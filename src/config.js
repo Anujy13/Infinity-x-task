@@ -8,6 +8,6 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "http://192.168.0.99:9890",
+    API_URL: "http://192.168.0.99:5000",
   }
 };

@@ -194,22 +194,22 @@ const authProtectedRoutes = [
   {
     path: "/",
     exact: true,
-    component: <Navigate to="/pages-LicenseValidation" />,
+    component: <Navigate to="/LicenseValidation" />,
   },
-  { path: "*", component: <Navigate to="/pages-LicenseValidation" /> },
+  { path: "*", component: <Navigate to="/LicenseValidation" /> },
 ];
 
 const publicRoutes = [
   // Authentication Page
   { path: "/logout", component: <Logout /> },
-  { path: "/login", component: <Login /> },
+  { path: "/ERPLogin", component: <Login /> },
   { path: "/forgot-password", component: <ForgetPasswordPage /> },
   { path: "/register", component: <Register /> },
    //LicenseValidation
-   { path: "/pages-LicenseValidation", component: <LicenseValidation /> },
+   { path: "/LicenseValidation", component: <LicenseValidation /> },
 
    // CompanySelection
-   { path: "/pages-CompanySelection", component: <CompanySelection /> },
+   { path: "/CompanySelection", component: <CompanySelection /> },
 
   //AuthenticationInner pages
   { path: "/auth-signin-basic", component: <BasicSignIn /> },

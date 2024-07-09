@@ -18,7 +18,7 @@ const ERPDashboard = () => {
         } else {
             // Redirect user to the start of the application or handle as needed
             console.log('Token not found or expired. Redirecting to login page or handling as needed.');
-            navigate('/pages-LicenseValidation')
+            navigate('/LicenseValidation')
             // Example: Redirect to login page
             // history.push('/login'); // Ensure history is available from react-router or another routing solution
         }
