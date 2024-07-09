@@ -94,17 +94,17 @@ const CompanySelection = () => {
         };
     }, []);
 
-    useEffect(() => {
-        if (userList.length === 1) {
-            setLocalLoading(true); // Start local loading indicator
-            const timer = setTimeout(() => {
-                navigate("/login"); // Navigate to login page after a brief delay
-                setLocalLoading(false); // Stop local loading indicator after navigation
-            }, 2000); // Adjust the delay time as needed
+    // useEffect(() => {
+    //     if (userList.length === 1) {
+    //         setLocalLoading(true); // Start local loading indicator
+    //         const timer = setTimeout(() => {
+    //             navigate("/login"); // Navigate to login page after a brief delay
+    //             setLocalLoading(false); // Stop local loading indicator after navigation
+    //         }, 2000); // Adjust the delay time as needed
     
-            return () => clearTimeout(timer); // Cleanup timer on component unmount
-        }
-    }, [userList, navigate]);
+    //         return () => clearTimeout(timer); // Cleanup timer on component unmount
+    //     }
+    // }, [userList, navigate]);
     
 
     
