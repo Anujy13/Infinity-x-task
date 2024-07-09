@@ -85,9 +85,9 @@ const FinishedProducts = () => {
     const TareTime = new Date(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.TareWeightDateTime"]);
 
     if (GrossTime > minDate && TareTime > minDate) {
-      return `Net Time @ ${voucher["weightDetails.NetWeightMTS"]} | ${voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.NetWeightTime"]}`;
+      return `Net Time @ ${voucher["weightDetails.NetWeightMTS"]} MTS | ${voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.NetWeightTime"]}`;
     } else if (GrossTime > minDate) {
-      return `Gross Time @ ${voucher["weightDetails.GrossWeightMTS"]} | ${voucher["weightDetails.Username"]}`;
+      return `Gross Time @ ${voucher["weightDetails.GrossWeightMTS"]} MTS | ${voucher["weightDetails.Username"]}`;
     } else {
       return "W/B Pending";
     }
