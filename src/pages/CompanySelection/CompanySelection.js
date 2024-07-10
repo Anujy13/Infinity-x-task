@@ -102,9 +102,9 @@ const CompanySelection = () => {
                 setLocalLoading(false); // Stop local loading indicator after navigation
             }, 2000); // Adjust the delay time as needed
     
-            return () => clearTimeout(timer); // Cleanup timer on component unmount
-        }
-    }, [userList, navigate]);
+    //         return () => clearTimeout(timer); // Cleanup timer on component unmount
+    //     }
+    // }, [userList, navigate]);
     
 
     
