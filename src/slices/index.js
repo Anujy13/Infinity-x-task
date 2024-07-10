@@ -27,7 +27,6 @@ import APIKeyReducer from "./apiKey/reducer";
 //voucher num
 import VoucherNumReducer from "./voucherNum/reducer";
 import VoucherNumImageReducer from "./voucherImage/reducer";
-
 const rootReducer = combineReducers({
     Layout: LayoutReducer,
     Login: LoginReducer,

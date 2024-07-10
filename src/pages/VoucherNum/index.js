@@ -77,6 +77,37 @@ const EcommerceOrderDetail = (props) => {
   // Debugging: log user2 object
 
 
+  const handleDownload = async () => {
+    try {
+      const downloadUrl = `http://192.168.0.99:5000/api/InfinityX/VoucherDownload?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992`;
+      const yourAccessToken = JSON.parse(localStorage.getItem("authUser2"))?.token;
+      const response = await fetch(downloadUrl, {
+        headers: {
+          Authorization: `Bearer ${yourAccessToken}`, // Add your authorization token if required
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download PDF');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `280D3BAA-195E-47C6-A6B9-36E14DA14992.pdf`);
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      // Handle error as needed
+    }
+  };
+
 document.title ="Voucher Details | Infinity X";
   return (
     <div className="page-content">
@@ -90,13 +121,9 @@ document.title ="Voucher Details | Infinity X";
                 <div className="d-flex align-items-center">
                   <h5 className="card-title flex-grow-1 mb-0">{user.voucherNumber}</h5>
                   <div className="flex-shrink-0">
-                    <Link
-                      to="/apps-invoices-details"
-                      className="btn btn-success btn-sm"
-                    >
-                      <i className="ri-download-2-fill align-middle me-1"></i>{" "}
-                      Download
-                    </Link>
+                  <button className="btn btn-success btn-sm" onClick={handleDownload}>
+                      <i className="ri-download-2-fill align-middle me-0"></i>{" "}
+                    </button>
                   </div>
                 </div>
               </CardHeader>

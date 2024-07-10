@@ -178,7 +178,6 @@ const LicenseValidation = (props) => {
   return (
     <React.Fragment>
       <ParticlesAuth>
-        {console.log('U:'+error)}
         <div className="auth-page-content">
           {(loading || localLoading) && (
             <div className="loader-overlay">
@@ -211,7 +210,7 @@ const LicenseValidation = (props) => {
                     <div className="text-center mt-2">
                       <h5 className="text-primary">Welcome</h5>
                       <p className="text-muted">
-                        Login to continue to Infinity-X
+                        Login to continue to Infinity-x
                       </p>
                     </div>
                     {error && (
@@ -356,4 +355,3 @@ const LicenseValidation = (props) => {
 };
 
 export default withRouter(LicenseValidation);
-

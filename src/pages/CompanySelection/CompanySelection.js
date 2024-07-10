@@ -19,6 +19,7 @@ const CompanySelection = () => {
     const [localLoading, setLocalLoading] = useState(false); // Local loading state
     const navigate = useNavigate();  // Access the history object for navigation
     const [backButtonClickCount, setBackButtonClickCount] = useState(0);
+    const [selectedCompany, setSelectedCompany] = useState({ companyName: '', companyCode: '' });
 
     const userprofileData = createSelector(
         selectLayoutState,
@@ -94,17 +95,21 @@ const CompanySelection = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     if (userList.length === 1) {
-    //         setLocalLoading(true); // Start local loading indicator
-    //         const timer = setTimeout(() => {
-    //             navigate("/login"); // Navigate to login page after a brief delay
-    //             setLocalLoading(false); // Stop local loading indicator after navigation
-    //         }, 2000); // Adjust the delay time as needed
+    useEffect(() => {
+        if (userList.length === 1) {
+            setLocalLoading(true); // Start local loading indicator
+            const timer = setTimeout(() => {
+                localStorage.setItem('selectedCompany', JSON.stringify({
+                    companyName: userList[0].companyName,
+                    companyCode: userList[0].companyCode
+                }));
+                navigate("/ERPLogin"); // Navigate to login page after storing details and a brief delay
+                setLocalLoading(false); // Stop local loading indicator after navigation
+            }, 2000); // Adjust the delay time as needed
     
-    //         return () => clearTimeout(timer); // Cleanup timer on component unmount
-    //     }
-    // }, [userList, navigate]);
+            return () => clearTimeout(timer); // Cleanup timer on component unmount
+        }
+    }, [userList, navigate]);
     
 
     
@@ -127,6 +132,33 @@ const CompanySelection = () => {
             window.removeEventListener("popstate", handleBackButtonClick);
         };
     }, [navigate, backButtonClickCount]);
+
+    useEffect(() => {
+        setUserList(user); // Initialize userList with the fetched user data
+    }, [user]);
+
+    useEffect(() => {
+        if (success && user.length > 0) {
+            setSelectedCompany({
+                companyName: user[0].companyName,
+                companyCode: user[0].companyCode
+            });
+        }
+    }, [success, user]);
+
+    const handleLoginClick = (companyName, companyCode) => {
+        // Store selected company details in local storage
+        localStorage.setItem('selectedCompany', JSON.stringify({
+            companyName,
+            companyCode
+        }));
+
+        // Navigate to login page after storing details
+        navigate("/ERPLogin");
+    };
+
+    // Rest of your component code...
+
 
     return (
         <React.Fragment>
@@ -280,13 +312,19 @@ const CompanySelection = () => {
                                                         </Col>
                                                         <Col lg={2} className="col">
                                                             <div className="text-end">
-                                                                {item.connectionStatus === 'Online' ? (
-                                                                    <Link to="/login" className="btn btn-light view-btn">Login</Link>
-                                                                ) : (
-                                                                    <h6 className="text-muted text-danger" style={{ marginRight: '2rem', color: 'red' }}>
-                                                                        Cannot login, the company is inactive
-                                                                    </h6>)}
-                                                            </div>
+                                {item.connectionStatus === 'Online' ? (
+                                    <Button
+                                        onClick={() => handleLoginClick(item.companyName, item.companyCode)}
+                                        className="btn btn-light view-btn"
+                                    >
+                                        Login
+                                    </Button>
+                                ) : (
+                                    <h6 className="text-muted text-danger" style={{ marginRight: '2rem', color: 'red' }}>
+                                        Cannot login, the company is inactive
+                                    </h6>
+                                )}
+                            </div>
                                                         </Col>
                                                     </Row>
                                                 </CardBody>

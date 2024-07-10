@@ -60,12 +60,15 @@ class APIClient {
   getdata = async (url, params) => {
     const token = JSON.parse(localStorage.getItem("authUser"))?.token;
     if (token) setAuthorization(token);
-
+  
+    const subscriberID = JSON.parse(localStorage.getItem("authUser"))?.subscriberID;
     const queryString = params
-      ? Object.keys(params).map(key => key + '=' + params[key]).join('&')
+      ? `?${Object.keys(params).map(key => `${key}=${params[key]}`).join('&')}`
       : "";
-      
-    const response = await axios.get(`${url}${queryString}`);
+  
+    const fullUrl = `${url}/${subscriberID}${queryString}`;
+    
+    const response = await axios.get(fullUrl);
     return response;
   };
   /**

@@ -13,7 +13,7 @@ import {
   FormFeedback,
   Alert,
   Spinner,
-} from "reactstrap";
+} from "reactstrap"; // Used for UI Components
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
 
 // redux
@@ -27,7 +27,7 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 
 // actions
-import { loginUser, socialLogin, resetLoginFlag } from "../../slices/thunks";
+import { loginUser, socialLogin, resetLoginFlag } from "../../slices/thunks"; // Used for API Logics
 
 import infinity2 from "../../assets/infinity2.png";
 import clientLogo from "../../assets/client.png";
@@ -37,7 +37,7 @@ import { infinity } from "ldrs";
 infinity.register();
 
 const Login = (props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Used for API connection
   const selectLayoutState = (state) => state;
   const loginpageData = createSelector(selectLayoutState, (state) => ({
     user: state.Account.user,
@@ -45,28 +45,34 @@ const Login = (props) => {
     loading: state.Login.loading,
     errorMsg: state.Login.errorMsg,
   }));
-
+  // Inside your component
   const { user, error, loading, errorMsg } = useSelector(loginpageData);
 
   const [userLogin, setUserLogin] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
-  const [localLoading, setLocalLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [autoSubmitted, setAutoSubmitted] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false); // Local loading state
+  const [initialLoading, setInitialLoading] = useState(true); // Initial loading state
+  const [autoSubmitted, setAutoSubmitted] = useState(false); // Track auto submission
   const navigate = useNavigate();
 
+  const companyCode = JSON.parse(localStorage.getItem("selectedCompany"))?.companyCode;
+  const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
+
   useEffect(() => {
+    // Check if email and password are stored in cookies
     const email = localStorage.getItem("email2");
     const password = localStorage.getItem("password2");
     if (email && password) {
+      // Set the userLogin state with stored credentials
       setUserLogin({ email, password });
 
+      // Automatically submit the form after 2 seconds if not already auto-submitted
       if (!autoSubmitted) {
         setAutoSubmitted(true);
-        setLocalLoading(true);
+        setLocalLoading(true); // Start loading for auto-submit
         setTimeout(() => {
           validation.handleSubmit();
-        }, 2000);
+        }, 2000); // Delay of 2 seconds
       }
     }
   }, []);
@@ -89,7 +95,9 @@ const Login = (props) => {
   }, [user]);
 
   const validation = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
+
     initialValues: {
       email: userLogin.email || "" || "",
       password: userLogin.password || "" || "",
@@ -101,9 +109,9 @@ const Login = (props) => {
     onSubmit: (values) => {
       localStorage.setItem("email2", values.email);
       localStorage.setItem("password2", values.password);
-      setLocalLoading(true);
+      setLocalLoading(true); // Start local loading
       dispatch(loginUser(values, props.router.navigate)).finally(() => {
-        setLocalLoading(false);
+        setLocalLoading(false); // End local loading after dispatch
       });
     },
   });
@@ -111,6 +119,20 @@ const Login = (props) => {
   const signIn = (type) => {
     dispatch(socialLogin(type, props.router.navigate));
   };
+
+  // useEffect(() => {
+  //   if (
+  //     validation.initialValues.email &&
+  //     validation.initialValues.password &&
+  //     !autoSubmitted
+  //   ) {
+  //     setAutoSubmitted(true);
+  //     setLocalLoading(true); // Start loading for auto-submit
+  //     setTimeout(() => {
+  //       validation.handleSubmit();
+  //     }, 2000); // Delay of 2 seconds
+  //   }
+  // }, [validation.initialValues, autoSubmitted, validation]);
 
   useEffect(() => {
     if (errorMsg) {
@@ -128,8 +150,7 @@ const Login = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  document.title =
-    "Infinity-X | CODEPLAYERS Business System Private Limited";
+  document.title = "Infinity-X | CODEPLAYERS Business System Private Limited";
   return (
     <React.Fragment>
       <ParticlesAuth>
@@ -145,7 +166,7 @@ const Login = (props) => {
         speed="1.3"
         color="white"
       ></l-infinity>
-      <p className="validating-message">Validating ERP User...</p>
+      <p className="validating-message">Validating the User...</p>
     </div>
   </div>
 )}
@@ -163,13 +184,14 @@ const Login = (props) => {
             <Row className="justify-content-center">
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
-                  <CardBody className="p-4" style={{ marginBottom: "-3.5rem" }}>
-                    <div className="text-center mt-2">
-                      <h5 className="text-primary">{props.companyName}</h5>
-                      <p className="text-muted">Company Code : {props.companyCode}</p>
-                    </div>
+                <CardBody className="p-4" style={{ marginBottom: '-3.5rem' }}>
+                <div className="text-center mt-2">
+  <h5 className="text-primary">{companyName}</h5>
+  <p className="text-muted">Company Code: {companyCode}</p>
+</div>
+
                     {error && error ? (
-                      <Alert color="danger">{error}</Alert>
+                      <Alert color="danger"> {error} </Alert>
                     ) : null}
                     <div className="p-2 mt-4">
                       <Form
@@ -200,19 +222,16 @@ const Login = (props) => {
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.email}
-                              </FormFeedback>
-                            ) : null}
+                          validation.errors.email ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.email}
+                            </FormFeedback>
+                          ) : null}
                         </div>
 
                         <div className="mb-3">
                           <div className="float-end">
-                            <Link
-                              to="/forgot-password"
-                              className="text-muted"
-                            >
+                            <Link to="/forgot-password" className="text-muted">
                               Forgot password?
                             </Link>
                           </div>
@@ -239,11 +258,11 @@ const Login = (props) => {
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.password}
-                                </FormFeedback>
-                              ) : null}
+                            validation.errors.password ? (
+                              <FormFeedback type="invalid">
+                                {validation.errors.password}
+                              </FormFeedback>
+                            ) : null}
                             <button
                               className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted shadow-none"
                               onClick={() => setShowPassword(!showPassword)}
@@ -273,9 +292,7 @@ const Login = (props) => {
                         <div className="mt-4">
                           <Button
                             color="success"
-                            disabled={
-                              error ? null : localLoading ? true : false
-                            }
+                            disabled={error ? null : localLoading ? true : false}
                             className="btn btn-success w-100"
                             type="submit"
                           >
@@ -295,13 +312,11 @@ const Login = (props) => {
                                 alt="infinityLogo"
                                 height="60"
                                 width="212"
-                                style={{
-                                  "@media (max-width: 767px)": {
-                                    marginTop: "0.5rem",
-                                  },
-                                }}
+                                style={{  '@media (max-width: 767px)': { marginTop: '0.5rem' } }}
                               />
                             </div>
+
+                            {/* <p className="text-description mt-3 fs-15 fw-medium"></p> */}
                           </div>
                         </div>
                       </Form>
@@ -313,28 +328,28 @@ const Login = (props) => {
           </Container>
           <style jsx>{`
             .loader-overlay {
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background-color: #092537;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              z-index: 9999;
-            }
-            .loader-container {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-            }
-            .validating-message {
-              margin-top: 15px;
-              color: white;
-              font-size: 1.2rem;
-              font-weight: bold;
-            }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #092537;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .validating-message {
+    margin-top: 15px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
           `}</style>
         </div>
       </ParticlesAuth>

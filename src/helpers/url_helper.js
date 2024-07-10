@@ -209,7 +209,7 @@ export const ADD_NEW_TEAMDATA = "/add/teamData";
 export const UPDATE_TEAMDATA = "/update/teamData";
 
 // Pages > CompanySelection
-export const GET_COMPANYSELECTIONDATA = "https://api5.codeplayers.in/api/ListOfCompanies/520259c3-3fa6-49a2-99cb-c8504de8fb29";
+export const GET_COMPANYSELECTIONDATA = "https://api5.codeplayers.in/api/ListOfCompanies";
 // export const DELETE_COMPANYSELECTIONDATA = "/delete/teamData";
 // export const ADD_NEW_COMPANYSELECTIONDATA = "/add/teamData";
 // export const UPDATE_COMPANYSELECTIONDATA = "/update/teamData";

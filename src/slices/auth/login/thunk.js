@@ -7,7 +7,9 @@ import {
 
 import { loginSuccess, logoutUserSuccess, apiError, reset_login_flag } from './reducer';
 
-export const loginUser = (user, companyCode, history) => async (dispatch) => {
+
+export const loginUser = (user, history) => async (dispatch) => {
+  const companyCode = JSON.parse(localStorage.getItem("selectedCompany"))?.companyCode;
   try {
     let response;
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
@@ -26,7 +28,7 @@ export const loginUser = (user, companyCode, history) => async (dispatch) => {
       response = postFakeLogin({
         Username: user.email,
         password: user.password,
-        CompanyCode: companyCode, // Use the passed companyCode here
+        CompanyCode: companyCode,
       });
     }
 
