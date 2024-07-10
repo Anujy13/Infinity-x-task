@@ -101,14 +101,17 @@ const EcommerceOrderDetail = (props) => {
       // Handle error as needed
     }
   };
+  
   localStorage.setItem("voucherNum", JSON.stringify(user.voucherNumber));
+
   const handleShareWhatsApp = async () => {
     try {
       // Fetch voucher number from localStorage
-      const voucherNumber = JSON.parse(localStorage.getItem('voucherNum'));
-      const Party = JSON.parse(localStorage.getItem("VoucherDetails"))?.party;
-  const VehicleNumber = JSON.parse(localStorage.getItem("VoucherDetails"))?.vehicleNumber;
-  const VoucherDate = JSON.parse(localStorage.getItem("VoucherDetails"))?.voucherDate;
+      // const user = localStorage.getItem("authUser2");
+      const voucherNumber = localStorage.getItem('voucherNum');
+      const Party = localStorage.getItem("Party")
+  const VehicleNumber = JSON.parse(localStorage.getItem("VehicleNumber"))
+  const VoucherDate = JSON.parse(localStorage.getItem("VoucherDate"))
   const NetGateTime = JSON.parse(localStorage.getItem("NetGateTime"));
   const NetWeight = JSON.parse(localStorage.getItem("NetWeight"));
   const Items = JSON.parse(localStorage.getItem("Items"));
@@ -155,7 +158,7 @@ const EcommerceOrderDetail = (props) => {
       }
   
       // Generate the WhatsApp share link with the uploaded PDF link
-      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n'${VehicleNumber}'\r\n\r\n'${VoucherDate}'\r\n'${sanitizedVoucherNumber}'\r\n\r\n'${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\nFirst Weight : 49.140\r\nFinal Weight : 13.750\r\n'${NetWeight}'\r\n\r\nFirst Time : 09/07/2024 16:47\r\nFinal Time : 09/07/2024 16:47\r\n'${NetGateTime}'",: ${uploadResult.link}`;
+      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n VehicleNumber :'${VehicleNumber}'\r\n\r\n VoucherDate :'${VoucherDate}'\r\nVoucherNumber :'${sanitizedVoucherNumber}'\r\n\r\n'Items :${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\nFirst Weight : 49.140\r\nFinal Weight : 13.750\r\n'Net-Weight :${NetWeight}'\r\n\r\nFirst Time : 09/07/2024 16:47\r\nFinal Time : 09/07/2024 16:47\r\n'Net-Gate-Time :${NetGateTime}'",: \r\n${uploadResult.link}`;
       const shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
   
       // Open the WhatsApp share link
