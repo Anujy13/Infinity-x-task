@@ -70,40 +70,61 @@ const FinishedProducts = () => {
     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
   };
 
-  const getGateStatus = (voucher) => {
-    const minDate = new Date('0001-01-01T00:00:00');
-    const inTime = new Date(voucher.gateWeightRecord.inTime);
-    const outTime = new Date(voucher.gateWeightRecord.outTime);
+  const parseGateDisplayTime = (gateDisplay) => {
+    const hoursMatch = gateDisplay.match(/(\d+)\s*Hours?/i);
+    const minutesMatch = gateDisplay.match(/(\d+)\s*Mins?/i);
 
-    if (inTime > minDate && outTime > minDate) {
-      return `Total Time : ${voucher.gateWeightRecord.netGateTime}`;
-    } else if (inTime > minDate) {
-      return "Gate-In Done";
-    } else {
-      return "Gate-In Pending";
-    }
+    const hours = hoursMatch ? parseInt(hoursMatch[1], 10) : 0;
+    const minutes = minutesMatch ? parseInt(minutesMatch[1], 10) : 0;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
-
-  const getBridgeStatus = (voucher) => {
-    const minDate = new Date('0001-01-01T00:00:00');
-    const GrossTime = new Date(voucher.gateWeightRecord.grossTime);
-    const TareTime = new Date(voucher.gateWeightRecord.tareTime);
+  const setVoucherDetailsToLocalStorage = (voucher) => {
     localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
     localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
-    localStorage.setItem("Items", JSON.stringify(voucher.items.item));
-    localStorage.setItem("Quantity", JSON.stringify(voucher.items.quantity));
-    localStorage.setItem("Unit", JSON.stringify(voucher.items.unit));
-
-    if (GrossTime > minDate && TareTime > minDate) {
-      return `Net Time @ ${voucher.gateWeightRecord.netWeight} ${voucher.items[0].unit} | ${voucher.gateWeightRecord.netWeightTime}`;
-    } else if (GrossTime > minDate) {
-      return `Gross Time @ ${voucher.gateWeightRecord.grossWeight} ${voucher.items[0].unit}`;
-    } else {
-      return "W/B Pending";
-    }
+    localStorage.setItem("Items", JSON.stringify(voucher.items.map(item => item.item)));
+    localStorage.setItem("Quantity", JSON.stringify(voucher.items.map(item => item.quantity)));
+    localStorage.setItem("Unit", JSON.stringify(voucher.items.map(item => item.unit)));
+    localStorage.setItem("Party", JSON.stringify(voucher.party));
+    localStorage.setItem("VehicleNumber", JSON.stringify(voucher.vehicleNumber));
+    localStorage.setItem("VoucherDate", JSON.stringify(voucher.voucherDate));
+    localStorage.setItem("VoucherDetails", JSON.stringify(voucher));
   };
+  // const getGateStatus = (voucher) => {
+  //   const minDate = new Date('0001-01-01T00:00:00');
+  //   const inTime = new Date(voucher.gateWeightRecord.inTime);
+  //   const outTime = new Date(voucher.gateWeightRecord.outTime);
 
-  localStorage.setItem("VoucherDetails", JSON.stringify(user));
+  //   if (inTime > minDate && outTime > minDate) {
+  //     return `Total Time : ${voucher.gateWeightRecord.netGateTime}`;
+  //   } else if (inTime > minDate) {
+  //     return "Gate-In Done";
+  //   } else {
+  //     return "Gate-In Pending";
+  //   }
+  // };
+
+  // const getBridgeStatus = (voucher) => {
+  //   const minDate = new Date('0001-01-01T00:00:00');
+  //   const GrossTime = new Date(voucher.gateWeightRecord.grossTime);
+  //   const TareTime = new Date(voucher.gateWeightRecord.tareTime);
+
+  //   if (GrossTime > minDate && TareTime > minDate) {
+  //     return `Net Time @ ${voucher.gateWeightRecord.netWeight} ${voucher.items[0].unit} | ${voucher.gateWeightRecord.netWeightTime}`;
+  //   } else if (GrossTime > minDate) {
+  //     return `Gross Time @ ${voucher.gateWeightRecord.grossWeight} ${voucher.items[0].unit}`;
+  //   } else {
+  //     return "W/B Pending";
+  //   }
+  // };
+
+  
+  useEffect(() => {
+    if (Array.isArray(user)) {
+      user.forEach(voucher => setVoucherDetailsToLocalStorage(voucher));
+    }
+  }, [user]);
+
 
   return (
     <div className="page-content">
@@ -113,8 +134,13 @@ const FinishedProducts = () => {
           <Col xl={8}>
             {Array.isArray(user) ? (
               user.map((voucher, voucherIndex) => (
-                <Card key={voucherIndex} className="product cursor-pointer" onClick={() => navigate('/voucher-num')}>
-                  <CardBody>
+                <Card key={voucherIndex} className="product cursor-pointer  ribbon-box border shadow-none mb-lg-0 right mt-2" onClick={() => navigate('/voucher-num')}>
+                  <CardBody  className="text-muted">
+                  <div className="ribbon-two ribbon-two-info">
+  <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? '9px' : '13px' }}>
+    {voucher.status}
+  </span>
+</div>
                     <Row className="gy-3">
                       <Col sm={8}>
                         <h5 className="fs-14 text-truncate text-wrap w-100">
@@ -130,7 +156,7 @@ const FinishedProducts = () => {
                           </li>
                         </ul>
                       </Col>
-                      <Col sm={4} className="text-lg-end mb-1.5 mt-sm-0">
+                      <Col sm={3} className="text-lg-end mb-1.5 mt-sm-0">
                         <p className="text-muted mb-1"></p>
                         <h5 className="fs-14 mt-md-3 mt-sm-0">
                           <span className="product-price">
@@ -218,7 +244,7 @@ const FinishedProducts = () => {
                             {expandedGate.includes(voucherIndex) ? "-" : "+"}
                           </Button>
                           <span className="ms-2">Gate</span>
-                          <span className="text-danger ms-2">{getGateStatus(voucher)}</span>
+                          <span className="text-danger ms-2">{(voucher.gateWeightRecord.gateDisplay)}</span>
                           <Collapse isOpen={expandedGate.includes(voucherIndex)}>
                             <div className="ms-4">
                               <p style={{ marginBottom: "0.25rem" }}>In-Time: {formatDateTime(voucher.gateWeightRecord.inTime)}</p>
@@ -244,7 +270,7 @@ const FinishedProducts = () => {
                             {expandedWeightment.includes(voucherIndex) ? "-" : "+"}
                           </Button>
                           <span className="ms-2">Weightment</span>
-                          <span className="text-danger ms-2">{getBridgeStatus(voucher)}</span>
+                          <span className="text-danger ms-2">{voucher.gateWeightRecord.weightDisplay}</span>
                           <Collapse isOpen={expandedWeightment.includes(voucherIndex)}>
                             <div className="ms-4">
                               <p style={{ marginBottom: "0.25rem" }}>Gross Weight: {voucher.gateWeightRecord.grossWeight}</p>
