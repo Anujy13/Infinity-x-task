@@ -61,12 +61,12 @@ const FinishedProducts = () => {
   };
 
   // Effect to log user data and specific fields when user changes
-  useEffect(() => {
-    console.log("user:", user);
-    if (user) {
-      console.log("user items:", user.itemStatus); // Ensure to log the correct field
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("user:", user);
+  //   if (user) {
+  //     console.log("user items:", user.itemStatus); // Ensure to log the correct field
+  //   }
+  // }, [user]);
 
   const formatDateTime = (dateTimeString) => {
     const dateTime = new Date(dateTimeString);
@@ -101,9 +101,9 @@ const FinishedProducts = () => {
     const TareTime = new Date(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.TareWeightDateTime"]);
 
     if (GrossTime > minDate && TareTime > minDate) {
-      return `Net Time @ ${voucher["weightDetails.NetWeightMTS"]} MTS | ${voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.NetWeightTime"]}`;
+      return `Net Time @ ${voucher["weightDetails.NetWeightMTS"]}  ${voucher["unit.Unit"]} | ${voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.NetWeightTime"]}`;
     } else if (GrossTime > minDate) {
-      return `Gross Time @ ${voucher["weightDetails.GrossWeightMTS"]} MTS | ${voucher["weightDetails.Username"]}`;
+      return `Gross Time @ ${voucher["weightDetails.GrossWeightMTS"]}  ${voucher["unit.Unit"]} | ${voucher["weightDetails.Username"]}`;
     } else {
       return "W/B Pending";
     }
@@ -155,7 +155,7 @@ const FinishedProducts = () => {
                           <ul className="list-inline text-muted mb-0 d-flex">
                             <li className="list-inline-item me-2">
                               <span className="fw-medium">
-                                {voucher["quantity"]} MTS
+                                {voucher["quantity"]} {voucher["unit.Unit"]}
                               </span>
                             </li>
                             <li className="list-inline-item">
@@ -186,7 +186,7 @@ const FinishedProducts = () => {
                               <ul className="list-inline text-muted mb-0 d-flex">
                                 <li className="list-inline-item">
                                   <span className="fw-medium">
-                                    {voucher["quantity"]} MTS
+                                    {voucher["quantity"]} {voucher["unit.Unit"]}
                                   </span>
                                 </li>
                                 <li className="list-inline-item">
