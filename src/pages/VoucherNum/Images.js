@@ -3,22 +3,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import { createSelector } from "reselect";
 import { fetchVoucherImagesNumData } from '../../slices/thunks';
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import "swiper/swiper-bundle.css";
 
 const VoucherImages = () => {
   const dispatch = useDispatch();
 
+  // Selecting data from Redux state
   const selectLayoutState = (state) => state.VoucherImageNum;
-
   const userprofileData = createSelector(
     selectLayoutState,
     (state) => state.user2 // Assuming state.user2 is the array of images
   );
-
   const user2 = useSelector(userprofileData);
+  const loading = useSelector(state => state.VoucherImageNum.loading);
+  const error = useSelector(state => state.VoucherImageNum.error);
 
   useEffect(() => {
     dispatch(fetchVoucherImagesNumData());
@@ -28,14 +26,28 @@ const VoucherImages = () => {
     console.log('user2:', user2); // Log the user2 array
   }, [user2]);
 
+  // Handling loading state
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  // Handling errors (adjust this logic based on your error structure)
+  if (error) {
+    if (error.status === 500 || error.status === 404) {
+      return <p>{error.message}</p>;
+    }
+    // Handle other types of errors if needed
+    return <p>Error occurred: {error.message}</p>;
+  }
+
+  // Rendering Swiper component if user2 exists and has elements
   return (
-    <React.Fragment>
-      {user2 && user2.length > 0 ? ( // Ensure user2 exists and has elements
+    <>
+      {user2 && user2.length > 0 ? (
         <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
+          navigation
           pagination={{ clickable: true }}
-          navigation={true}
-          loop={true}
+          loop
           autoplay={{ delay: 2500, disableOnInteraction: false }}
           className="mySwiper swiper navigation-swiper rounded"
         >
@@ -50,9 +62,9 @@ const VoucherImages = () => {
           ))}
         </Swiper>
       ) : (
-        <p>Loading...</p> // Show a loading message if user2 is undefined or empty
+        <p>No captures in Camera</p>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

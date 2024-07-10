@@ -5,6 +5,7 @@ import { Collapse, Col, Container, Row, Card, CardBody, Button } from "reactstra
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import { fetchFinishedProductsData } from "../../slices/thunks";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const FinishedProducts = () => {
   const dispatch = useDispatch();
@@ -59,28 +60,23 @@ const FinishedProducts = () => {
     }
   };
 
-  // Effect to log user data and specific fields when user changes
-  useEffect(() => {
-    console.log("user:", user);
-    if (user) {
-      console.log("user items:", user.itemStatus); // Ensure to log the correct field
-    }
-  }, [user]);
+  const formatDateTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    return moment(dateTime).format('ddd, DD MMM YYYY - hh:mmA');
+  };
 
-  // Utility function to format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
   };
 
-  // Utility function to get Gate status based on voucher data
   const getGateStatus = (voucher) => {
     const minDate = new Date('0001-01-01T00:00:00');
-    const inTime = new Date(voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateInDateTime"]);
-    const outTime = new Date(voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateOutDateTime"]);
+    const inTime = new Date(voucher.gateWeightRecord.inTime);
+    const outTime = new Date(voucher.gateWeightRecord.outTime);
 
     if (inTime > minDate && outTime > minDate) {
-      return `Total Time : ${voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.NetGateTime"]}`;
+      return `Total Time : ${voucher.gateWeightRecord.netGateTime}`;
     } else if (inTime > minDate) {
       return "Gate-In Done";
     } else {
@@ -88,20 +84,26 @@ const FinishedProducts = () => {
     }
   };
 
-  // Utility function to get Bridge status based on voucher data
   const getBridgeStatus = (voucher) => {
     const minDate = new Date('0001-01-01T00:00:00');
-    const GrossTime = new Date(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"]);
-    const TareTime = new Date(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.TareWeightDateTime"]);
+    const GrossTime = new Date(voucher.gateWeightRecord.grossTime);
+    const TareTime = new Date(voucher.gateWeightRecord.tareTime);
+    localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
+    localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
+    localStorage.setItem("Items", JSON.stringify(voucher.items.item));
+    localStorage.setItem("Quantity", JSON.stringify(voucher.items.quantity));
+    localStorage.setItem("Unit", JSON.stringify(voucher.items.unit));
 
     if (GrossTime > minDate && TareTime > minDate) {
-      return `Net Time @ ${voucher["weightDetails.NetWeightMTS"]} MTS | ${voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.NetWeightTime"]}`;
+      return `Net Time @ ${voucher.gateWeightRecord.netWeight} ${voucher.items[0].unit} | ${voucher.gateWeightRecord.netWeightTime}`;
     } else if (GrossTime > minDate) {
-      return `Gross Time @ ${voucher["weightDetails.GrossWeightMTS"]} MTS | ${voucher["weightDetails.Username"]}`;
+      return `Gross Time @ ${voucher.gateWeightRecord.grossWeight} ${voucher.items[0].unit}`;
     } else {
       return "W/B Pending";
     }
   };
+
+  localStorage.setItem("VoucherDetails", JSON.stringify(user));
 
   return (
     <div className="page-content">
@@ -117,22 +119,22 @@ const FinishedProducts = () => {
                       <Col sm={8}>
                         <h5 className="fs-14 text-truncate text-wrap w-100">
                           <span className="text-body">
-                            {voucher["voucherNum.Account.Account"]}
+                            {voucher.party}
                           </span>
                         </h5>
                         <ul className="list-inline text-muted mb-1 mb-md-3">
                           <li className="list-inline-item">
                             <span className="fw-medium">
-                              {voucher["voucherNum.Transport.VehicleNumber"]}
+                              {voucher.vehicleNumber}
                             </span>
                           </li>
                         </ul>
                       </Col>
-                      <Col sm={4} className="text-lg-end mb-1.5 mt-sm-0 mt-md-2">
+                      <Col sm={4} className="text-lg-end mb-1.5 mt-sm-0">
                         <p className="text-muted mb-1"></p>
-                        <h5 className="fs-14">
+                        <h5 className="fs-14 mt-md-3 mt-sm-0">
                           <span className="product-price">
-                            {voucher["voucherNum.VoucherNumber"]} | {formatDate(voucher["voucherNum.GateVoucher.VoucherDate"])}
+                            {voucher.voucherNumber} | {formatDate(voucher.voucherDate)}
                           </span>
                         </h5>
                       </Col>
@@ -143,55 +145,53 @@ const FinishedProducts = () => {
                         <div className="d-flex flex-row">
                           <h5 className="fs-14 text-truncate me-4 me-sm-3 mb-1 mb-sm-0">
                             <span className="text-body">
-                              {voucher["item.Item"]}
+                              {voucher.items[0].sequence}. {voucher.items[0].item}
                             </span>
                           </h5>
                           <ul className="list-inline text-muted mb-0 d-flex">
                             <li className="list-inline-item me-2">
                               <span className="fw-medium">
-                                {voucher["quantity"]} MTS
+                                {voucher.items[0].quantity} {voucher.items[0].unit}
                               </span>
                             </li>
                             <li className="list-inline-item">
                               <span className="fw-medium">
-                                {voucher["exclusiveRate"]}
+                                {voucher.items[0].exclusiveRate}
                               </span>
                             </li>
                           </ul>
                         </div>
 
-                        {/* Display additional items count */}
                         {!expandedItems.includes(voucherIndex) ? (
                           <div
                             style={{ marginLeft: "1rem", cursor: "pointer", color: 'red' }}
                             onClick={(e) => handleExpandItem(e, voucherIndex)}
                           >
-                            +{voucher["item.Item"].length - 1} more items
+                            +{voucher.items.length - 1} more items
                           </div>
                         ) : (
                           <Collapse isOpen={expandedItems.includes(voucherIndex)} className="mt-2">
-                            {/* Display additional details here */}
-                            <div className="d-flex flex-row">
-                              <h5 className="fs-14 text-truncate me-4 me-sm-3 mb-1 mb-sm-0">
-                                <span className="text-body">
-                                  {voucher["item.Item"]}
-                                </span>
-                              </h5>
-                              <ul className="list-inline text-muted mb-0 d-flex">
-                                <li className="list-inline-item">
-                                  <span className="fw-medium">
-                                    {voucher["quantity"]} MTS
+                            {voucher.items.slice(1).map((item, itemIndex) => (
+                              <div className="d-flex flex-row" key={itemIndex}>
+                                <h5 className="fs-14 text-truncate me-4 me-sm-3 mb-1 mb-sm-0">
+                                  <span className="text-body">
+                                    {item.sequence}. {item.item}
                                   </span>
-                                </li>
-                                <li className="list-inline-item">
-                                  <span className="fw-medium">
-                                    {voucher["exclusiveRate"]}
-                                  </span>
-                                </li>
-                              </ul>
-                              <div className="position-relative ms-auto">
+                                </h5>
+                                <ul className="list-inline text-muted mb-0 d-flex">
+                                  <li className="list-inline-item me-2">
+                                    <span className="fw-medium">
+                                      {item.quantity} {item.unit}
+                                    </span>
+                                  </li>
+                                  <li className="list-inline-item">
+                                    <span className="fw-medium">
+                                      {item.exclusiveRate}
+                                    </span>
+                                  </li>
+                                </ul>
                               </div>
-                            </div>
+                            ))}
                             <div
                               style={{ marginLeft: "1rem", cursor: "pointer", color: 'red' }}
                               onClick={(e) => handleExpandItem(e, voucherIndex)}
@@ -210,9 +210,9 @@ const FinishedProducts = () => {
                               fontSize: "1rem",
                               lineHeight: "1",
                               textShadow: "none",
-                              boxShadow : "none",
-                              backgroundColor : 'white',
-                              border:'none',
+                              boxShadow: "none",
+                              backgroundColor: 'white',
+                              border: 'none',
                             }}
                           >
                             {expandedGate.includes(voucherIndex) ? "-" : "+"}
@@ -221,13 +221,13 @@ const FinishedProducts = () => {
                           <span className="text-danger ms-2">{getGateStatus(voucher)}</span>
                           <Collapse isOpen={expandedGate.includes(voucherIndex)}>
                             <div className="ms-4">
-                              <p style={{ marginBottom: "0.25rem" }}>In-Time : {voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateInDateTime"]}</p>
-                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Out-Time: {voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateOutDateTime"]}</p>
+                              <p style={{ marginBottom: "0.25rem" }}>In-Time: {formatDateTime(voucher.gateWeightRecord.inTime)}</p>
+                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Out-Time: {formatDateTime(voucher.gateWeightRecord.outTime)}</p>
                             </div>
                           </Collapse>
                         </div>
 
-                        <div className="mt-1 mt-sm-1">
+                        <div className="mt-3 mt-sm-0">
                           <Button
                             type="button"
                             className="btn btn-link p-1"
@@ -236,19 +236,19 @@ const FinishedProducts = () => {
                               fontSize: "1rem",
                               lineHeight: "1",
                               textShadow: "none",
-                              boxShadow : "none",
-                              backgroundColor : 'white',
-                              border:'none',
+                              boxShadow: "none",
+                              backgroundColor: 'white',
+                              border: 'none',
                             }}
                           >
                             {expandedWeightment.includes(voucherIndex) ? "-" : "+"}
                           </Button>
-                          <span className="ms-2">WeighBridge</span>
+                          <span className="ms-2">Weightment</span>
                           <span className="text-danger ms-2">{getBridgeStatus(voucher)}</span>
                           <Collapse isOpen={expandedWeightment.includes(voucherIndex)}>
                             <div className="ms-4">
-                              <p style={{ marginBottom: "0.25rem" }}>Gross Wt : {voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"]}</p>
-                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Tare Wt: {voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"]}</p>
+                              <p style={{ marginBottom: "0.25rem" }}>Gross Weight: {voucher.gateWeightRecord.grossWeight}</p>
+                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Tare Weight: {voucher.gateWeightRecord.tareWeight}</p>
                             </div>
                           </Collapse>
                         </div>
@@ -258,7 +258,7 @@ const FinishedProducts = () => {
                 </Card>
               ))
             ) : (
-              <div>No data available</div>
+              <p>No finished products data available.</p>
             )}
           </Col>
         </Row>
