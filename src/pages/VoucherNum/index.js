@@ -5,9 +5,7 @@ import classnames from "classnames";
 import { Link } from "react-router-dom";
 
 import BreadCrumb from "../../Components/Common/BreadCrumb";
-import { productDetails } from "../../common/data/ecommerce";
 import EcommerceOrderProduct from "./EcommerceOrderProduct";
-import avatar3 from "../../assets/images/users/avatar-3.jpg";
 
 import {fetchVoucherNumData } from '../../slices/thunks';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,19 +13,13 @@ import { createSelector } from "reselect";
 import moment from "moment/moment";
 import { FaWhatsapp } from 'react-icons/fa';
 
-
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-fade";
 import "swiper/css/effect-flip";
-import { Pagination, Navigation, Autoplay } from "swiper/modules";
 
-import img4 from "../../assets/images/small/img-4.jpg";
-import img5 from "../../assets/images/small/img-5.jpg";
-import img6 from "../../assets/images/small/img-6.jpg";
 import VoucherImages from "./Images";
 
 const EcommerceOrderDetail = (props) => {

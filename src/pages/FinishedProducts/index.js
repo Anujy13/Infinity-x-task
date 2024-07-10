@@ -7,6 +7,7 @@ import { fetchFinishedProductsData } from "../../slices/thunks";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
+
 const FinishedProducts = () => {
   const dispatch = useDispatch();
   const [expandedItems, setExpandedItems] = useState([]);
@@ -111,6 +112,7 @@ const FinishedProducts = () => {
         <BreadCrumb title="Security Gate/Finished Products" pageTitle="Infinity X" />
         <Row className="mb-3">
           <Col xl={8}>
+
             {Array.isArray(user) ? (
               user.map((voucher, voucherIndex) => (
                 <Card key={voucherIndex} className="product cursor-pointer" onClick={() => navigate('/voucher-num')}>
