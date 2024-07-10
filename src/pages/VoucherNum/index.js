@@ -109,21 +109,30 @@ const EcommerceOrderDetail = (props) => {
       // Handle error as needed
     }
   };
-
   localStorage.setItem("voucherNum", JSON.stringify(user.voucherNumber));
   const handleShareWhatsApp = async () => {
     try {
       // Fetch voucher number from localStorage
       const voucherNumber = JSON.parse(localStorage.getItem('voucherNum'));
-
+      const Party = JSON.parse(localStorage.getItem("VoucherDetails"))?.party;
+  const VehicleNumber = JSON.parse(localStorage.getItem("VoucherDetails"))?.vehicleNumber;
+  const VoucherDate = JSON.parse(localStorage.getItem("VoucherDetails"))?.voucherDate;
+  const NetGateTime = JSON.parse(localStorage.getItem("NetGateTime"));
+  const NetWeight = JSON.parse(localStorage.getItem("NetWeight"));
+  const Items = JSON.parse(localStorage.getItem("Items"));
+  const Quantity = JSON.parse(localStorage.getItem("Quantity"));
+  const Unit = JSON.parse(localStorage.getItem("Unit"));
       // Ensure voucherNumber is available
       if (!voucherNumber) {
         throw new Error('Voucher number not found in localStorage');
       }
-
+  
+      // Sanitize the voucher number to make it a valid file name
+      const sanitizedVoucherNumber = voucherNumber.replace(/[\/:*?"<>|]/g, '-');
+  
       const downloadUrl = `http://45.124.144.253:9890/api/InfinityX/VoucherDownload?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992`;
       const yourAccessToken = JSON.parse(localStorage.getItem("authUser2"))?.token;
-      
+  
       // Fetch the PDF from the API
       const response = await fetch(downloadUrl, {
         headers: {
@@ -140,7 +149,7 @@ const EcommerceOrderDetail = (props) => {
   
       // Upload the PDF to File.io or any other file hosting service
       const formData = new FormData();
-      formData.append('file', blob, `${voucherNumber}.pdf`);
+      formData.append('file', blob, `${sanitizedVoucherNumber}.pdf`);
   
       const uploadResponse = await fetch('https://file.io', {
         method: 'POST',
@@ -153,15 +162,18 @@ const EcommerceOrderDetail = (props) => {
         throw new Error('Failed to upload PDF');
       }
   
-      // Generate the WhatsApp share link
-      const shareLink = `https://api.whatsapp.com/send?text=Here is the PDF you requested: ${uploadResult.link}`;
+      // Generate the WhatsApp share link with the uploaded PDF link
+      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n'${VehicleNumber}'\r\n\r\n'${VoucherDate}'\r\n'${sanitizedVoucherNumber}'\r\n\r\n'${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\nFirst Weight : 49.140\r\nFinal Weight : 13.750\r\n'${NetWeight}'\r\n\r\nFirst Time : 09/07/2024 16:47\r\nFinal Time : 09/07/2024 16:47\r\n'${NetGateTime}'",: ${uploadResult.link}`;
+      const shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+  
+      // Open the WhatsApp share link
       window.open(shareLink, '_blank');
   
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
+  
 document.title ="Voucher Details | Infinity X";
   return (
     <div className="page-content">
