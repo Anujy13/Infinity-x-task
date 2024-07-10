@@ -13,6 +13,8 @@ import {fetchVoucherNumData } from '../../slices/thunks';
 import { useSelector, useDispatch } from 'react-redux';
 import { createSelector } from "reselect";
 import moment from "moment/moment";
+import { FaWhatsapp } from 'react-icons/fa';
+
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -79,7 +81,7 @@ const EcommerceOrderDetail = (props) => {
 
   const handleDownload = async () => {
     try {
-      const downloadUrl = `http://192.168.0.99:5000/api/InfinityX/VoucherDownload?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992`;
+      const downloadUrl = `http://45.124.144.253:9890/api/InfinityX/VoucherDownload?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992`;
       const yourAccessToken = JSON.parse(localStorage.getItem("authUser2"))?.token;
       const response = await fetch(downloadUrl, {
         headers: {
@@ -96,7 +98,7 @@ const EcommerceOrderDetail = (props) => {
 
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `280D3BAA-195E-47C6-A6B9-36E14DA14992.pdf`);
+      link.setAttribute('download', `${user.voucherNumber}.pdf`);
       document.body.appendChild(link);
       link.click();
 
@@ -105,6 +107,58 @@ const EcommerceOrderDetail = (props) => {
     } catch (error) {
       console.error('Error downloading PDF:', error);
       // Handle error as needed
+    }
+  };
+
+  localStorage.setItem("voucherNum", JSON.stringify(user.voucherNumber));
+  const handleShareWhatsApp = async () => {
+    try {
+      // Fetch voucher number from localStorage
+      const voucherNumber = JSON.parse(localStorage.getItem('voucherNum'));
+
+      // Ensure voucherNumber is available
+      if (!voucherNumber) {
+        throw new Error('Voucher number not found in localStorage');
+      }
+
+      const downloadUrl = `http://45.124.144.253:9890/api/InfinityX/VoucherDownload?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992`;
+      const yourAccessToken = JSON.parse(localStorage.getItem("authUser2"))?.token;
+      
+      // Fetch the PDF from the API
+      const response = await fetch(downloadUrl, {
+        headers: {
+          Authorization: `Bearer ${yourAccessToken}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to download PDF');
+      }
+  
+      // Get the PDF blob
+      const blob = await response.blob();
+  
+      // Upload the PDF to File.io or any other file hosting service
+      const formData = new FormData();
+      formData.append('file', blob, `${voucherNumber}.pdf`);
+  
+      const uploadResponse = await fetch('https://file.io', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      const uploadResult = await uploadResponse.json();
+  
+      if (!uploadResult.success) {
+        throw new Error('Failed to upload PDF');
+      }
+  
+      // Generate the WhatsApp share link
+      const shareLink = `https://api.whatsapp.com/send?text=Here is the PDF you requested: ${uploadResult.link}`;
+      window.open(shareLink, '_blank');
+  
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -121,9 +175,12 @@ document.title ="Voucher Details | Infinity X";
                 <div className="d-flex align-items-center">
                   <h5 className="card-title flex-grow-1 mb-0">{user.voucherNumber}</h5>
                   <div className="flex-shrink-0">
-                  <button className="btn btn-success btn-sm" onClick={handleDownload}>
-                      <i className="ri-download-2-fill align-middle me-0"></i>{" "}
+                    <button className="btn btn-success btn-sm me-2" onClick={handleDownload}>
+                      <i className="ri-download-2-fill align-middle me-0 fs-6"></i>
                     </button>
+                    <button className="btn btn-info btn-sm" onClick={handleShareWhatsApp}>
+      <FaWhatsapp className="me-0 fs-4" />
+    </button>
                   </div>
                 </div>
               </CardHeader>
@@ -214,7 +271,7 @@ document.title ="Voucher Details | Infinity X";
                   <h6 className="fs-15 mb-0 fw-semibold">
                     {tracking.particulars} -{" "}
                     <span className="fw-normal">
-                      {tracking.trackingDate}
+                    {moment(tracking.trackingDate).format('ddd, DD MMM YYYY - hh:mmA')}
                     </span>
                   </h6>
                 </div>
@@ -227,17 +284,14 @@ document.title ="Voucher Details | Infinity X";
             isOpen={accordionState[index]}
           >
             <div className="accordion-body ms-2 ps-5 pt-0">
-              <h6 className="mb-1">An order has been placed.</h6>
-              <p className="text-muted">
-                Wed, 15 Dec 2021 - 05:34PM
-              </p>
-
-              <h6 className="mb-1">
-                Seller has processed your order.
-              </h6>
-              <p className="text-muted mb-0">
-                Thu, 16 Dec 2021 - 5:48AM
-              </p>
+              {tracking.trackingDetails.map((subDetail, subIndex) => (
+                <div key={subIndex}>
+                  <h6 className="mb-1">{subDetail.subParticulars}</h6>
+                  <p className="text-muted mb-0">
+                    {moment(subDetail.subDate).format('ddd, DD MMM YYYY - hh:mmA')}
+                  </p>
+                </div>
+              ))}
             </div>
           </Collapse>
         </div>

@@ -5,6 +5,7 @@ import { Collapse, Col, Container, Row, Card, CardBody, Button } from "reactstra
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import { fetchFinishedProductsData } from "../../slices/thunks";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const FinishedProducts = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,11 @@ const FinishedProducts = () => {
     }
   }, [user]);
 
+  const formatDateTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    return moment(dateTime).format('ddd, DD MMM YYYY - hh:mmA');
+  };
+
   // Utility function to format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -128,9 +134,9 @@ const FinishedProducts = () => {
                           </li>
                         </ul>
                       </Col>
-                      <Col sm={4} className="text-lg-end mb-1.5 mt-sm-0 mt-md-2">
+                      <Col sm={4} className="text-lg-end mb-1.5 mt-sm-0">
                         <p className="text-muted mb-1"></p>
-                        <h5 className="fs-14">
+                        <h5 className="fs-14 mt-md-3 mt-sm-0">
                           <span className="product-price">
                             {voucher["voucherNum.VoucherNumber"]} | {formatDate(voucher["voucherNum.GateVoucher.VoucherDate"])}
                           </span>
@@ -221,8 +227,8 @@ const FinishedProducts = () => {
                           <span className="text-danger ms-2">{getGateStatus(voucher)}</span>
                           <Collapse isOpen={expandedGate.includes(voucherIndex)}>
                             <div className="ms-4">
-                              <p style={{ marginBottom: "0.25rem" }}>In-Time : {voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateInDateTime"]}</p>
-                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Out-Time: {voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateOutDateTime"]}</p>
+                              <p style={{ marginBottom: "0.25rem" }}>In-Time : {formatDateTime(voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateInDateTime"])}</p>
+                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Out-Time: {formatDateTime(voucher["voucherNum.GateVoucher.VehicleGateWeightDetails.GateOutDateTime"])}</p>
                             </div>
                           </Collapse>
                         </div>
@@ -247,8 +253,8 @@ const FinishedProducts = () => {
                           <span className="text-danger ms-2">{getBridgeStatus(voucher)}</span>
                           <Collapse isOpen={expandedWeightment.includes(voucherIndex)}>
                             <div className="ms-4">
-                              <p style={{ marginBottom: "0.25rem" }}>Gross Wt : {voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"]}</p>
-                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Tare Wt: {voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"]}</p>
+                              <p style={{ marginBottom: "0.25rem" }}>Gross Wt : {formatDateTime(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.GrossWeightDateTime"])}</p>
+                              <p style={{ marginTop: "0.25rem", marginBottom: "0.25rem" }}>Tare Wt:{formatDateTime(voucher["voucherNum.WeighmentVoucher.VehicleGateWeightDetails.TareWeightDateTime"])}</p>
                             </div>
                           </Collapse>
                         </div>
