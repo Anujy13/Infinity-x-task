@@ -94,13 +94,13 @@ const CompanySelection = () => {
         };
     }, []);
 
-    useEffect(() => {
-        if (userList.length === 1) {
-            setLocalLoading(true); // Start local loading indicator
-            const timer = setTimeout(() => {
-                navigate("/ERPLogin"); // Navigate to login page after a brief delay
-                setLocalLoading(false); // Stop local loading indicator after navigation
-            }, 2000); // Adjust the delay time as needed
+    // useEffect(() => {
+    //     if (userList.length === 1) {
+    //         setLocalLoading(true); // Start local loading indicator
+    //         const timer = setTimeout(() => {
+    //             navigate("/login"); // Navigate to login page after a brief delay
+    //             setLocalLoading(false); // Stop local loading indicator after navigation
+    //         }, 2000); // Adjust the delay time as needed
     
     //         return () => clearTimeout(timer); // Cleanup timer on component unmount
     //     }
@@ -115,7 +115,7 @@ const CompanySelection = () => {
             // If it's the second click or more, navigate to a specific page
             if (backButtonClickCount >= 1) {
                 event.preventDefault(); // Prevent the default back button behavior
-                navigate("/CompanySelection"); // Navigate to another specific page
+                navigate("/pages-CompanySelection"); // Navigate to another specific page
             }
             // For the first click, allow the default back button behavior or handle as needed
         };
@@ -281,7 +281,7 @@ const CompanySelection = () => {
                                                         <Col lg={2} className="col">
                                                             <div className="text-end">
                                                                 {item.connectionStatus === 'Online' ? (
-                                                                    <Link to="/ERPLogin" className="btn btn-light view-btn">Login</Link>
+                                                                    <Link to="/login" className="btn btn-light view-btn">Login</Link>
                                                                 ) : (
                                                                     <h6 className="text-muted text-danger" style={{ marginRight: '2rem', color: 'red' }}>
                                                                         Cannot login, the company is inactive
@@ -309,4 +309,3 @@ const CompanySelection = () => {
 };
 
 export default CompanySelection;
-
