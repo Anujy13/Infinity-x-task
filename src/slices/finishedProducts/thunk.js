@@ -18,7 +18,7 @@ export const fetchFinishedProductsData = () => async (dispatch) => {
       response = await getFinishedProductsData({
         FromDate: "2024-04-01",
         ToDate: "2025-04-01",
-        VoucherTypeID: "6B073462-B205-498D-9BF6-532FE22DA45F"
+        VoucherTypeID: "16acad1d-52b9-481c-b90c-4d80534a3d8a"
       });
     }
 

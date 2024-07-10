@@ -214,7 +214,7 @@ export const GET_COMPANYSELECTIONDATA = "https://api5.codeplayers.in/api/ListOfC
 // export const ADD_NEW_COMPANYSELECTIONDATA = "/add/teamData";
 // export const UPDATE_COMPANYSELECTIONDATA = "/update/teamData";
 //Voucher Num
-export const GET_VOUCHER_NUM_DATA = "/api/InfinityX/VoucherNumData?VoucherNumID=DBD1BA91-0BE4-48F8-8703-554A5D4E898D";
+export const GET_VOUCHER_NUM_DATA = "/api/InfinityX/VoucherNumData?VoucherNumID=280D3BAA-195E-47C6-A6B9-36E14DA14992";
 
 //Voucher Num
 export const GET_VOUCHER_IMAGES_NUM_DATA = "/api/InfinityX/VoucherNumCameraCaptures?VoucherNumID=5FE514A8-946E-4DEC-BB4D-C415FA5B875D";
