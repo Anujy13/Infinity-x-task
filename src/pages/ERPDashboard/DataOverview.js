@@ -31,6 +31,7 @@ const DataOverview = () => {
                             <Card>
                                 <CardHeader className="border-0 align-items-center d-flex">
                                     <h4 className="card-title mb-0 flex-grow-1">{item.voucherType}</h4>
+                                    <div class="flex-shrink-0"><a class="badge bg-primary-subtle text-primary fs-11" >Under Process</a></div>
                                 </CardHeader>
                                 <CardHeader className="p-0 border-0 bg-light-subtle">
                                     <Row className="g-0 text-center">
