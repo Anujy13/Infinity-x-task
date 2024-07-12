@@ -177,6 +177,8 @@ const EcommerceOrderDetail = (props) => {
     }
   };
   
+  const errorimages = localStorage.getItem("errorimages");
+
 document.title ="Voucher Details | Infinity X";
   return (
     <div className="page-content">
@@ -485,19 +487,19 @@ document.title ="Voucher Details | Infinity X";
                 </div>
               </CardBody>
             </Card>
-
-        <Card >
-          <CardHeader>
-            <h5 className="card-title mb-0">
-              <i className="ri-flag-2-fill align-bottom me-1 text-muted"></i>{" "}
-              Camera Captures
-            </h5>
-          </CardHeader>
-          <CardBody>
-            <VoucherImages/>
-          </CardBody>
-        </Card>
-
+            {!errorimages && (
+  <Card>
+    <CardHeader>
+      <h5 className="card-title mb-0">
+        <i className="ri-flag-2-fill align-bottom me-1 text-muted"></i>{" "}
+        Camera Captures
+      </h5>
+    </CardHeader>
+    <CardBody>
+      <VoucherImages />
+    </CardBody>
+  </Card>
+)}
 
             <Card>
               <CardHeader>

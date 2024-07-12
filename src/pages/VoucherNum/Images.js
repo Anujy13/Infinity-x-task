@@ -12,11 +12,13 @@ const VoucherImages = () => {
   const selectLayoutState = (state) => state.VoucherImageNum;
   const userprofileData = createSelector(
     selectLayoutState,
-    (state) => state.user2 // Assuming state.user2 is the array of images
+    (state) => state.user2,
+    (state) => state.error,
+    (state) => state.loading  // Assuming state.user2 is the array of images
   );
   const user2 = useSelector(userprofileData);
-  const loading = useSelector(state => state.VoucherImageNum.loading);
-  const error = useSelector(state => state.VoucherImageNum.error);
+  const loading = useSelector(userprofileData);
+  const error = useSelector(userprofileData);
 
   useEffect(() => {
     dispatch(fetchVoucherImagesNumData());
@@ -39,7 +41,6 @@ const VoucherImages = () => {
     // Handle other types of errors if needed
     return <p>Error occurred: {error.message}</p>;
   }
-
   // Rendering Swiper component if user2 exists and has elements
   return (
     <>
