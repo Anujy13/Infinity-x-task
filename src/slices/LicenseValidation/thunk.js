@@ -7,7 +7,7 @@ import {
 
 import { licenseSuccess, licenseLogoutUserSuccess, apiError, reset_license_flag } from './reducer';
 
-export const licenseUser = (user, history) => async (dispatch) => {
+export const licenseUser = (user,history) => async (dispatch) => {
 
   try {
     let response;
