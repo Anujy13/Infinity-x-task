@@ -104,28 +104,48 @@ const TabData = () => {
 
   useEffect(() => {
     if (Array.isArray(user)) {
+      const partynames = user.map((voucher) => voucher.party); // Extracting party names
+      localStorage.setItem("PartyNames", JSON.stringify(partynames)); // Storing party names in localStorage
+      user.forEach((voucher) => setVoucherDetailsToLocalStorage(voucher));
+    }
+  }, [user]);
+  
+  useEffect(() => {
+    if (Array.isArray(user)) {
       user.forEach((voucher) => setVoucherDetailsToLocalStorage(voucher));
     }
   }, [user]);
 
   return (
     <div className="page-content">
-      <Container fluid>
+      <Container fluid style={{marginTop:'-5rem'}}>
         <Row className="mb-3">
         <div class="card-header border-0" style={{marginLeft:'1rem'}}>
           <div class="row align-items-center">
             <div class="col">
-              <ul role="tablist" class="nav-tabs-custom card-header-tabs border-bottom-0 nav">
-                <li class="nav-item">
-                  <a href="#" class="active fw-semibold nav-link">Opening <span class="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span></a>
-                  </li>
-                  <li class="nav-item"><a href="#" class="fw-semibold nav-link">In <span class="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span></a>
-                  </li>
-                  <li class="nav-item"><a href="#" class="fw-semibold nav-link">Out</a>
-                  </li>
-                  <li class="nav-item"><a href="#" class="fw-semibold nav-link">Closing</a>
-                  </li>
-                  </ul></div>
+            <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav ">
+  <li className="nav-item" style={{width:'18%'}}>
+    <a href="#" className="active fw-semibold nav-link">
+      Opening <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
+    </a>
+  </li>
+  <li className="nav-item" style={{width:'18%'}}>
+    <a href="#" className="fw-semibold nav-link" >
+      In <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
+    </a>
+  </li>
+  <li className="nav-item" style={{width:'18%'}}>
+    <a href="#" className="fw-semibold nav-link" >
+      Out
+    </a>
+  </li>
+  <li className="nav-item" style={{width:'18%'}}>
+    <a href="#" className="fw-semibold nav-link">
+      Closing
+    </a>
+  </li>
+</ul>
+</div>
                     </div>
                     </div>
           <Col xl={8}>
@@ -133,7 +153,7 @@ const TabData = () => {
               user.map((voucher, voucherIndex) => (
                 <div className="card-header p-0" onClick={(e) => handleCardClick(e, voucher)}>        
                 <Col xl={12} lg={12}>
-                    <Card className="product cursor-pointer  ribbon-box border shadow-none mb-lg-0 right mt-2" style={{width:'160%'}}>
+                <Card className="product cursor-pointer ribbon-box border shadow-none mb-lg-0 right mt-2" xl={12} lg={12} md={12}>
                       <CardBody style={{ paddingTop: "0px" }}>
                         <div className="ribbon-two ribbon-two-info">
                           <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "9px" : "13px" }}>

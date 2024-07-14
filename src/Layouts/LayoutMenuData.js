@@ -162,20 +162,44 @@ const Navdata = () => {
       label: "Security Gate",
       icon: "mdi mdi-gate",
       link: "/securitygate-ERP",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
     {
       id: "weighbridge",
       label: "WeighBridge",
       icon: "mdi mdi-scale",
       link: "/weighbridge",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
     {
       id: "inward_order",
       label: "Inward Order",
       icon: "mdi mdi-file-import",
       link: "/voucher-num",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
-    
+  ];
+  return <React.Fragment>{menuItems}</React.Fragment>;
+};
+export default Navdata;
       // subItems: [
       //   {
       //     id: "analytics",
@@ -1490,8 +1514,3 @@ const Navdata = () => {
     //     },
     //   ],
     // },
-  ];
-  return <React.Fragment>{menuItems}</React.Fragment>;
-};
-export default Navdata;
-

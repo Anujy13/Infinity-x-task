@@ -35,6 +35,8 @@ import UiLink from "../pages/BaseUi/UiLinks/UiLinks";
 import UiGeneral from "../pages/BaseUi/UiGeneral/UiGeneral";
 import UiRibbons from "../pages/BaseUi/UiRibbons/UiRibbons";
 import UiUtilities from "../pages/BaseUi/UiUtilities/UiUtilities";
+
+///operational template
 import Operational from  "../pages/Operational";
 
 // Advance Ui
@@ -123,7 +125,9 @@ const authProtectedRoutes = [
   { path: "/voucher-num", component: <VoucherNum /> },
   { path: "/dashboard-ERP", component: <ERPDashboard /> },
   { path: "/securitygate-ERP", component: <SecurityGate /> },
+  //operational template
   { path: "/operational", component: <Operational /> },
+
 
   // Base Ui
   { path: "/ui-alerts", component: <UiAlerts /> },

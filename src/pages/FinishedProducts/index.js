@@ -108,6 +108,15 @@ const FinishedProducts = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (Array.isArray(user)) {
+      const partynames = user.map((voucher) => voucher.party); // Extracting party names
+      localStorage.setItem("PartyNames", JSON.stringify(partynames)); // Storing party names in localStorage
+      user.forEach((voucher) => setVoucherDetailsToLocalStorage(voucher));
+    }
+  }, [user]);
+
+  
   return (
     <div className="page-content">
       <Container fluid>

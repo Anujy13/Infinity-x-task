@@ -13,7 +13,7 @@ const Statistics = () => {
     return (
         <React.Fragment>
         <div className="page-content">
-            <Container fluid>
+            <Container fluid style={{marginTop:'-5rem'}}>
             <div className="table-responsive">
 <Table className="align-middle table-nowrap mb-0" style={{ backgroundColor: '#ffffff' }}>
     <thead>
