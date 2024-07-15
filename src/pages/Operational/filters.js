@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import {
-    Container,
-    Row,
-    Input,
-    Label,
-    Col
-} from 'reactstrap'; // Assuming you're using Reactstrap
+import { Container, Row, Input, Label, Col } from 'reactstrap'; // Assuming you're using Reactstrap
 import BreadCrumb from '../../Components/Common/BreadCrumb'; // Replace with correct path to BreadCrumb component
 import Flatpickr from 'react-flatpickr'; // Assuming you're using Flatpickr
 import Statistics from './statistics'; // Replace with correct path to Statistics component
 import TabData from './tabdata'; // Replace with correct path to TabData component
 import Header from './header';
 import HeaderTabData from "./header_tab_data";
-import { fetchFinishedProductsData } from "../../slices/thunks";
+import { fetchFinishedProductsData} from "../../slices/thunks"; 
+import {setDateRange } from "../../slices/finishedProducts/reducer";
+
+import { format, parse } from 'date-fns';
 
 const Filters = () => {
     const dispatch = useDispatch();
@@ -27,23 +24,28 @@ const Filters = () => {
     const [isOpen3, setIsOpen3] = useState(false); 
     const [isOpen4, setIsOpen4] = useState(false); 
     const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
-    
+    const [selectedDates, setSelectedDates] = useState([null, null]);
+
     useEffect(() => {
+        // Fetch finished products data on initial mount
         dispatch(fetchFinishedProductsData());
-    }, [dispatch]);
-    
-    const toggleAccordion1 = () => {
-        setIsOpen1(!isOpen1);
+        
+        // Fetch finished products data if selectedDates have both start and end date
+        if (selectedDates[0] && selectedDates[1]) {
+            dispatch(setDateRange(selectedDates));
+            dispatch(fetchFinishedProductsData());
+        }
+    }, [selectedDates, dispatch]);
+
+    const handleDateChange = (newDates) => {
+        const convertedDates = newDates.map(date => format(date, 'yyyy-MM-dd'));
+        setSelectedDates(convertedDates);
     };
-    const toggleAccordion2 = () => {
-        setIsOpen2(!isOpen2);
-    };
-    const toggleAccordion3 = () => {
-        setIsOpen3(!isOpen3);
-    };
-    const toggleAccordion4 = () => {
-        setIsOpen4(!isOpen4);
-    };
+
+    const toggleAccordion1 = () => setIsOpen1(!isOpen1);
+    const toggleAccordion2 = () => setIsOpen2(!isOpen2);
+    const toggleAccordion3 = () => setIsOpen3(!isOpen3);
+    const toggleAccordion4 = () => setIsOpen4(!isOpen4);
 
     // Selecting data from Redux state using selectors
     const selectFinishedProductsState = (state) => state.FinishedProducts;
@@ -58,9 +60,7 @@ const Filters = () => {
     
     const { user, loading, error } = useSelector(selectFinishedProductsData);
 
-    const toggleFilter = () => {
-        setFilterOpen(!filterOpen);
-    };
+    const toggleFilter = () => setFilterOpen(!filterOpen);
 
     const headerContent = (
         <Header/>
@@ -77,6 +77,16 @@ const Filters = () => {
     useEffect(() => {
         setIsAnyAccordionOpen(isOpen1 || isOpen2 || isOpen3 || isOpen4);
     }, [isOpen1, isOpen2, isOpen3, isOpen4]);
+
+    // Initial default dates in "d M, Y" format
+    useEffect(() => {
+        const defaultDates = ["04 Apr 2024", "04 Apr 2025"];
+        const convertedDates = defaultDates.map(date => {
+            const parsedDate = parse(date, 'dd MMM yyyy', new Date());
+            return format(parsedDate, 'yyyy-MM-dd');
+        });
+        setSelectedDates(convertedDates);
+    }, []);
 
     
     
@@ -99,8 +109,9 @@ const Filters = () => {
                                         options={{
                                             mode: "range",
                                             dateFormat: "d M, Y",
-                                            defaultDate: ["01 Jan 2022", "31 Jan 2022"]
+                                            defaultDate: ["01 Apr 2024", "01 Apr 2025"]
                                         }}
+                                        onChange={(dates) => handleDateChange(dates)}
                                     />
                                     <div className="input-group-text bg-primary border-primary text-white">
                                         <i className="ri-calendar-2-line"></i>
