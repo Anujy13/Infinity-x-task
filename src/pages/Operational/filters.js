@@ -470,8 +470,8 @@ const Filters = () => {
             <style jsx>{`
                 .sidebar-filter {
                     position: fixed;
-                    top: 18%; /* Adjust this value based on your header height */
-                    right: 10%;
+                    top: 21%; /* Adjust this value based on your header height */
+                    right: 1%;
                     width: 300px; /* Adjust width as needed */
                     height: 70%;
                     background-color: white;
