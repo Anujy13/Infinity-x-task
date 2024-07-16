@@ -86,12 +86,10 @@ create2 = (url, data) => {
     return axios.post(url, data)
         .then(response => {
             // Handle successful response
-            console.log('Response:', response);
             return response; // Optionally return data or handle as needed
         })
         .catch(error => {
             // Handle error
-            console.error('Error:', error);
             throw error; // Rethrow or handle as per your application's error handling strategy
         });
 };

@@ -90,8 +90,14 @@ const TabData = ({ voucher , voucherIndex }) => {
                   <div className="card-header p-0">
                             <div className="d-flex align-items-center">
                               <h5 className="card-title flex-grow-1 mb-0 mt-0">
-                                <span className="d-block d-md-none" style={{ fontSize: "13px", marginTop: "10px", marginBottom: "10px",fontWeight:'bold' }}>
-                                  {voucher.party}
+                              <span className="d-block d-md-none" style={{ 
+                                    fontSize: window.innerWidth >= 320 && window.innerWidth <= 350 ? "11px" : "13px", 
+                                    marginTop: "10px", 
+                                    marginBottom: "10px",
+                                    fontWeight: 'bold',
+                                    wordWrap: 'break-word' 
+                                }}>
+                                    {voucher.party}
                                 </span>
                                 <span className="d-none d-md-block">{voucher.party}</span>
                               </h5>
