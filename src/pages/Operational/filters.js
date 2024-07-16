@@ -110,7 +110,7 @@ const Filters = () => {
                     <form action="#">
                         <Row className="g-3 mb-0 align-items-center">
                             <div className="col-sm-auto">
-                                <div className="input-group">
+                                <div className="input-group" style={{flexWrap: "nowrap"}}>
                                     <Flatpickr
                                         className="form-control border-0 dash-filter-picker shadow"
                                         options={{
