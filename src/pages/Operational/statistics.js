@@ -5,7 +5,9 @@ import { Container, Table } from 'reactstrap';
 const Statistics = ({ user }) => {
   // Deduplicate vouchers based on the 'party' property
   const uniqueVouchers = Array.from(new Map(user.map(voucher => [voucher.party, voucher])).values());
-
+  const allItems = user.flatMap(voucher => voucher.items);
+  // Deduplicate items based on the 'item' property
+  const uniqueItems = Array.from(new Map(allItems.map(item => [item.item, item])).values());
   const mobileStyles = {
     fontSize: '0.5rem',
     whiteSpace: 'normal',
@@ -53,10 +55,10 @@ const Statistics = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {uniqueVouchers.map((voucher, voucherIndex) => (
-                  <tr key={voucherIndex}>
-                    <th scope="row" style={isMobile ? mobileStyles : {}}>
-                      <Link to="#" className="fw-medium" >{voucher.party}</Link>
+                {uniqueItems.map((item, itemIndex) => (
+                  <tr key={itemIndex}>
+                    <th style={isMobile ? mobileStyles : {}}>
+                      <Link to="#" className="fw-medium">{item.item}</Link>
                     </th>
                     <td style={isMobile ? mobileStyles : {}}>999</td>
                     <td style={isMobile ? mobileStyles : {}}>999</td>

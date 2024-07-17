@@ -5,7 +5,7 @@ const HeaderTabData = () => {
         <div className="card-header border-0" style={{ marginLeft: '1rem' }}>
             <div className="row align-items-center">
                 <div className="col">
-                    <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{marginTop:'0.5rem'}}>
+                    <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{marginTop:'0rem'}}>
                     <li className="nav-item" style={{ width: isMobile ? '30%' : '18%', }}>
   <a href="#" className="active fw-semibold nav-link">
     Opening

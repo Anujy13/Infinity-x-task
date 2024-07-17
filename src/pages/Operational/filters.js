@@ -29,6 +29,7 @@ const Filters = () => {
     const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
     const [selectedDates, setSelectedDates] = useState([null, null]);
 
+    
 
     const toggleDropdown = () => {
         setFilterOpen(!filterOpen); // Toggle the state between true and false
@@ -75,7 +76,9 @@ const Filters = () => {
     );
 
     // Fetch PartyNames and filter out duplicates
-    const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
+   const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
+const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
+const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.item, item])).values()) : [];
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
@@ -95,8 +98,10 @@ const Filters = () => {
         setSelectedDates(convertedDates);
     }, []);
 
-    
-    
+    const filteredItems = uniqueItems.filter((item) =>
+      item.item.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div>
             <BreadCrumb leftContent={headerContent}>
@@ -130,7 +135,7 @@ const Filters = () => {
                 </div>
             </BreadCrumb>
 
-            <div className="card-header border-0" style={{ marginLeft: '1rem' }}>
+            <div className="card-header border-0" style={{ marginLeft: '1rem'  }}>
                 <div className="row align-items-center">
                     <div className="col">
                         <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav">
@@ -175,7 +180,6 @@ const Filters = () => {
         )}
     </Col>
 </Container>
-
 
 
             {/* Sidebar filter */}
@@ -263,72 +267,76 @@ const Filters = () => {
         {/* Other accordion items */}
       </div>
       <div className="accordion accordion-flush">
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button bg-transparent shadow-none"
-              type="button"
-              id="flush-headingBrands"
-              onClick={toggleAccordion2}
-            >
-              <span className="text-muted text-uppercase fs-12 fw-medium">Items</span>
-              <span className="badge bg-success rounded-pill align-middle ms-1">{uniquePartyNames.length}</span>
-            </button>
-          </h2>
-          <div className={`collapse ${isOpen2 ? 'show' : ''}`} id="flush-collapseBrands" aria-labelledby="flush-headingBrands">
-            <div className="accordion-body text-body pt-0">
-              <div className="search-box search-box-sm">
-                <input
-                  type="text"
-                  className="form-control bg-light border-0"
-                  placeholder="Search Items..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <i className="ri-search-line search-icon"></i>
-              </div>
-              <div className="d-flex flex-column gap-2 mt-3">
-                {uniquePartyNames
-                  .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .slice(0, 3)
-                  .map((party, index) => (
-                    <div className="form-check" key={index}>
-                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} />
-                      <Label className="form-check-label" htmlFor={`partyName${index}`}>
-                        {party}
-                      </Label>
-                    </div>
-                  ))}
-                {showMore2 &&
-                  uniquePartyNames
-                    .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .slice(3)
-                    .map((party, index) => (
-                      <div className="form-check" key={index + 3}>
-                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`} />
-                        <Label className="form-check-label" htmlFor={`partyNameMore${index}`}>
-                          {party}
-                        </Label>
-                      </div>
-                    ))}
-                {uniquePartyNames.length > 3 && (
-                  <div>
-                    <button
-                      type="button"
-                      className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
-                      onClick={() => setShowMore2(!showMore2)}
-                    >
-                      {showMore2 ? 'Show Less' : `${uniquePartyNames.length - 3} More`}
-                    </button>
-                  </div>
-                )}
-              </div>
+      <div className="accordion-item">
+        <h2 className="accordion-header">
+          <button
+            className="accordion-button bg-transparent shadow-none"
+            type="button"
+            id="flush-headingBrands"
+            onClick={toggleAccordion2}
+          >
+            <span className="text-muted text-uppercase fs-12 fw-medium">Items</span>
+            <span className="badge bg-success rounded-pill align-middle ms-1">{filteredItems.length}</span>
+          </button>
+        </h2>
+        <div className={`collapse ${isOpen2 ? 'show' : ''}`} id="flush-collapseBrands" aria-labelledby="flush-headingBrands">
+          <div className="accordion-body text-body pt-0">
+            <div className="search-box search-box-sm">
+              <input
+                type="text"
+                className="form-control bg-light border-0"
+                placeholder="Search Items..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              <i className="ri-search-line search-icon"></i>
+            </div>
+            <div className="d-flex flex-column gap-2 mt-3">
+              {filteredItems.slice(0, 2).map((item, itemIndex) => (
+                <div className="form-check" key={itemIndex}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`itemsName${itemIndex}`}
+                    value={item.item}
+                    // Handle checkbox logic here if needed
+                  />
+                  <label className="form-check-label" htmlFor={`itemsName${itemIndex}`}>
+                    {item.item}
+                  </label>
+                </div>
+              ))}
+              {showMore2 && filteredItems.slice(2).map((item, itemIndex) => (
+                <div className="form-check" key={itemIndex + 2}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`itemsNameMore${itemIndex}`}
+                    value={item.item}
+                    // Handle checkbox logic here if needed
+                  />
+                  <label className="form-check-label" htmlFor={`itemsNameMore${itemIndex}`}>
+                    {item.item}
+                  </label>
+                </div>
+              ))}
+              {filteredItems.length > 2 && (
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
+                    onClick={() => setShowMore2(!showMore2)}
+                  >
+                    {showMore2 ? 'Show Less' : `Show More (${filteredItems.length - 2})`}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
-        {/* Other accordion items */}
       </div>
+      {/* Other accordion items */}
+    </div>
       <div className="accordion accordion-flush">
         <div className="accordion-item">
           <h2 className="accordion-header">
