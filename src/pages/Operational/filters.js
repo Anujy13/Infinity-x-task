@@ -29,7 +29,18 @@ const Filters = () => {
     const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
     const [selectedDates, setSelectedDates] = useState([null, null]);
 
-    
+    const [isLargeOrMedium, setIsLargeOrMedium] = useState(window.innerWidth > 767);
+    const [isSmallDevice, setIsSmallDevice] = useState(window.innerWidth <= 560);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsLargeOrMedium(window.innerWidth > 767);
+            setIsSmallDevice(window.innerWidth <= 560);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const toggleDropdown = () => {
         setFilterOpen(!filterOpen); // Toggle the state between true and false
@@ -103,66 +114,99 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
     );
 
     return (
-        <div>
-            <BreadCrumb leftContent={headerContent}>
-                {location.pathname !== '/operational' && headerContent}
-                <div className="mt-3 mt-lg-0 d-flex justify-content-end">
-                    <i
-                        className="ri-filter-3-line"
-                        style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
-                        onClick={toggleFilter}
-                    ></i>
-                    <form action="#">
-                        <Row className="g-3 mb-0 align-items-center">
-                            <div className="col-sm-auto">
-                                <div className="input-group" style={{flexWrap: "nowrap"}}>
-                                    <Flatpickr
-                                        className="form-control border-0 dash-filter-picker shadow"
-                                        options={{
-                                            mode: "range",
-                                            dateFormat: "d M, Y",
-                                            defaultDate: ["01 Apr 2024", "01 Apr 2025"]
-                                        }}
-                                        onChange={(dates) => handleDateChange(dates)}
-                                    />
-                                    <div className="input-group-text bg-primary border-primary text-white">
-                                        <i className="ri-calendar-2-line"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </form>
-                </div>
-            </BreadCrumb>
+      <div>
+      <BreadCrumb leftContent={headerContent}>
+          {location.pathname !== '/operational' && headerContent}
+          <div className="mt-3 mt-lg-0 d-flex justify-content-end">
+              <i
+                  className="ri-filter-3-line"
+                  style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
+                  onClick={toggleFilter}
+              ></i>
+              <form action="#">
+                  <Row className="g-3 mb-0 align-items-center">
+                      <div className="col-sm-auto">
+                          <div className="input-group" style={{ flexWrap: "nowrap" }}>
+                              <Flatpickr
+                                  className="form-control border-0 dash-filter-picker shadow"
+                                  options={{
+                                      mode: "range",
+                                      dateFormat: "d M, Y",
+                                      defaultDate: ["01 Apr 2024", "01 Apr 2025"]
+                                  }}
+                                  onChange={(dates) => handleDateChange(dates)}
+                              />
+                              <div className="input-group-text bg-primary border-primary text-white">
+                                  <i className="ri-calendar-2-line"></i>
+                              </div>
+                          </div>
+                      </div>
+                  </Row>
+              </form>
+          </div>
+          {!isLargeOrMedium && (
+              <div className="card-header border-0" style={{marginTop:'1rem'}}>
+                  <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
+                      <div className="col">
+                          <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
+                              <li className="nav-item flex-grow-1">
+                                  <a
+                                      href="#"
+                                      className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`}
+                                      onClick={() => setActiveTab('statistics')}
+                                      style={{ width: '100%', textAlign: 'center' }}
+                                  >
+                                      Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
+                                  </a>
+                              </li>
+                              <li className="nav-item flex-grow-1">
+                                  <a
+                                      href="#"
+                                      className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`}
+                                      onClick={() => setActiveTab('vouchers')}
+                                      style={{ width: '100%', textAlign: 'center' }}
+                                  >
+                                      Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          )}
+      </BreadCrumb>
 
-            <div className="card-header border-0" style={{ marginLeft: '1rem'  }}>
-                <div className="row align-items-center">
-                    <div className="col">
-                        <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav">
-                            <li className="nav-item flex-grow-1">
-                                <a
-                                    href="#"
-                                    className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('statistics')}
-                                    style={{ width: '100%', textAlign: 'center' }}
-                                >
-                                    Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
-                                </a>
-                            </li>
-                            <li className="nav-item flex-grow-1">
-                                <a
-                                    href="#"
-                                    className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('vouchers')}
-                                    style={{ width: '100%', textAlign: 'center' }}
-                                >
-                                    Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+      {!isSmallDevice && (
+          <div className="card-header border-0">
+              <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
+                  <div className="col">
+                      <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
+                          <li className="nav-item flex-grow-1">
+                              <a
+                                  href="#"
+                                  className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`}
+                                  onClick={() => setActiveTab('statistics')}
+                                  style={{ width: '107%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}
+                              >
+                                  Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
+                              </a>
+                          </li>
+                          <li className="nav-item flex-grow-1">
+                              <a
+                                  href="#"
+                                  className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`}
+                                  onClick={() => setActiveTab('vouchers')}
+                                  style={{ width: '115%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}
+                              >
+                                  Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      )}
+
 
             <Container>
     {activeTab === 'vouchers' && <HeaderTabData />}
