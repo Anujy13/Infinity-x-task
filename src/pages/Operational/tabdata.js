@@ -82,7 +82,7 @@ const TabData = ({ voucher , voucherIndex }) => {
               <Card className="product cursor-pointer ribbon-box border shadow-none mb-lg-0 right mt-2" xl={12} lg={12} md={12}>
                 <CardBody style={{ paddingTop: "0px" }}>
                   <div className="ribbon-two ribbon-two-info">
-                    <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "9px" : "13px" }}>
+                    <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "7px" : "13px" }}>
                       {voucher.status}
                     </span>
                   </div>
