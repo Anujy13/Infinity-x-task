@@ -21,13 +21,18 @@ const Filters = () => {
     const [showMore2, setShowMore2] = useState(false);
     const [showMore3, setShowMore3] = useState(false);
     const [showMore4, setShowMore4] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery1, setSearchQuery1] = useState('');
+    const [searchQuery2, setSearchQuery2] = useState('');
+    const [searchQuery3, setSearchQuery3] = useState('');
+    const [searchQuery4, setSearchQuery4] = useState('');
     const [isOpen1, setIsOpen1] = useState(false); 
     const [isOpen2, setIsOpen2] = useState(false); 
     const [isOpen3, setIsOpen3] = useState(false); 
     const [isOpen4, setIsOpen4] = useState(false); 
     const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
     const [selectedDates, setSelectedDates] = useState([null, null]);
+
+
 
     const [isLargeOrMedium, setIsLargeOrMedium] = useState(window.innerWidth > 767);
     const [isSmallDevice, setIsSmallDevice] = useState(window.innerWidth <= 560);
@@ -88,12 +93,59 @@ const Filters = () => {
 
     // Fetch PartyNames and filter out duplicates
    const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
-const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
-const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.item, item])).values()) : [];
+    // Fetch ItemsNames and filter out duplicates
+   const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
+   const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.item, item])).values()) : [];
+   // Fetch BrokerNames and filter out duplicates
+   const uniqueBrokerNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.broker))) : [];
+   // Fetch stockGroupNames and filter out duplicates
+   const uniqueGroups = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.stockGroup, item])).values()) : [];
 
-    const handleSearchChange = (event) => {
-        setSearchQuery(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
+   const [checkedState1, setCheckedState1] = useState(Array(uniquePartyNames.length).fill(false));
+   const [checkedState2, setCheckedState2] = useState(Array(uniqueItems.length).fill(false));
+   const [checkedState3, setCheckedState3] = useState(Array(uniqueBrokerNames.length).fill(false));
+   const [checkedState4, setCheckedState4] = useState(Array(uniqueGroups.length).fill(false));
+
+    const handleSearchChange1 = (event) => {
+        setSearchQuery1(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
     };
+    const handleSearchChange2 = (event) => {
+      setSearchQuery2(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
+  };
+  const handleSearchChange3 = (event) => {
+    setSearchQuery3(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
+};
+const handleSearchChange4 = (event) => {
+  setSearchQuery4(event.target.value.toLowerCase()); // Convert to lowercase for case-insensitive search
+};
+
+const handleCheckboxChange1 = (index) => {
+  const updatedCheckedState = [...checkedState1];
+  updatedCheckedState[index] = !updatedCheckedState[index];
+  setCheckedState1(updatedCheckedState);
+};
+const handleCheckboxChange2 = (itemIndex) => {
+  const updatedCheckedState = [...checkedState2];
+  updatedCheckedState[itemIndex] = !updatedCheckedState[itemIndex];
+  setCheckedState2(updatedCheckedState);
+};
+const handleCheckboxChange3 = (index) => {
+  const updatedCheckedState = [...checkedState3];
+  updatedCheckedState[index] = !updatedCheckedState[index];
+  setCheckedState3(updatedCheckedState);
+};
+const handleCheckboxChange4 = (itemIndex) => {
+  const updatedCheckedState = [...checkedState4];
+  updatedCheckedState[itemIndex] = !updatedCheckedState[itemIndex];
+  setCheckedState4(updatedCheckedState);
+};
+
+const clearAll = () => {
+  setCheckedState1(Array(uniquePartyNames.length).fill(false));
+  setCheckedState2(Array(uniqueItems.length).fill(false));
+  setCheckedState3(Array(uniqueBrokerNames.length).fill(false));
+  setCheckedState4(Array(uniqueGroups.length).fill(false));
+};
 
     useEffect(() => {
         setIsAnyAccordionOpen(isOpen1 || isOpen2 || isOpen3 || isOpen4);
@@ -110,7 +162,11 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
     }, []);
 
     const filteredItems = uniqueItems.filter((item) =>
-      item.item.toLowerCase().includes(searchQuery.toLowerCase())
+      item.item.toLowerCase().includes(searchQuery2.toLowerCase())
+    );
+
+    const filteredGroups = uniqueGroups.filter((item) =>
+      item.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
     );
 
     return (
@@ -239,7 +295,7 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                                     <h5 className="fs-16">Filters</h5>
                                 </div>
                                 <div className="flex-shrink-0">
-                                    <a className="text-decoration-underline" href="/apps-ecommerce-products">Clear All</a>
+                                    <a className="text-decoration-underline" style={{ cursor: 'pointer' }} onClick={clearAll}>Clear All</a>
                                 </div>
                             </div>
                         </div>
@@ -263,18 +319,21 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                   type="text"
                   className="form-control bg-light border-0"
                   placeholder="Search Party..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
+                  value={searchQuery1}
+                  onChange={handleSearchChange1}
                 />
                 <i className="ri-search-line search-icon"></i>
               </div>
               <div className="d-flex flex-column gap-2 mt-3">
                 {uniquePartyNames
-                  .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
+                  .filter(party => party.toLowerCase().includes(searchQuery1.toLowerCase()))
                   .slice(0, 3)
                   .map((party, index) => (
                     <div className="form-check" key={index}>
-                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} />
+                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} 
+                       checked={checkedState1[index]}
+                       onChange={() => handleCheckboxChange1(index)}
+                       />
                       <Label className="form-check-label" htmlFor={`partyName${index}`}>
                         {party}
                       </Label>
@@ -282,11 +341,14 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                   ))}
                 {showMore1 &&
                   uniquePartyNames
-                    .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .filter(party => party.toLowerCase().includes(searchQuery1.toLowerCase()))
                     .slice(3)
                     .map((party, index) => (
                       <div className="form-check" key={index + 3}>
-                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`} />
+                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`}
+                         checked={checkedState1[index]}
+                         onChange={() => handleCheckboxChange1(index)}
+                          />
                         <Label className="form-check-label" htmlFor={`partyNameMore${index}`}>
                           {party}
                         </Label>
@@ -330,18 +392,20 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                 type="text"
                 className="form-control bg-light border-0"
                 placeholder="Search Items..."
-                value={searchQuery}
-                onChange={handleSearchChange}
+                value={searchQuery2}
+                onChange={handleSearchChange2}
               />
               <i className="ri-search-line search-icon"></i>
             </div>
             <div className="d-flex flex-column gap-2 mt-3">
-              {filteredItems.slice(0, 2).map((item, itemIndex) => (
+              {filteredItems.slice(0, 3).map((item, itemIndex) => (
                 <div className="form-check" key={itemIndex}>
                   <input
                     className="form-check-input"
                     type="checkbox"
                     id={`itemsName${itemIndex}`}
+                    checked={checkedState2[itemIndex]}
+                    onChange={() => handleCheckboxChange2(itemIndex)}
                     value={item.item}
                     // Handle checkbox logic here if needed
                   />
@@ -350,12 +414,14 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                   </label>
                 </div>
               ))}
-              {showMore2 && filteredItems.slice(2).map((item, itemIndex) => (
-                <div className="form-check" key={itemIndex + 2}>
+              {showMore2 && filteredItems.slice(3).map((item, itemIndex) => (
+                <div className="form-check" key={itemIndex + 3}>
                   <input
                     className="form-check-input"
                     type="checkbox"
                     id={`itemsNameMore${itemIndex}`}
+                    checked={checkedState2[itemIndex]}
+                    onChange={() => handleCheckboxChange2(itemIndex)}
                     value={item.item}
                     // Handle checkbox logic here if needed
                   />
@@ -364,14 +430,14 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                   </label>
                 </div>
               ))}
-              {filteredItems.length > 2 && (
+              {filteredItems.length > 3 && (
                 <div>
                   <button
                     type="button"
                     className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
                     onClick={() => setShowMore2(!showMore2)}
                   >
-                    {showMore2 ? 'Show Less' : `Show More (${filteredItems.length - 2})`}
+                    {showMore2 ? 'Show Less' : `${filteredItems.length - 3} More`}
                   </button>
                 </div>
               )}
@@ -391,7 +457,7 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
               onClick={toggleAccordion3}
             >
               <span className="text-muted text-uppercase fs-12 fw-medium">Agents</span>
-              <span className="badge bg-success rounded-pill align-middle ms-1">{uniquePartyNames.length}</span>
+              <span className="badge bg-success rounded-pill align-middle ms-1">{ uniqueBrokerNames.length}</span>
             </button>
           </h2>
           <div className={`collapse ${isOpen3 ? 'show' : ''}`} id="flush-collapseBrands" aria-labelledby="flush-headingBrands">
@@ -401,43 +467,49 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
                   type="text"
                   className="form-control bg-light border-0"
                   placeholder="Search Agents..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
+                  value={searchQuery3}
+                  onChange={handleSearchChange3}
                 />
                 <i className="ri-search-line search-icon"></i>
               </div>
               <div className="d-flex flex-column gap-2 mt-3">
-                {uniquePartyNames
-                  .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
+                { uniqueBrokerNames
+                  .filter(broker => broker.toLowerCase().includes(searchQuery3.toLowerCase()))
                   .slice(0, 3)
-                  .map((party, index) => (
+                  .map((broker, index) => (
                     <div className="form-check" key={index}>
-                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} />
+                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} 
+                        checked={checkedState3[index]}
+                        onChange={() => handleCheckboxChange3(index)}
+                        />
                       <Label className="form-check-label" htmlFor={`partyName${index}`}>
-                        {party}
+                        {broker}
                       </Label>
                     </div>
                   ))}
                 {showMore3 &&
-                  uniquePartyNames
-                    .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
+                  uniqueBrokerNames
+                    .filter(broker => broker.toLowerCase().includes(searchQuery3.toLowerCase()))
                     .slice(3)
-                    .map((party, index) => (
+                    .map((broker, index) => (
                       <div className="form-check" key={index + 3}>
-                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`} />
+                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`}
+                          checked={checkedState3[index]}
+                          onChange={() => handleCheckboxChange3(index)}
+                           />
                         <Label className="form-check-label" htmlFor={`partyNameMore${index}`}>
-                          {party}
+                          {broker}
                         </Label>
                       </div>
                     ))}
-                {uniquePartyNames.length > 3 && (
+                {uniqueBrokerNames.length > 3 && (
                   <div>
                     <button
                       type="button"
                       className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
                       onClick={() => setShowMore3(!showMore3)}
                     >
-                      {showMore3 ? 'Show Less' : `${uniquePartyNames.length - 3} More`}
+                      {showMore3 ? 'Show Less' : `${uniqueBrokerNames.length - 3} More`}
                     </button>
                   </div>
                 )}
@@ -449,72 +521,80 @@ const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(it
         {/* Other accordion items */}
       </div>
       <div className="accordion accordion-flush">
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button bg-transparent shadow-none"
-              type="button"
-              id="flush-headingBrands"
-              onClick={toggleAccordion4}
-            >
-              <span className="text-muted text-uppercase fs-12 fw-medium">Groups</span>
-              <span className="badge bg-success rounded-pill align-middle ms-1">{uniquePartyNames.length}</span>
-            </button>
-          </h2>
-          <div className={`collapse ${isOpen4 ? 'show' : ''}`} id="flush-collapseBrands" aria-labelledby="flush-headingBrands">
-            <div className="accordion-body text-body pt-0">
-              <div className="search-box search-box-sm">
-                <input
-                  type="text"
-                  className="form-control bg-light border-0"
-                  placeholder="Search Groups..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <i className="ri-search-line search-icon"></i>
-              </div>
-              <div className="d-flex flex-column gap-2 mt-3">
-                {uniquePartyNames
-                  .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .slice(0, 3)
-                  .map((party, index) => (
-                    <div className="form-check" key={index}>
-                      <Input className="form-check-input" type="checkbox" id={`partyName${index}`} />
-                      <Label className="form-check-label" htmlFor={`partyName${index}`}>
-                        {party}
-                      </Label>
-                    </div>
-                  ))}
-                {showMore4 &&
-                  uniquePartyNames
-                    .filter(party => party.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .slice(3)
-                    .map((party, index) => (
-                      <div className="form-check" key={index + 3}>
-                        <Input className="form-check-input" type="checkbox" id={`partyNameMore${index}`} />
-                        <Label className="form-check-label" htmlFor={`partyNameMore${index}`}>
-                          {party}
-                        </Label>
-                      </div>
-                    ))}
-                {uniquePartyNames.length > 3 && (
-                  <div>
-                    <button
-                      type="button"
-                      className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
-                      onClick={() => setShowMore4(!showMore4)}
-                    >
-                      {showMore4 ? 'Show Less' : `${uniquePartyNames.length - 3} More`}
-                    </button>
-                  </div>
-                )}
-              </div>
+      <div className="accordion-item">
+        <h2 className="accordion-header">
+          <button
+            className="accordion-button bg-transparent shadow-none"
+            type="button"
+            id="flush-headingBrands"
+            onClick={toggleAccordion4}
+          >
+            <span className="text-muted text-uppercase fs-12 fw-medium">Groups</span>
+            <span className="badge bg-success rounded-pill align-middle ms-1">{filteredGroups.length}</span>
+          </button>
+        </h2>
+        <div className={`collapse ${isOpen4 ? 'show' : ''}`} id="flush-collapseBrands" aria-labelledby="flush-headingBrands">
+          <div className="accordion-body text-body pt-0">
+            <div className="search-box search-box-sm">
+              <input
+                type="text"
+                className="form-control bg-light border-0"
+                placeholder="Search Items..."
+                value={searchQuery4}
+                onChange={handleSearchChange4}
+              />
+              <i className="ri-search-line search-icon"></i>
+            </div>
+            <div className="d-flex flex-column gap-2 mt-3">
+              {filteredGroups.slice(0, 3).map((item, itemIndex) => (
+                <div className="form-check" key={itemIndex}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`itemsName${itemIndex}`}
+                    checked={checkedState4[itemIndex]}
+                    onChange={() => handleCheckboxChange4(itemIndex)}
+                    value={item.stockGroup}
+                    // Handle checkbox logic here if needed
+                  />
+                  <label className="form-check-label" htmlFor={`itemsName${itemIndex}`}>
+                    {item.stockGroup}
+                  </label>
+                </div>
+              ))}
+              {showMore4 && filteredGroups.slice(3).map((item, itemIndex) => (
+                <div className="form-check" key={itemIndex + 3}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`itemsNameMore${itemIndex}`}
+                    checked={checkedState4[itemIndex]}
+                    onChange={() => handleCheckboxChange4(itemIndex)}
+                    value={item.stockGroup}
+                    // Handle checkbox logic here if needed
+                  />
+                  <label className="form-check-label" htmlFor={`itemsNameMore${itemIndex}`}>
+                    {item.stockGroup}
+                  </label>
+                </div>
+              ))}
+              {filteredGroups.length > 3 && (
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none text-uppercase fw-medium p-0"
+                    onClick={() => setShowMore4(!showMore4)}
+                  >
+                    {showMore4 ? 'Show Less' : `${filteredGroups.length - 3} More`}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
-        {/* Other accordion items */}
       </div>
+      {/* Other accordion items */}
+    </div>
                     </div>
                 </div>
             )}

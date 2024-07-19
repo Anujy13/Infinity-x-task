@@ -5,9 +5,15 @@ import { Container, Table } from 'reactstrap';
 const Statistics = ({ user }) => {
   // Deduplicate vouchers based on the 'party' property
   const uniqueVouchers = Array.from(new Map(user.map(voucher => [voucher.party, voucher])).values());
+  // Deduplicate vouchers based on the 'items' property
   const allItems = user.flatMap(voucher => voucher.items);
-  // Deduplicate items based on the 'item' property
   const uniqueItems = Array.from(new Map(allItems.map(item => [item.item, item])).values());
+ // Deduplicate vouchers based on the 'broker' property
+  const uniqueBrokers = Array.from(new Map(user.map(voucher => [voucher.broker, voucher])).values());
+   // Deduplicate vouchers based on the 'stockGroup' property
+  const uniqueGroups = Array.from(new Map(allItems.map(item => [item.stockGroup, item])).values());
+
+
   const mobileStyles = {
     fontSize: '0.5rem',
     whiteSpace: 'normal',
@@ -71,7 +77,7 @@ const Statistics = ({ user }) => {
             <Table className="align-middle table-nowrap mb-4" style={{ backgroundColor: '#ffffff' }}>
               <thead>
                 <tr>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>Agent Name</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Broker Name</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Opening</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>In</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Out</th>
@@ -79,10 +85,10 @@ const Statistics = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {uniqueVouchers.map((voucher, voucherIndex) => (
+                {uniqueBrokers.map((voucher, voucherIndex) => (
                   <tr key={voucherIndex}>
                     <th scope="row" style={isMobile ? mobileStyles : {}}>
-                      <Link to="#" className="fw-medium" >{voucher.party}</Link>
+                      <Link to="#" className="fw-medium" >{voucher.broker}</Link>
                     </th>
                     <td style={isMobile ? mobileStyles : {}}>999</td>
                     <td style={isMobile ? mobileStyles : {}}>999</td>
@@ -103,10 +109,10 @@ const Statistics = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {uniqueVouchers.map((voucher, voucherIndex) => (
-                  <tr key={voucherIndex}>
-                    <th scope="row" style={isMobile ? mobileStyles : {}}>
-                      <Link to="#" className="fw-medium" >{voucher.party}</Link>
+              {uniqueGroups.map((item, itemIndex) => (
+                  <tr key={itemIndex}>
+                    <th style={isMobile ? mobileStyles : {}}>
+                      <Link to="#" className="fw-medium">{item.stockGroup}</Link>
                     </th>
                     <td style={isMobile ? mobileStyles : {}}>999</td>
                     <td style={isMobile ? mobileStyles : {}}>999</td>
