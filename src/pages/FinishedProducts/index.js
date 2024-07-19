@@ -93,6 +93,10 @@ const FinishedProducts = () => {
   const setVoucherDetailsToLocalStorage = (voucher) => {
     localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
     localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
+    localStorage.setItem("FirstTime", JSON.stringify(voucher.gateWeightRecord.inTime));
+    localStorage.setItem("FinalTime", JSON.stringify(voucher.gateWeightRecord.outTime));
+    localStorage.setItem("FirstWeight", JSON.stringify(voucher.gateWeightRecord.grossWeight));
+    localStorage.setItem("FinalWeight", JSON.stringify(voucher.gateWeightRecord.tareWeight));
     localStorage.setItem("Items", JSON.stringify(voucher.items.map((item) => item.item)));
     localStorage.setItem("Quantity", JSON.stringify(voucher.items.map((item) => item.quantity)));
     localStorage.setItem("Unit", JSON.stringify(voucher.items.map((item) => item.unit)));

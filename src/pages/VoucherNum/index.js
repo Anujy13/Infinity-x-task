@@ -121,6 +121,10 @@ const EcommerceOrderDetail = (props) => {
   const VehicleNumber = JSON.parse(localStorage.getItem("VehicleNumber"))
   const VoucherDate = JSON.parse(localStorage.getItem("VoucherDate"))
   const NetGateTime = JSON.parse(localStorage.getItem("NetGateTime"));
+  const FirstTime = JSON.parse(localStorage.getItem("FirstTime"));
+  const FinalTime = JSON.parse(localStorage.getItem("FinalTime"));
+  const FirstWeight = JSON.parse(localStorage.getItem("FirstWeight"));
+  const FinalWeight = JSON.parse(localStorage.getItem("FinalWeight"));
   const NetWeight = JSON.parse(localStorage.getItem("NetWeight"));
   const Items = JSON.parse(localStorage.getItem("Items"));
   const Quantity = JSON.parse(localStorage.getItem("Quantity"));
@@ -166,7 +170,7 @@ const EcommerceOrderDetail = (props) => {
       }
   
       // Generate the WhatsApp share link with the uploaded PDF link
-      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n VehicleNumber :'${VehicleNumber}'\r\n\r\n VoucherDate :'${VoucherDate}'\r\nVoucherNumber :'${sanitizedVoucherNumber}'\r\n\r\n'Items :${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\nFirst Weight : 49.140\r\nFinal Weight : 13.750\r\n'Net-Weight :${NetWeight}'\r\n\r\nFirst Time : 09/07/2024 16:47\r\nFinal Time : 09/07/2024 16:47\r\n'Net-Gate-Time :${NetGateTime}'",: \r\n${uploadResult.link}`;
+      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n VehicleNumber :'${VehicleNumber}'\r\n\r\n VoucherDate :'${VoucherDate}'\r\nVoucherNumber :'${sanitizedVoucherNumber}'\r\n\r\n'Items :${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\n'${FirstWeight}'\r\n'${FinalWeight}'\r\n'Net-Weight :${NetWeight}'\r\n\r\n'${FirstTime}'\r\n'${FinalTime}'\r\n'Net-Gate-Time :${NetGateTime}'",: \r\n${uploadResult.link}`;
       const shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
   
       // Open the WhatsApp share link
