@@ -256,8 +256,8 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                 <tr>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Item Name</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Opening</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>In</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>Out</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Inward</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Outward</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Closing</th>
                 </tr>
               </thead>
@@ -314,8 +314,8 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                 <tr>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Broker Name</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Opening</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>In</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>Out</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Inward</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Outward</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Closing</th>
                 </tr>
               </thead>
@@ -372,8 +372,8 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                 <tr>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Group Name</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Opening</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>In</th>
-                  <th scope="col" style={isMobile ? mobileStyles : {}}>Out</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Inward</th>
+                  <th scope="col" style={isMobile ? mobileStyles : {}}>Outward</th>
                   <th scope="col" style={isMobile ? mobileStyles : {}}>Closing</th>
                 </tr>
               </thead>

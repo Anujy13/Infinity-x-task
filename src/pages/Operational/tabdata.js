@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Collapse, Col, Container, Row, Card, CardBody } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { FaMinus } from "react-icons/fa6";
 import moment from "moment";
 
-const TabData = ({ vouchers }) => {
+const TabData = ({ vouchers, selectedTab, selectedDates }) => {
+  const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [expandedItems, setExpandedItems] = useState([]);
   const [expandedGateMap, setExpandedGateMap] = useState({});
   const [expandedWeighBridgeMap, setExpandedWeighBridgeMap] = useState({});
@@ -13,7 +14,7 @@ const TabData = ({ vouchers }) => {
   const handleExpandItem = (e, index) => {
     e.stopPropagation();
     if (expandedItems.includes(index)) {
-      setExpandedItems(expandedItems.filter((item) => item !== index));
+      setExpandedItems(expandedItems.filter(item => item !== index));
     } else {
       setExpandedItems([...expandedItems, index]);
     }
@@ -21,26 +22,26 @@ const TabData = ({ vouchers }) => {
 
   const toggleGateDetails = (e, voucherIndex) => {
     e.stopPropagation();
-    setExpandedGateMap((prevState) => ({
+    setExpandedGateMap(prevState => ({
       ...prevState,
-      [voucherIndex]: !prevState[voucherIndex],
+      [voucherIndex]: !prevState[voucherIndex]
     }));
   };
 
   const toggleWeighBridgeDetails = (e, voucherIndex) => {
     e.stopPropagation();
-    setExpandedWeighBridgeMap((prevState) => ({
+    setExpandedWeighBridgeMap(prevState => ({
       ...prevState,
-      [voucherIndex]: !prevState[voucherIndex],
+      [voucherIndex]: !prevState[voucherIndex]
     }));
   };
 
-  const formatDateTime = (dateTimeString) => {
+  const formatDateTime = dateTimeString => {
     const dateTime = new Date(dateTimeString);
     return moment(dateTime).format("ddd, DD MMM YYYY - hh:mmA");
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" });
   };
@@ -51,29 +52,55 @@ const TabData = ({ vouchers }) => {
     navigate(`/voucher-num`);
   };
 
-  const setVoucherDetailsToLocalStorage = (voucher) => {
+  const setVoucherDetailsToLocalStorage = voucher => {
     localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
     localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
     localStorage.setItem("FirstTime", JSON.stringify(voucher.gateWeightRecord.inTime));
     localStorage.setItem("FinalTime", JSON.stringify(voucher.gateWeightRecord.outTime));
     localStorage.setItem("FirstWeight", JSON.stringify(voucher.gateWeightRecord.grossWeight));
     localStorage.setItem("FinalWeight", JSON.stringify(voucher.gateWeightRecord.tareWeight));
-    localStorage.setItem("Items", JSON.stringify(voucher.items.map((item) => item.item)));
-    localStorage.setItem("Quantity", JSON.stringify(voucher.items.map((item) => item.quantity)));
-    localStorage.setItem("Unit", JSON.stringify(voucher.items.map((item) => item.unit)));
+    localStorage.setItem("Items", JSON.stringify(voucher.items.map(item => item.item)));
+    localStorage.setItem("Quantity", JSON.stringify(voucher.items.map(item => item.quantity)));
+    localStorage.setItem("Unit", JSON.stringify(voucher.items.map(item => item.unit)));
     localStorage.setItem("Party", JSON.stringify(voucher.party));
     localStorage.setItem("VehicleNumber", JSON.stringify(voucher.vehicleNumber));
     localStorage.setItem("VoucherDate", JSON.stringify(voucher.voucherDate));
     localStorage.setItem("VoucherDetails", JSON.stringify(voucher));
   };
 
+  const filterVouchersByTab = (vouchers, selectedTab) => {
+    if (selectedTab === "All") {
+      return vouchers; // Return all vouchers for the 'All' tab
+    }
+    return vouchers.filter(voucher => {
+      const gateInTime = new Date(voucher.gateWeightRecord.inTime);
+      const gateOutTime = new Date(voucher.gateWeightRecord.outTime);
+      const fromDate = new Date(FromDate);
+      const toDate = new Date(ToDate);
+
+      if (selectedTab === "Opening") {
+        return gateInTime < fromDate;
+      } else if (selectedTab === "Inward") {
+        return gateInTime > fromDate;
+      } else if (selectedTab === "Outward") {
+        return gateOutTime < toDate;
+      } else if (selectedTab === "Closing") {
+        return gateInTime >= fromDate || gateOutTime > toDate;
+      } else {
+        return true;
+      }
+    });
+  };
+
+  const filteredVouchers = filterVouchersByTab(vouchers, selectedTab);
+
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '-1.5rem' }}>
       <Container fluid style={{ marginTop: '-5rem' }}>
         <Row className="mb-3">
-          {vouchers.length > 0 ? (
-            vouchers.map((voucher, voucherIndex) => (
-              <div className="card-header p-0" key={voucherIndex} onClick={(e) => handleCardClick(e, voucher)}>
+          {filteredVouchers.length > 0 ? (
+            filteredVouchers.map((voucher, voucherIndex) => (
+              <div className="card-header p-0" key={voucherIndex} onClick={e => handleCardClick(e, voucher)}>
                 <Col xl={12} lg={12}>
                   <Card className="product cursor-pointer ribbon-box border shadow-none mb-lg-0 right mt-2" xl={12} lg={12} md={12}>
                     <CardBody style={{ paddingTop: "0px" }}>
@@ -139,7 +166,7 @@ const TabData = ({ vouchers }) => {
                               <tr
                                 key="expand-btn"
                                 style={{ cursor: "pointer", color: "red" }}
-                                onClick={(e) => handleExpandItem(e, voucherIndex)}
+                                onClick={e => handleExpandItem(e, voucherIndex)}
                               >
                                 <td colSpan="2">+{voucher.items.length - 1} more items</td>
                               </tr>
@@ -165,7 +192,7 @@ const TabData = ({ vouchers }) => {
                                 <tr
                                   key="collapse-btn"
                                   style={{ cursor: "pointer", color: "red" }}
-                                  onClick={(e) => handleExpandItem(e, voucherIndex)}
+                                  onClick={e => handleExpandItem(e, voucherIndex)}
                                 >
                                   <td colSpan="2">Less items</td>
                                 </tr>
@@ -181,7 +208,7 @@ const TabData = ({ vouchers }) => {
                                           <div
                                             className="flex-shrink-0 avatar-xs"
                                             style={{ width: "0.5rem", marginTop: "9px" }}
-                                            onClick={(e) => toggleGateDetails(e, voucherIndex)}
+                                            onClick={e => toggleGateDetails(e, voucherIndex)}
                                           >
                                             <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
                                               {expandedGateMap[voucherIndex] ? (
@@ -216,7 +243,7 @@ const TabData = ({ vouchers }) => {
                                           <div
                                             className="flex-shrink-0 avatar-xs"
                                             style={{ width: "0.5rem", marginTop: "9px" }}
-                                            onClick={(e) => toggleWeighBridgeDetails(e, voucherIndex)}
+                                            onClick={e => toggleWeighBridgeDetails(e, voucherIndex)}
                                           >
                                             <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
                                               {expandedWeighBridgeMap[voucherIndex] ? (

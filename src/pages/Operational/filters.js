@@ -89,6 +89,7 @@ const Filters = () => {
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('statistics');
   const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('All');
   const [showMore1, setShowMore1] = useState(false);
   const [showMore2, setShowMore2] = useState(false);
   const [showMore3, setShowMore3] = useState(false);
@@ -276,6 +277,14 @@ const Filters = () => {
   const filteredGroups = uniqueGroups.filter((item) =>
     item.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
   );
+  const handleSelectTab = (tab) => {
+    setActiveTab(tab);
+  };
+  
+  const handleTabSelection = (tab) => {
+    setSelectedTab(tab);
+  };
+
 
   return (
     <div>
@@ -347,7 +356,7 @@ const Filters = () => {
       )}
 
       <Container>
-        {activeTab === 'vouchers' && <HeaderTabData />}
+        {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} />}
         <Col xl={8}>
           {Array.isArray(user) ? (
             activeTab === 'statistics' ? (
@@ -360,7 +369,7 @@ const Filters = () => {
                 user={user}
               />
             ) : (
-              <TabData vouchers={combinedFilter} />
+              <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}/>
             )
           ) : (
             <p>No finished products data available.</p>
@@ -495,7 +504,7 @@ const Filters = () => {
                                         id="flush-headingBrokers"
                                         onClick={toggleAccordion3}
                                     >
-                                        <span className="text-muted text-uppercase fs-12 fw-medium">Agents</span>
+                                        <span className="text-muted text-uppercase fs-12 fw-medium">Broker</span>
                                         <span className="badge bg-success rounded-pill align-middle ms-1">{uniqueBrokerNames.length}</span>
                                     </button>
                                 </h2>
