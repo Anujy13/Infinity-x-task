@@ -5,6 +5,7 @@ import CountUp from "react-countup";
 import { fetchDashboardData } from '../../slices/thunks';
 import { createSelector } from "reselect";
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import FeatherIcon from "feather-icons-react";
 
 const DataOverview = () => {
     const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const DataOverview = () => {
                         <Link to="/securitygate-ERP"> {/* Wrap Card with Link */}
                             <Card>
                                 <CardHeader className="border-0 align-items-center d-flex">
+                                <FeatherIcon icon="shopping-cart" /> &nbsp;&nbsp;
                                     <h4 className="card-title mb-0 flex-grow-1">{item.voucherType}</h4>
                                     <div class="flex-shrink-0"><a class="badge bg-primary-subtle text-primary fs-11" >Under Process</a></div>
                                 </CardHeader>
