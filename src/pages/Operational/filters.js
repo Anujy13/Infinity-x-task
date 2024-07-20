@@ -12,7 +12,6 @@ import { fetchFinishedProductsData } from "../../slices/thunks";
 import { setDateRange } from "../../slices/finishedProducts/reducer";
 import { format, parse } from 'date-fns';
 
-// Component to render party filter options
 const PartyFilter = ({
   uniquePartyNames,
   searchQuery1,
@@ -64,7 +63,7 @@ const PartyFilter = ({
             className="form-check-input"
             type="checkbox"
             id={`partyNameMore${index}`}
-            checked={checkedState1[index + 3]} // Add offset of 3 for index
+            checked={checkedState1[index + 3]}
             onChange={() => handleCheckboxChange1(index + 3)}
           />
           <Label className="form-check-label" htmlFor={`partyNameMore${index}`}>
@@ -163,9 +162,9 @@ const Filters = () => {
 
   const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
   const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
-  const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.item, item])).values()) : [];
+  const uniqueItems = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item?.item, item])).values()) : [];
   const uniqueBrokerNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.broker))) : [];
-  const uniqueGroups = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item.stockGroup, item])).values()) : [];
+  const uniqueGroups = Array.isArray(allItems) ? Array.from(new Map(allItems.map(item => [item?.stockGroup, item])).values()) : [];
 
   const [checkedState1, setCheckedState1] = useState(Array(uniquePartyNames.length).fill(false));
   const [checkedState2, setCheckedState2] = useState(Array(uniqueItems.length).fill(false));
@@ -183,59 +182,77 @@ const Filters = () => {
     setCheckedState1(updatedCheckedState);
     filterParties(updatedCheckedState);
   };
+  
   const handleCheckboxChange2 = (itemIndex) => {
     const updatedCheckedState = [...checkedState2];
     updatedCheckedState[itemIndex] = !updatedCheckedState[itemIndex];
     setCheckedState2(updatedCheckedState);
     filterItems(updatedCheckedState);
   };
+  
   const handleCheckboxChange3 = (index) => {
     const updatedCheckedState = [...checkedState3];
     updatedCheckedState[index] = !updatedCheckedState[index];
     setCheckedState3(updatedCheckedState);
     filterBrokers(updatedCheckedState);
   };
-  const handleCheckboxChange4 = (itemIndex) => {
+  
+  const handleCheckboxChange4 = (index) => {
     const updatedCheckedState = [...checkedState4];
-    updatedCheckedState[itemIndex] = !updatedCheckedState[itemIndex];
+    updatedCheckedState[index] = !updatedCheckedState[index];
     setCheckedState4(updatedCheckedState);
     filterGroups(updatedCheckedState);
   };
 
   const filterParties = (checkedState) => {
-        const selectedParties = uniquePartyNames.filter((_, index) => checkedState[index]);
-        setPartyFilter(user.filter(voucher => selectedParties.includes(voucher.party)));
-    };
-
-    const filterItems = (checkedState) => {
-        const selectedItems = uniqueItems.filter((_, itemIndex) => checkedState[itemIndex]).map(item => item.item);
-        setItemFilter(user.filter(voucher => voucher.items.some(item => selectedItems.includes(item.item))));
-    };
-
-    const filterBrokers = (checkedState) => {
-        const selectedBrokers = uniqueBrokerNames.filter((_, index) => checkedState[index]);
-        setBrokerFilter(user.filter(voucher => selectedBrokers.includes(voucher.broker)));
-    };
-
-    const filterGroups = (checkedState) => {
-        const selectedGroups = uniqueGroups.filter((_, itemIndex) => checkedState[itemIndex]).map(item => item.stockGroup);
-        setGroupFilter(user.filter(voucher => voucher.items.some(item => selectedGroups.includes(item.stockGroup))));
-    };
-
+    const selectedParties = uniquePartyNames.filter((_, index) => checkedState[index]);
+    const filteredVouchers = user.filter(voucher => selectedParties.includes(voucher.party));
+    setPartyFilter(filteredVouchers);
+    updateFilters(filteredVouchers);
+  };
+  
+  const filterItems = (checkedState) => {
+    const selectedItems = uniqueItems.filter((_, index) => checkedState[index]).map(item => item?.item);
+    const filteredVouchers = user.filter(voucher => voucher.items.some(item => selectedItems.includes(item?.item)));
+    setItemFilter(filteredVouchers);
+    updateFilters(filteredVouchers);
+  };
+  
+  const filterBrokers = (checkedState) => {
+    const selectedBrokers = uniqueBrokerNames.filter((_, index) => checkedState[index]);
+    const filteredVouchers = user.filter(voucher => selectedBrokers.includes(voucher.broker));
+    setBrokerFilter(filteredVouchers);
+    updateFilters(filteredVouchers);
+  };
+  
+  const filterGroups = (checkedState) => {
+    const selectedGroups = uniqueGroups.filter((_, index) => checkedState[index]).map(group => group?.stockGroup);
+    const filteredVouchers = user.filter(voucher => voucher.items.some(item => selectedGroups.includes(item?.stockGroup)));
+    setGroupFilter(filteredVouchers);
+    updateFilters(filteredVouchers);
+  };
+  
+  const updateFilters = (filteredVouchers) => {
+    setPartyFilter(filteredVouchers);
+    setItemFilter(filteredVouchers);
+    setBrokerFilter(filteredVouchers);
+    setGroupFilter(filteredVouchers);
+  };
+  
   const clearAll = () => {
     setCheckedState1(Array(uniquePartyNames.length).fill(false));
     setCheckedState2(Array(uniqueItems.length).fill(false));
     setCheckedState3(Array(uniqueBrokerNames.length).fill(false));
     setCheckedState4(Array(uniqueGroups.length).fill(false));
-   setPartyFilter(user);
-        setItemFilter(user);
-        setBrokerFilter(user);
-        setGroupFilter(user);
+    setPartyFilter(user);
+    setItemFilter(user);
+    setBrokerFilter(user);
+    setGroupFilter(user);
     setCombinedFilter(user);
   };
 
   useEffect(() => {
-    if (!Array.isArray(user)) return;  // Ensure user is an array before setting states
+    if (!Array.isArray(user)) return; // Ensure user is an array before setting states
     setPartyFilter(user);
     setItemFilter(user);
     setBrokerFilter(user);
@@ -243,7 +260,7 @@ const Filters = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!Array.isArray(user)) return;  // Ensure user is an array before using filter
+    if (!Array.isArray(user)) return; // Ensure user is an array before using filter
     const updateCombinedFilter = () => {
       const filters = [partyFilter, itemFilter, brokerFilter, groupFilter];
       const filteredVouchers = user.filter(voucher =>
@@ -271,20 +288,20 @@ const Filters = () => {
   }, []);
 
   const filteredItems = uniqueItems.filter((item) =>
-    item.item.toLowerCase().includes(searchQuery2.toLowerCase())
+    item?.item.toLowerCase().includes(searchQuery2.toLowerCase())
   );
 
   const filteredGroups = uniqueGroups.filter((item) =>
-    item.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
+    item?.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
   );
+
   const handleSelectTab = (tab) => {
     setActiveTab(tab);
   };
-  
+
   const handleTabSelection = (tab) => {
     setSelectedTab(tab);
   };
-
 
   return (
     <div>
@@ -369,7 +386,7 @@ const Filters = () => {
                 user={user}
               />
             ) : (
-              <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}/>
+              <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates} />
             )
           ) : (
             <p>No finished products data available.</p>
