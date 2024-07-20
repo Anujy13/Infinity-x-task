@@ -238,7 +238,7 @@ const Filters = () => {
     setBrokerFilter(filteredVouchers);
     setGroupFilter(filteredVouchers);
   };
-  
+
   const clearAll = () => {
     setCheckedState1(Array(uniquePartyNames.length).fill(false));
     setCheckedState2(Array(uniqueItems.length).fill(false));

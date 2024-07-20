@@ -187,11 +187,10 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
   };
 
   const isMobile = window.innerWidth <= 767.98;
-
   return (
     <React.Fragment>
-      <div className="page-content" style={{ paddingRight: '0px', paddingLeft: '0px' }}>
-        <Container fluid style={{ marginTop: '-5rem', paddingRight: '0px', paddingLeft: '0px', marginRight: '10px' }}>
+      <div className="page-content" style={{ paddingRight: '0px', paddingLeft: '0px'}}>
+        <Container fluid style={{ marginTop: '-5rem', paddingRight: '0px', paddingLeft: '0px', marginRight: '50px' }}>
           <div className="table-responsive">
             <Table className="align-middle table-nowrap mb-4" style={{ backgroundColor: '#ffffff' }}>
               <thead>
