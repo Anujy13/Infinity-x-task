@@ -48,17 +48,18 @@ const LicenseValidation = (props) => {
   const selectLayoutState = (state) => state;
   const loginpageData = createSelector(selectLayoutState, (state) => ({
     user: state.Account.user,
-    error: state.Login.error,
-    loading: state.Login.loading,
-    errorMsg: state.Login.errorMsg,
+    error: state.LicenseValidation.error,
+    loading2: state.LicenseValidation.loading2,
+    errorMsg: state.LicenseValidation.errorMsg,
   }));
-  // Inside your component
-  const { user, error, errorMsg } = useSelector(loginpageData);
+  
+  const { user, error, loading2,errorMsg } = useSelector(loginpageData);
   const [userLogin, setUserLogin] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [localLoading, setLocalLoading] = useState(false); // Local loading state
-  const [loading, setLoading] = useState(false); // Initial loading state set to true
+  const [ loading,setLoading] = useState(false); // Initial loading state set to true
   const [autoSubmitted, setAutoSubmitted] = useState(false); // Track auto submission
+  const [error2,seterror2]= useState();
 
   useEffect(() => {
     const email = sessionStorage.getItem("email");
@@ -112,6 +113,14 @@ const LicenseValidation = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (error === 'Request failed with status code 401') {
+      const errorMessage = 'Unauthorized';
+      seterror2(errorMessage);
+    }
+  }, [error]);
+
+  
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -137,6 +146,7 @@ const LicenseValidation = (props) => {
     
   });
 
+
   const signIn = (type) => {
     dispatch(licensesocialLogin(type, props.router.navigate));
   };
@@ -158,13 +168,13 @@ const LicenseValidation = (props) => {
     return () => cancelAnimationFrame(handle);
   }, []);
 
-  useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        dispatch(resetLicenseFlag());
-      }, 3000);
-    }
-  }, [dispatch, errorMsg]);
+  // useEffect(() => {
+  //   if (errorMsg) {
+  //     setTimeout(() => {
+  //       dispatch(resetLicenseFlag());
+  //     }, 3000);
+  //   }
+  // }, [dispatch, errorMsg]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -213,8 +223,8 @@ const LicenseValidation = (props) => {
                         Login to continue to Infinity-x
                       </p>
                     </div>
-                    {error && (
-                      <Alert color="danger"> {error} </Alert>
+                    {error2 && (
+                      <Alert color="danger"> {error2} </Alert>
                     )}
                     <div className="p-2 mt-4">
                       <Form

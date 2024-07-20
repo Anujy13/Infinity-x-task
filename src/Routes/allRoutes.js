@@ -36,6 +36,9 @@ import UiGeneral from "../pages/BaseUi/UiGeneral/UiGeneral";
 import UiRibbons from "../pages/BaseUi/UiRibbons/UiRibbons";
 import UiUtilities from "../pages/BaseUi/UiUtilities/UiUtilities";
 
+///operational template
+import Operational from  "../pages/Operational";
+
 // Advance Ui
 import UiNestableList from "../pages/AdvanceUi/UiNestableList/UiNestableList";
 import UiScrollbar from "../pages/AdvanceUi/UiScrollbar/UiScrollbar";
@@ -122,6 +125,8 @@ const authProtectedRoutes = [
   { path: "/voucher-num", component: <VoucherNum /> },
   { path: "/dashboard-ERP", component: <ERPDashboard /> },
   { path: "/securitygate-ERP", component: <SecurityGate /> },
+  //operational template
+  { path: "/operational", component: <Operational /> },
 
 
   // Base Ui
@@ -176,6 +181,7 @@ const authProtectedRoutes = [
   { path: "/forms-wizard", component: <FormWizard /> },
   { path: "/forms-advanced", component: <FormAdvanced /> },
   { path: "/forms-select2", component: <Select2 /> },
+
 
   //Icons
   { path: "/icons-remix", component: <RemixIcons /> },

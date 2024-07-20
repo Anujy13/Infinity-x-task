@@ -113,6 +113,10 @@ const EcommerceOrderDetail = (props) => {
   const VehicleNumber = JSON.parse(localStorage.getItem("VehicleNumber"))
   const VoucherDate = JSON.parse(localStorage.getItem("VoucherDate"))
   const NetGateTime = JSON.parse(localStorage.getItem("NetGateTime"));
+  const FirstTime = JSON.parse(localStorage.getItem("FirstTime"));
+  const FinalTime = JSON.parse(localStorage.getItem("FinalTime"));
+  const FirstWeight = JSON.parse(localStorage.getItem("FirstWeight"));
+  const FinalWeight = JSON.parse(localStorage.getItem("FinalWeight"));
   const NetWeight = JSON.parse(localStorage.getItem("NetWeight"));
   const Items = JSON.parse(localStorage.getItem("Items"));
   const Quantity = JSON.parse(localStorage.getItem("Quantity"));
@@ -158,7 +162,7 @@ const EcommerceOrderDetail = (props) => {
       }
   
       // Generate the WhatsApp share link with the uploaded PDF link
-      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n VehicleNumber :'${VehicleNumber}'\r\n\r\n VoucherDate :'${VoucherDate}'\r\nVoucherNumber :'${sanitizedVoucherNumber}'\r\n\r\n'Items :${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\nFirst Weight : 49.140\r\nFinal Weight : 13.750\r\n'Net-Weight :${NetWeight}'\r\n\r\nFirst Time : 09/07/2024 16:47\r\nFinal Time : 09/07/2024 16:47\r\n'Net-Gate-Time :${NetGateTime}'",: \r\n${uploadResult.link}`;
+      const shareMessage = `"Inward Order (Raw Materials) \r\n\r\n Account : '${Party}'\r\n VehicleNumber :'${VehicleNumber}'\r\n\r\n VoucherDate :'${VoucherDate}'\r\nVoucherNumber :'${sanitizedVoucherNumber}'\r\n\r\n'Items :${Items}' - '${Quantity}' '${Unit}'\r\n\r\n\r\n'${FirstWeight}'\r\n'${FinalWeight}'\r\n'Net-Weight :${NetWeight}'\r\n\r\n'${FirstTime}'\r\n'${FinalTime}'\r\n'Net-Gate-Time :${NetGateTime}'",: \r\n${uploadResult.link}`;
       const shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
   
       // Open the WhatsApp share link
@@ -302,136 +306,7 @@ document.title ="Voucher Details | Infinity X";
             </div>
           </Collapse>
         </div>
-      ))}
-
-                    {/* <div className="accordion-item border-0" onClick={togglecol2}>
-                      <div className="accordion-header" id="headingTwo">
-                        <Link to="#"
-                          className={classnames(
-                            "accordion-button",
-                            "p-2",
-                            "shadow-none",
-                            { collapsed: !col2 }
-                          )}
-                          href="#collapseTwo"
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="flex-shrink-0 avatar-xs">
-                              <div className="avatar-title bg-success rounded-circle">
-                                <i className="mdi mdi-gift-outline"></i>
-                              </div>
-                            </div>
-                            <div className="flex-grow-1 ms-3">
-                              <h6 className="fs-15 mb-1 fw-semibold">
-                                Packed -{" "}
-                                <span className="fw-normal">
-                                  Thu, 16 Dec 2021
-                                </span>
-                              </h6>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                      <Collapse
-                        id="collapseTwo"
-                        className="accordion-collapse"
-                        isOpen={col2}
-                      >
-                        <div className="accordion-body ms-2 ps-5 pt-0">
-                          <h6 className="mb-1">
-                            Your Item has been picked up by courier patner
-                          </h6>
-                          <p className="text-muted mb-0">
-                            Fri, 17 Dec 2021 - 9:45AM
-                          </p>
-                        </div>
-                      </Collapse>
-                    </div>
-                    <div className="accordion-item border-0" onClick={togglecol3}>
-                      <div className="accordion-header" id="headingThree">
-                        <Link to="#"
-                          className={classnames(
-                            "accordion-button",
-                            "p-2",
-                            "shadow-none",
-                            { collapsed: !col3 }
-                          )}
-                          href="#collapseThree"
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="flex-shrink-0 avatar-xs">
-                              <div className="avatar-title bg-success rounded-circle">
-                                <i className="ri-truck-line"></i>
-                              </div>
-                            </div>
-                            <div className="flex-grow-1 ms-3">
-                              <h6 className="fs-15 mb-1 fw-semibold">
-                                Shipping -{" "}
-                                <span className="fw-normal">
-                                  Thu, 16 Dec 2021
-                                </span>
-                              </h6>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                      <Collapse
-                        id="collapseThree"
-                        className="accordion-collapse"
-                        isOpen={col3}
-                      >
-                        <div className="accordion-body ms-2 ps-5 pt-0">
-                          <h6 className="fs-14">
-                            RQK Logistics - MFDS1400457854
-                          </h6>
-                          <h6 className="mb-1">Your item has been shipped.</h6>
-                          <p className="text-muted mb-0">
-                            Sat, 18 Dec 2021 - 4.54PM
-                          </p>
-                        </div>
-                      </Collapse>
-                    </div> */}
-                    <div className="accordion-item border-0">
-                      <div className="accordion-header" id="headingFour">
-                        <Link to="#"
-                          className="accordion-button p-2 shadow-none"
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="flex-shrink-0 avatar-xs">
-                              <div className="avatar-title bg-light text-success rounded-circle">
-                                <i className="ri-takeaway-fill"></i>
-                              </div>
-                            </div>
-                            <div className="flex-grow-1 ms-3">
-                              <h6 className="fs-14 mb-0 fw-semibold">
-                                Out For Delivery
-                              </h6>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="accordion-item border-0">
-                      <div className="accordion-header" id="headingFive">
-                        <Link
-                          className="accordion-button p-2 shadow-none"
-                          to="#"
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="flex-shrink-0 avatar-xs">
-                              <div className="avatar-title bg-light text-success rounded-circle">
-                                <i className="mdi mdi-package-variant"></i>
-                              </div>
-                            </div>
-                            <div className="flex-grow-1 ms-3">
-                              <h6 className="fs-14 mb-0 fw-semibold">
-                                Delivered
-                              </h6>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
+      ))} 
                   </div>
                 </div>
               </CardBody>
@@ -606,20 +481,7 @@ document.title ="Voucher Details | Infinity X";
                 </div>
               </CardBody>
             </Card>
-
-        <Card >
-          <CardHeader>
-            <h5 className="card-title mb-0">
-              <i className="ri-flag-2-fill align-bottom me-1 text-muted"></i>{" "}
-              Camera Captures
-            </h5>
-          </CardHeader>
-          <CardBody>
-            <VoucherImages/>
-          </CardBody>
-        </Card>
-
-
+      <VoucherImages />
             <Card>
               <CardHeader>
                 <h5 className="card-title mb-0">

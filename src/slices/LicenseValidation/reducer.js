@@ -3,24 +3,24 @@ import { createSlice } from "@reduxjs/toolkit";
 export const initialState = {
   user: {},
   error: "", // for error message
-  loading: false,
+  loading2: false,
   isUserLogout: false,
   errorMsg: false, // for error
 };
 
-const licenseSlice = createSlice({
+const license = createSlice({
   name: "license",
   initialState,
   reducers: {
     apiError(state, action) {
       state.error = action.payload;
-      state.loading = true;
+      state.loading2 = false;
       state.isUserLogout = false;
       state.errorMsg = true;
     },
     licenseSuccess(state, action) {
       state.user = action.payload
-      state.loading = false;
+      state.loading2 = false;
       state.errorMsg = false;
     },
     licenseLogoutUserSuccess(state, action) {
@@ -28,7 +28,7 @@ const licenseSlice = createSlice({
     },
     reset_license_flag(state) {
       state.error = null
-      state.loading = false;
+      state.loading2 = false;
       state.errorMsg = false;
     }
   },
@@ -39,6 +39,6 @@ export const {
   licenseSuccess,
   licenseLogoutUserSuccess,
   reset_license_flag
-} = licenseSlice.actions
+} = license.actions
 
-export default licenseSlice.reducer;
+export default license.reducer;

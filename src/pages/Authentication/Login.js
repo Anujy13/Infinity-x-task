@@ -43,7 +43,7 @@ const Login = (props) => {
   const loginpageData = createSelector(selectLayoutState, (state) => ({
     user: state.Account.user,
     error: state.Login.error,
-    loading: state.Login.loading,
+    loading2: state.Login.loading2,
     errorMsg: state.Login.errorMsg,
   }));
   // Inside your component
@@ -54,6 +54,8 @@ const Login = (props) => {
   const [localLoading, setLocalLoading] = useState(false); // Local loading state
   const [initialLoading, setInitialLoading] = useState(true); // Initial loading state
   const [autoSubmitted, setAutoSubmitted] = useState(false); // Track auto submission
+  const [error2,seterror2]= useState();
+
   const navigate = useNavigate();
 
   const companyCode = JSON.parse(localStorage.getItem("selectedCompany"))?.companyCode;
@@ -121,6 +123,14 @@ const Login = (props) => {
     dispatch(socialLogin(type, props.router.navigate));
   };
 
+  useEffect(() => {
+    if (error === 'Request failed with status code 401') {
+      const errorMessage = 'Unauthorized';
+      seterror2(errorMessage);
+    }
+  }, [error]);
+
+
   // useEffect(() => {
   //   if (
   //     validation.initialValues.email &&
@@ -135,13 +145,13 @@ const Login = (props) => {
   //   }
   // }, [validation.initialValues, autoSubmitted, validation]);
 
-  useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        dispatch(resetLoginFlag());
-      }, 3000);
-    }
-  }, [dispatch, errorMsg]);
+  // useEffect(() => {
+  //   if (errorMsg) {
+  //     setTimeout(() => {
+  //       dispatch(resetLoginFlag());
+  //     }, 3000);
+  //   }
+  // }, [dispatch, errorMsg]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -191,9 +201,9 @@ const Login = (props) => {
   <p className="text-muted">Company Code: {companyCode}</p>
 </div>
 
-                    {error && error ? (
-                      <Alert color="danger"> {error} </Alert>
-                    ) : null}
+{error2 && (
+                      <Alert color="danger"> {error2} </Alert>
+                    )}
                     <div className="p-2 mt-4">
                       <Form
                         onSubmit={(e) => {
