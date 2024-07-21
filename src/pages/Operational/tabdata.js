@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Collapse, Col, Container, Row, Card, CardBody } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { FaMinus } from "react-icons/fa6";
 import moment from "moment";
 
-const TabData = ({ vouchers, selectedTab, selectedDates }) => {
+const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [expandedItems, setExpandedItems] = useState([]);
   const [expandedGateMap, setExpandedGateMap] = useState({});
@@ -49,7 +49,7 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
   const handleCardClick = (e, voucher) => {
     e.stopPropagation();
     setVoucherDetailsToLocalStorage(voucher);
-    navigate(`/voucher-num`);
+    navigate("/voucher-num");
   };
 
   const setVoucherDetailsToLocalStorage = voucher => {
@@ -80,9 +80,9 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
 
       if (selectedTab === "Opening") {
         return gateInTime < fromDate;
-      } else if (selectedTab === "Inward") {
+      } else if (selectedTab === "In") {
         return gateInTime > fromDate;
-      } else if (selectedTab === "Outward") {
+      } else if (selectedTab === "Out") {
         return gateOutTime < toDate;
       } else if (selectedTab === "Closing") {
         return gateInTime >= fromDate || gateOutTime > toDate;
@@ -92,17 +92,33 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
     });
   };
 
+  const getCounts = (vouchers) => {
+    return {
+      All: vouchers.length,
+      Opening: filterVouchersByTab(vouchers, "Opening").length,
+      In: filterVouchersByTab(vouchers, "In").length,
+      Out: filterVouchersByTab(vouchers, "Out").length,
+      Closing: filterVouchersByTab(vouchers, "Closing").length
+    };
+  }
+
   const filteredVouchers = filterVouchersByTab(vouchers, selectedTab);
 
+  useEffect(() => {
+    if (typeof onUpdateCounts === "function") {
+      onUpdateCounts(getCounts(vouchers));
+    }
+  }, [vouchers, selectedTab, selectedDates]);
+
   return (
-    <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '-1.5rem' }}>
+    <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
       <Container fluid style={{ marginTop: '-5.5rem' }}>
         <Row className="mb-3">
           {filteredVouchers.length > 0 ? (
             filteredVouchers.map((voucher, voucherIndex) => (
               <div className="card-header p-0" key={voucherIndex} onClick={e => handleCardClick(e, voucher)}>
                 <Col xl={12} lg={12}>
-                  <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{marginTop:'0rem',marginLeft:'0rem'}}>
+                  <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
                     <CardBody style={{ paddingTop: "0px" }}>
                       <div className="ribbon-two ribbon-two-info">
                         <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "7px" : "13px" }}>
@@ -139,73 +155,73 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                         </div>
                       </div>
                       <div className="table-responsive table-card">
-  <table className="table table-nowrap align-middle table-sm mb-0">
-    <thead className="table-light text-muted">
-      <tr>
-        <th scope="col">Product Details</th>
-        <th scope="col" className="text-end">Total Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <div className="d-flex">
-            <div className="flex-grow-1 ms-0">
-              <h5 className="fs-15">
-                {voucher.items[0].sequence}. {voucher.items[0].item}
-              </h5>
-              <p className="text-muted mb-0">
-                {voucher.items[0].quantity} {voucher.items[0].unit} | 
-                {voucher.items[0].exclusiveRate.toLocaleString()}  {/* Comma separator */}
-              </p>
-            </div>
-          </div>
-        </td>
-        <td className="fw-medium text-end">
-          {voucher.items[0].amount.toLocaleString()}  {/* Comma separator */}
-        </td>
-      </tr>
-      {!expandedItems.includes(voucherIndex) && voucher.items.length > 1 ? (
-        <tr
-          key="expand-btn"
-          style={{ cursor: "pointer", color: "red" }}
-          onClick={e => handleExpandItem(e, voucherIndex)}
-        >
-          <td colSpan="2">+{voucher.items.length - 1} more items</td>
-        </tr>
-      ) : (
-        expandedItems.includes(voucherIndex) && voucher.items.length > 1 && (
-          <>
-            {voucher.items.slice(1).map((item, itemIndex) => (
-              <tr key={itemIndex}>
-                <td>
-                  <div className="d-flex">
-                    <div className="flex-grow-1 ms-0">
-                      <h5 className="fs-15">
-                        {item.sequence}. {item.item}
-                      </h5>
-                      <p className="text-muted mb-0">
-                        {item.quantity} {item.unit} | 
-                        {item.exclusiveRate.toLocaleString()}  {/* Comma separator */}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="fw-medium text-end">
-                  {item.amount.toLocaleString()}  {/* Comma separator */}
-                </td>
-              </tr>
-            ))}
-            <tr
-              key="collapse-btn"
-              style={{ cursor: "pointer", color: "red" }}
-              onClick={e => handleExpandItem(e, voucherIndex)}
-            >
-              <td colSpan="2">Less items</td>
-            </tr>
-          </>
-        )
-      )}
+                        <table className="table table-nowrap align-middle table-sm mb-0">
+                          <thead className="table-light text-muted">
+                            <tr>
+                              <th scope="col">Product Details</th>
+                              <th scope="col" className="text-end">Total Amount</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>
+                                <div className="d-flex">
+                                  <div className="flex-grow-1 ms-0">
+                                    <h5 className="fs-15">
+                                      {voucher.items[0].sequence}. {voucher.items[0].item}
+                                    </h5>
+                                    <p className="text-muted mb-0">
+                                      {voucher.items[0].quantity} {voucher.items[0].unit} |
+                                      {voucher.items[0].exclusiveRate.toLocaleString()}  {/* Comma separator */}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="fw-medium text-end">
+                                {voucher.items[0].amount.toLocaleString()}  {/* Comma separator */}
+                              </td>
+                            </tr>
+                            {!expandedItems.includes(voucherIndex) && voucher.items.length > 1 ? (
+                              <tr
+                                key="expand-btn"
+                                style={{ cursor: "pointer", color: "red" }}
+                                onClick={e => handleExpandItem(e, voucherIndex)}
+                              >
+                                <td colSpan="2">+{voucher.items.length - 1} more items</td>
+                              </tr>
+                            ) : (
+                              expandedItems.includes(voucherIndex) && voucher.items.length > 1 && (
+                                <>
+                                  {voucher.items.slice(1).map((item, itemIndex) => (
+                                    <tr key={itemIndex}>
+                                      <td>
+                                        <div className="d-flex">
+                                          <div className="flex-grow-1 ms-0">
+                                            <h5 className="fs-15">
+                                              {item.sequence}. {item.item}
+                                            </h5>
+                                            <p className="text-muted mb-0">
+                                              {item.quantity} {item.unit} |
+                                              {item.exclusiveRate.toLocaleString()}  {/* Comma separator */}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="fw-medium text-end">
+                                        {item.amount.toLocaleString()}  {/* Comma separator */}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                  <tr
+                                    key="collapse-btn"
+                                    style={{ cursor: "pointer", color: "red" }}
+                                    onClick={e => handleExpandItem(e, voucherIndex)}
+                                  >
+                                    <td colSpan="2">Less items</td>
+                                  </tr>
+                                </>
+                              )
+                            )}
                             <tr className="border-top border-top-dashed">
                               <td colSpan="2" className="fw-medium p-0">
                                 <table className="table table-borderless table-sm mb-0">

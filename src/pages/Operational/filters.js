@@ -11,6 +11,7 @@ import HeaderTabData from "./header_tab_data";
 import { fetchFinishedProductsData } from "../../slices/thunks";
 import { setDateRange } from "../../slices/finishedProducts/reducer";
 import { format, parse } from 'date-fns';
+import { useCallback } from "react";
 
 const PartyFilter = ({
   uniquePartyNames,
@@ -103,6 +104,7 @@ const Filters = () => {
   const [isOpen4, setIsOpen4] = useState(false);
   const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
   const [selectedDates, setSelectedDates] = useState([null, null]);
+  
 
   const [partyFilter, setPartyFilter] = useState([]);
   const [itemFilter, setItemFilter] = useState([]);
@@ -111,6 +113,13 @@ const Filters = () => {
   const [combinedFilter, setCombinedFilter] = useState([]);
   const [isLargeOrMedium, setIsLargeOrMedium] = useState(window.innerWidth > 767);
   const [isSmallDevice, setIsSmallDevice] = useState(window.innerWidth <= 560);
+  const [tabCounts, setTabCounts] = useState({
+    All: 0,
+    Opening: 0,
+    In: 0,
+    Out: 0,
+    Closing: 0,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -295,13 +304,34 @@ const Filters = () => {
     item?.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
   );
 
-  const handleSelectTab = (tab) => {
-    setActiveTab(tab);
+  
+  const handleUpdateCounts = (counts) => {
+    setTabCounts(counts);
   };
+
 
   const handleTabSelection = (tab) => {
     setSelectedTab(tab);
   };
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const updateIsMobile = useCallback(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, [updateIsMobile]);
+
+  const containerStyle = activeTab === 'statistics' && isMobile ? 
+    { paddingLeft: '0px', paddingRight: '0px', width: '117%', marginLeft: '-2rem' } :
+    {}; // Default empty style if not 'statistics' or not mobile
 
   return (
     <div>
@@ -337,12 +367,12 @@ const Filters = () => {
                 <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
                   <li className="nav-item flex-grow-1">
                     <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '100%', textAlign: 'center' }}>
-                      Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
+                      Statistics 
                     </a>
                   </li>
                   <li className="nav-item flex-grow-1">
                     <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '100%', textAlign: 'center' }}>
-                      Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
+                      Vouchers 
                     </a>
                   </li>
                 </ul>
@@ -358,12 +388,12 @@ const Filters = () => {
               <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
                 <li className="nav-item flex-grow-1">
                   <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '107%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
+                    Statistics 
                   </a>
                 </li>
                 <li className="nav-item flex-grow-1">
                   <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '115%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
+                    Vouchers 
                   </a>
                 </li>
               </ul>
@@ -371,28 +401,27 @@ const Filters = () => {
           </div>
         </div>
       )}
-
-      <Container>
-        {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} />}
-        <Col xl={8}>
-          {Array.isArray(user) ? (
-            activeTab === 'statistics' ? (
-              <Statistics
-                partyFilter={partyFilter}
-                itemFilter={itemFilter}
-                brokerFilter={brokerFilter}
-                groupFilter={groupFilter}
-                selectedDates={selectedDates}
-                user={user}
-              />
-            ) : (
-              <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates} />
-            )
+ <Container style={containerStyle}>
+      {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} tabCounts={tabCounts} />}
+      <Col xl={8}>
+        {Array.isArray(user) ? (
+          activeTab === 'statistics' ? (
+            <Statistics
+              partyFilter={partyFilter}
+              itemFilter={itemFilter}
+              brokerFilter={brokerFilter}
+              groupFilter={groupFilter}
+              selectedDates={selectedDates}
+              user={user}
+            />
           ) : (
-            <p>No finished products data available.</p>
-          )}
-        </Col>
-      </Container>
+            <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}   onUpdateCounts={handleUpdateCounts}/>
+          )
+        ) : (
+          <p>No finished products data available.</p>
+        )}
+      </Col>
+    </Container>
             {filterOpen && (
                 <div className={`sidebar-filter ${isAnyAccordionOpen ? 'open-height' : 'closed-height'}`}>
                     <div className="card">

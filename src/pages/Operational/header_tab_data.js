@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-const HeaderTabData = ({ onSelectTab }) => {
+const HeaderTabData = ({ onSelectTab, tabCounts }) => {
   const [activeTab, setActiveTab] = useState('All');
   const [fontSize, setFontSize] = useState('13px');
-  
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     onSelectTab(tab);
@@ -20,11 +20,10 @@ const HeaderTabData = ({ onSelectTab }) => {
     }
   }, []);
 
-
   useEffect(() => {
     // Update font size on component mount
     updateFontSize();
-    
+
     // Add event listener for window resize
     window.addEventListener('resize', updateFontSize);
 
@@ -47,18 +46,32 @@ const HeaderTabData = ({ onSelectTab }) => {
     flex: '1',
     textAlign: 'center',
     fontSize: fontSize, // Apply dynamic font size
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
+
+  const badgeStyle = {
+    marginLeft: '5px',
+    whiteSpace: 'nowrap' // Prevent the badge from wrapping
+  };
+
+  const linkStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   };
 
   return (
-    <div className="card-header border-0" style={{ marginLeft: '1rem' }}>
+    <div className="card-header border-0">
       <div className="row align-items-center">
-        <div className="col">
+        <div className="col" style={{ marginLeft: '20px'}}>
           <ul
             role='tablist'
             className='nav-tabs-custom card-header-tabs border-bottom-0 nav'
             style={tabStyle}
           >
-            {['All', 'Opening', 'Inward', 'Outward', 'Closing'].map(tab => (
+            {['All', 'Opening', 'In', 'Out', 'Closing'].map(tab => (
               <li
                 key={tab}
                 className='nav-item'
@@ -68,8 +81,12 @@ const HeaderTabData = ({ onSelectTab }) => {
                   href='#'
                   className={`fw-semibold nav-link${activeTab === tab ? ' active' : ''}`}
                   onClick={(e) => { e.preventDefault(); handleTabClick(tab); }}
+                  style={linkStyle}
                 >
                   {tab}
+                  <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1" style={badgeStyle}>
+                    {tabCounts[tab] || 0}
+                  </span>
                 </a>
               </li>
             ))}

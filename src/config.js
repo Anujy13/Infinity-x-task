@@ -12,6 +12,6 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: dataExchangeURL, // Use the retrieved URL
+    API_URL: 'http://45.124.144.253:9890/', // Use the retrieved URL
   }
 };
