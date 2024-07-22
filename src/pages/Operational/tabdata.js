@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaMinus } from "react-icons/fa6";
 import moment from "moment";
 
-const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts }) => {
+const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQuery  }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [expandedItems, setExpandedItems] = useState([]);
   const [expandedGateMap, setExpandedGateMap] = useState({});
@@ -102,8 +102,20 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts }) => {
     };
   }
 
-  const filteredVouchers = filterVouchersByTab(vouchers, selectedTab);
+  const filterVouchersByQuery = (vouchers, query) => {
+    if (!query) return vouchers;
+    return vouchers.filter(voucher => {
+      const lowerCaseQuery = query.toLowerCase();
+      return voucher.party.toLowerCase().includes(lowerCaseQuery)
+        || voucher.items.some(item => item.item.toLowerCase().includes(lowerCaseQuery))
+        || voucher.voucherNumber.toLowerCase().includes(lowerCaseQuery)
+        || voucher.vehicleNumber.toLowerCase().includes(lowerCaseQuery)
+        || formatDate(voucher.voucherDate).toLowerCase().includes(lowerCaseQuery);
+    });
+  };
 
+  const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery), selectedTab);
+  
   useEffect(() => {
     if (typeof onUpdateCounts === "function") {
       onUpdateCounts(getCounts(vouchers));

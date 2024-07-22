@@ -12,6 +12,7 @@ import { fetchFinishedProductsData } from "../../slices/thunks";
 import { setDateRange } from "../../slices/finishedProducts/reducer";
 import { format, parse } from 'date-fns';
 import { useCallback } from "react";
+import SearchOption from "../../Components/Common/SearchOption";
 
 const PartyFilter = ({
   uniquePartyNames,
@@ -360,6 +361,12 @@ const Filters = () => {
     marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
   };
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (query) => {
+    setSearchQuery(query); // update search query
+  };
+
   return (
     <div>
            <BreadCrumb leftContent={headerContent}>
@@ -419,9 +426,10 @@ const Filters = () => {
               groupFilter={groupFilter}
               selectedDates={selectedDates}
               user={user}
+              searchQuery={searchQuery} // pass the search query to Statistics
             />
           ) : (
-            <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}   onUpdateCounts={handleUpdateCounts}/>
+            <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}   onUpdateCounts={handleUpdateCounts}  searchQuery={searchQuery}/>
           )
         ) : (
           <p>No finished products data available.</p>

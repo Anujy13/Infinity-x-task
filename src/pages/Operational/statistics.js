@@ -12,7 +12,7 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, selectedDates, user }) => {
+const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, selectedDates, user,searchQuery  }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [openingCounts, setOpeningCounts] = useState({});
   const [inwardCounts, setInwardCounts] = useState({});
@@ -184,12 +184,189 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setOutwardCountsGroup(counts.outward);
     setClosingCountsGroup(counts.closing);
   }, [groupFilter, FromDate, ToDate]);
+  const filterDataByQuery = (data, query, fields) => {
+    if (!query) return data;
+    const lowerCaseQuery = query.toLowerCase();
+    return data.filter(item => fields.some(field => item[field]?.toLowerCase().includes(lowerCaseQuery)));
+  };
 
-  const uniqueParties = Array.isArray(partyFilter) ? Array.from(new Map(partyFilter.map(voucher => [voucher.party, voucher])).values()) : [];
-  const uniqueItems = Array.isArray(itemFilter) ? Array.from(new Map(itemFilter.flatMap(voucher => voucher.items).map(item => [item.item, item])).values()) : [];
-  const uniqueBrokers = Array.isArray(brokerFilter) ? Array.from(new Map(brokerFilter.map(voucher => [voucher.broker, voucher])).values()) : [];
-  const uniqueGroups = Array.isArray(groupFilter) ? Array.from(new Map(groupFilter.flatMap(voucher => voucher.items).map(item => [item.stockGroup, item])).values()) : [];
+  useEffect(() => {
+    const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
 
+    partyFilter.forEach(voucher => {
+      const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
+      const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
+      const formattedFromDate = formatDate(FromDate);
+      const formattedToDate = formatDate(ToDate);
+
+      if (formattedInTime < formattedFromDate) {
+        counts.opening[voucher.party] = (counts.opening[voucher.party] || 0) + 1;
+      }
+
+      if (formattedInTime >= formattedFromDate) {
+        counts.inward[voucher.party] = (counts.inward[voucher.party] || 0) + 1;
+      }
+
+      if (formattedOutTime <= formattedToDate) {
+        counts.outward[voucher.party] = (counts.outward[voucher.party] || 0) + 1;
+      }
+    });
+
+    Object.keys(counts.opening).forEach(party => {
+      counts.closing[party] = (counts.opening[party] || 0) + (counts.inward[party] || 0) - (counts.outward[party] || 0);
+    });
+
+    setOpeningCounts(counts.opening);
+    setInwardCounts(counts.inward);
+    setOutwardCounts(counts.outward);
+    setClosingCounts(counts.closing);
+  }, [partyFilter, FromDate, ToDate]);
+
+  useEffect(() => {
+    const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    itemFilter.forEach(voucher => {
+      voucher.items.forEach(item => {
+        const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
+        const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
+        const formattedFromDate = formatDate(FromDate);
+        const formattedToDate = formatDate(ToDate);
+
+        if (formattedInTime < formattedFromDate) {
+          counts.opening[item.item] = (counts.opening[item.item] || 0) + 1;
+        }
+
+        if (formattedInTime >= formattedFromDate) {
+          counts.inward[item.item] = (counts.inward[item.item] || 0) + 1;
+        }
+
+        if (formattedOutTime <= formattedToDate) {
+          counts.outward[item.item] = (counts.outward[item.item] || 0) + 1;
+        }
+      });
+    });
+
+    Object.keys(counts.opening).forEach(item => {
+      counts.closing[item] = (counts.opening[item] || 0) + (counts.inward[item] || 0) - (counts.outward[item] || 0);
+    });
+
+    setOpeningCountsItem(counts.opening);
+    setInwardCountsItem(counts.inward);
+    setOutwardCountsItem(counts.outward);
+    setClosingCountsItem(counts.closing);
+  }, [itemFilter, FromDate, ToDate]);
+
+  useEffect(() => {
+    const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    brokerFilter.forEach(voucher => {
+      const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
+      const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
+      const formattedFromDate = formatDate(FromDate);
+      const formattedToDate = formatDate(ToDate);
+
+      if (formattedInTime < formattedFromDate) {
+        counts.opening[voucher.broker] = (counts.opening[voucher.broker] || 0) + 1;
+      }
+
+      if (formattedInTime >= formattedFromDate) {
+        counts.inward[voucher.broker] = (counts.inward[voucher.broker] || 0) + 1;
+      }
+
+      if (formattedOutTime <= formattedToDate) {
+        counts.outward[voucher.broker] = (counts.outward[voucher.broker] || 0) + 1;
+      }
+    });
+
+    Object.keys(counts.opening).forEach(broker => {
+      counts.closing[broker] = (counts.opening[broker] || 0) + (counts.inward[broker] || 0) - (counts.outward[broker] || 0);
+    });
+
+    setOpeningCountsBroker(counts.opening);
+    setInwardCountsBroker(counts.inward);
+    setOutwardCountsBroker(counts.outward);
+    setClosingCountsBroker(counts.closing);
+  }, [brokerFilter, FromDate, ToDate]);
+
+  useEffect(() => {
+    const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    groupFilter.forEach(voucher => {
+      voucher.items.forEach(item => {
+        const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
+        const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
+        const formattedFromDate = formatDate(FromDate);
+        const formattedToDate = formatDate(ToDate);
+
+        if (formattedInTime < formattedFromDate) {
+          counts.opening[item.stockGroup] = (counts.opening[item.stockGroup] || 0) + 1;
+        }
+
+        if (formattedInTime >= formattedFromDate) {
+          counts.inward[item.stockGroup] = (counts.inward[item.stockGroup] || 0) + 1;
+        }
+
+        if (formattedOutTime <= formattedToDate) {
+          counts.outward[item.stockGroup] = (counts.outward[item.stockGroup] || 0) + 1;
+        }
+      });
+    });
+
+    Object.keys(counts.opening).forEach(group => {
+      counts.closing[group] = (counts.opening[group] || 0) + (counts.inward[group] || 0) - (counts.outward[group] || 0);
+    });
+
+    setOpeningCountsGroup(counts.opening);
+    setInwardCountsGroup(counts.inward);
+    setOutwardCountsGroup(counts.outward);
+    setClosingCountsGroup(counts.closing);
+  }, [groupFilter, FromDate, ToDate]);
+
+
+
+  const uniqueParties = filterDataByQuery(
+    Array.isArray(partyFilter) ? Array.from(new Map(partyFilter.map(voucher => [voucher.party, voucher])).values()) : [],
+    searchQuery,
+    ['party']
+  );
+
+  const uniqueItems = filterDataByQuery(
+    Array.isArray(itemFilter) ? Array.from(new Map(itemFilter.flatMap(voucher => voucher.items).map(item => [item.item, item])).values()) : [],
+    searchQuery,
+    ['item']
+  );
+
+  const uniqueBrokers = filterDataByQuery(
+    Array.isArray(brokerFilter) ? Array.from(new Map(brokerFilter.map(voucher => [voucher.broker, voucher])).values()) : [],
+    searchQuery,
+    ['broker']
+  );
+
+  const uniqueGroups = filterDataByQuery(
+    Array.isArray(groupFilter) ? Array.from(new Map(groupFilter.flatMap(voucher => voucher.items).map(item => [item.stockGroup, item])).values()) : [],
+    searchQuery,
+    ['stockGroup']
+  );
   // Sorting uniqueParties and uniqueItems in alphabetical order by name
   uniqueParties.sort((a, b) => a.party.localeCompare(b.party));
   uniqueItems.sort((a, b) => a.item.localeCompare(b.item));
@@ -269,7 +446,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     outward: outwardCountsGroup[item.stockGroup],
     closing: closingCountsGroup[item.stockGroup],
   })));
-
+  
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0' }}>
       <Container fluid style={{ marginTop: '-4rem', paddingLeft: '0px', paddingRight: '0px' }}>
@@ -359,7 +536,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               </Card>
             </Col>
           ) : (
-            <p>No data available for the selected filters.</p>
+            <p></p>
           )}
 
           {uniqueItems.length > 0 ? (
@@ -447,7 +624,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               </Card>
             </Col>
           ) : (
-            <p>No data available for the selected filters.</p>
+            <p></p>
           )}
 
           {uniqueBrokers.length > 0 ? (
@@ -535,7 +712,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               </Card>
             </Col>
           ) : (
-            <p>No data available for the selected filters.</p>
+            <p></p>
           )}
 
 {uniqueGroups.length > 0 ? (
@@ -614,7 +791,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <tfoot>
                                                 <tr className="border-top border-top-dashed">
                           <th scope="row">Total Entries:(As per all Groups)</th>
-                          <th style={{ textAlign: 'center' }}>{(brokerTotals.opening + brokerTotals.inward + brokerTotals.outward + brokerTotals.closing).toFixed(2)}</th>
+                          <th style={{ textAlign: 'center' }}>{(groupsTotals.opening + groupsTotals.inward + groupsTotals.outward + groupsTotals.closing).toFixed(2)}</th>
                         </tr>
                       </tfoot>
                     </table>
@@ -623,7 +800,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               </Card>
             </Col>
           ) : (
-            <p>No data available for the selected filters.</p>
+            <p></p>
           )}
         </Row>
       </Container>
