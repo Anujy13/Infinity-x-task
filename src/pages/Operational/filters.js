@@ -339,8 +339,8 @@ const Filters = () => {
     const handleResize = () => {
       setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
       setIsLaptop1024(window.innerWidth >= 1024 && window.innerWidth < 1280);
-      setIsBetween1200And1300(window.innerWidth >= 1200 && window.innerWidth < 1300);
-      setIsLaptopLarge(window.innerWidth >= 1280 && window.innerWidth < 1600);
+      setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
+      setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
       setIs4KDesktop(window.innerWidth >= 1600);
     };
 
@@ -356,7 +356,7 @@ const Filters = () => {
 
   const cardHeaderStyle = {
     marginTop: '1rem',
-    width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '300%' : isTablet ? '200%' : '100%',
+    width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
     marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
   };
 

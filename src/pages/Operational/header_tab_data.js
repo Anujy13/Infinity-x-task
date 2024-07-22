@@ -63,7 +63,7 @@ const HeaderTabData = ({ onSelectTab, tabCounts }) => {
   };
 
   return (
-    <div className="card-header border-0">
+    <div className="card-header border-0" style={{marginTop:'-1rem'}}>
       <div className="row align-items-center">
         <div className="col" style={{ marginLeft: '20px'}}>
           <ul
