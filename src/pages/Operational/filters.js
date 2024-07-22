@@ -331,7 +331,7 @@ const Filters = () => {
 
   const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
   const [isLaptop1024, setIsLaptop1024] = useState(window.innerWidth >= 1024 && window.innerWidth < 1280);
-  const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1200 && window.innerWidth < 1399);
+  const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
   const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
   const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
 
