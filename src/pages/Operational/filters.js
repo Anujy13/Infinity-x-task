@@ -329,78 +329,84 @@ const Filters = () => {
     };
   }, [updateIsMobile]);
 
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+  const [isLaptop1024, setIsLaptop1024] = useState(window.innerWidth >= 1024 && window.innerWidth < 1280);
+  const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1200 && window.innerWidth < 1399);
+  const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
+  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+      setIsLaptop1024(window.innerWidth >= 1024 && window.innerWidth < 1280);
+      setIsBetween1200And1300(window.innerWidth >= 1200 && window.innerWidth < 1300);
+      setIsLaptopLarge(window.innerWidth >= 1280 && window.innerWidth < 1600);
+      setIs4KDesktop(window.innerWidth >= 1600);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const containerStyle = activeTab === 'statistics' && isMobile ? 
     { paddingLeft: '0px', paddingRight: '0px', width: '117%', marginLeft: '-2rem' } :
     {}; // Default empty style if not 'statistics' or not mobile
 
+  const cardHeaderStyle = {
+    marginTop: '1rem',
+    width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '300%' : isTablet ? '200%' : '100%',
+    marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
+  };
+
   return (
     <div>
-      <BreadCrumb leftContent={headerContent}>
-        {location.pathname !== '/operational' && headerContent}
-        <div className="mt-3 mt-lg-0 d-flex justify-content-end">
-          <i
-            className="ri-filter-3-line"
-            style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
-            onClick={toggleFilter}
-          ></i>
-          <form action="#">
-            <Row className="g-3 mb-0 align-items-center">
-              <div className="col-sm-auto">
-                <div className="input-group" style={{ flexWrap: "nowrap" }}>
-                  <Flatpickr
-                    className="form-control border-0 dash-filter-picker shadow"
-                    options={{ mode: "range", dateFormat: "d M, Y", defaultDate: ["01 Apr 2024", "01 Apr 2025"] }}
-                    onChange={(dates) => handleDateChange(dates)}
-                  />
-                  <div className="input-group-text bg-primary border-primary text-white">
-                    <i className="ri-calendar-2-line"></i>
-                  </div>
+           <BreadCrumb leftContent={headerContent}>
+            {location.pathname !== '/operational' && headerContent}
+            <div className="mt-3 mt-lg-0 d-flex justify-content-end">
+                <i
+                    className="ri-filter-3-line"
+                    style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
+                    onClick={toggleFilter}
+                ></i>
+                <form action="#">
+                    <Row className="g-3 mb-0 align-items-center">
+                        <div className="col-sm-auto">
+                            <div className="input-group" style={{ flexWrap: "nowrap" }}>
+                                <Flatpickr
+                                    className="form-control border-0 dash-filter-picker shadow"
+                                    options={{ mode: "range", dateFormat: "d M, Y", defaultDate: ["01 Apr 2024", "01 Apr 2025"] }}
+                                    onChange={(dates) => handleDateChange(dates)}
+                                />
+                                <div className="input-group-text bg-primary border-primary text-white">
+                                    <i className="ri-calendar-2-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </Row>
+                </form>
+            </div>
+            <div className="card-header border-0" style={cardHeaderStyle}>
+                <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
+                    <div className="col">
+                        <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav flex-fill" style={{ width: '100%' }}>
+                            <li className="nav-item" style={{ flex: 1 }}>
+                                <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '100%', textAlign: 'center' }}>
+                                    Statistics
+                                </a>
+                            </li>
+                            <li className="nav-item" style={{ flex: 1 }}>
+                                <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '100%', textAlign: 'center' }}>
+                                    Vouchers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-              </div>
-            </Row>
-          </form>
-        </div>
-        {!isLargeOrMedium && (
-          <div className="card-header border-0" style={{ marginTop: '1rem' }}>
-            <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
-              <div className="col">
-                <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
-                  <li className="nav-item flex-grow-1">
-                    <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '100%', textAlign: 'center' }}>
-                      Statistics 
-                    </a>
-                  </li>
-                  <li className="nav-item flex-grow-1">
-                    <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '100%', textAlign: 'center' }}>
-                      Vouchers 
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </div>
-          </div>
-        )}
-      </BreadCrumb>
-      {!isSmallDevice && (
-        <div className="card-header border-0">
-          <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
-            <div className="col">
-              <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
-                <li className="nav-item flex-grow-1">
-                  <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '107%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Statistics 
-                  </a>
-                </li>
-                <li className="nav-item flex-grow-1">
-                  <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '115%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Vouchers 
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+        </BreadCrumb>
+
  <Container style={containerStyle}>
       {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} tabCounts={tabCounts} />}
       <Col xl={8}>

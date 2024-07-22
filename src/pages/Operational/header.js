@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
     ButtonGroup,
     UncontrolledDropdown,
@@ -14,6 +14,7 @@ const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
     const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 700);
 
     const [selectedOptions, setSelectedOptions] = useState({
         inward: false,
@@ -37,9 +38,19 @@ const Header = () => {
         return selectedKeys.map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(", ");
     };
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsLargeScreen(window.innerWidth >= 700);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
-        <div className="d-flex align-items-center">
-            <ButtonGroup className="me-3">
+   <div className="d-flex align-items-center" style={isLargeScreen ? { marginTop: '-2.5rem' } : {}}>            <ButtonGroup className="me-3">
                 <UncontrolledDropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                     <DropdownToggle tag="button" className="btn btn-primary">
                         {renderContent()} <i className="mdi mdi-chevron-down"></i>
