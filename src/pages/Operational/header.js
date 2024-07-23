@@ -10,7 +10,7 @@ import {
     Label
 } from 'reactstrap'; // Assuming you're using Reactstrap
 
-const Header = () => {
+const Header2 = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
     const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
@@ -152,4 +152,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export default Header2;

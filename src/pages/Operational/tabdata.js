@@ -81,11 +81,11 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
       if (selectedTab === "Opening") {
         return gateInTime < fromDate;
       } else if (selectedTab === "In") {
-        return gateInTime > fromDate;
+        return gateInTime >= fromDate && gateInTime <= toDate;
       } else if (selectedTab === "Out") {
-        return gateOutTime < toDate;
+        return gateOutTime >= fromDate && gateOutTime <= toDate
       } else if (selectedTab === "Closing") {
-        return gateInTime >= fromDate || gateOutTime > toDate;
+        return gateOutTime > toDate;
       } else {
         return true;
       }
@@ -116,17 +116,14 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
 
   const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery), selectedTab);
 
-  useEffect(() => {
-    if (typeof onUpdateCounts === "function") {
-      onUpdateCounts(getCounts(vouchers));
-    }
-  }, [vouchers, selectedTab, selectedDates, searchQuery, onUpdateCounts]);
+ // First effect to handle counting vouchers
+ useEffect(() => {
+  if (typeof onUpdateCounts === "function") {
+    onUpdateCounts(getCounts(vouchers));
+  }
+}, [vouchers, selectedDates, onUpdateCounts]);
 
-  useEffect(() => {
-    if (typeof onUpdateCounts === "function") {
-      onUpdateCounts(getCounts(filteredVouchers));
-    }
-  }, [filteredVouchers, selectedTab, selectedDates, searchQuery, onUpdateCounts]);
+
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
       <Container fluid style={{ marginTop: '-5.5rem' }}>

@@ -21,7 +21,7 @@ import { changeSidebarVisibility } from '../slices/thunks';
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from 'reselect';
 
-const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
+const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) => {
     const dispatch = useDispatch();
 
     const selectDashboardData = createSelector(
@@ -109,7 +109,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                             </button>
 
 
-                            <SearchOption />
+                            <SearchOption onSearch={onSearch}/>
                         </div>
 
                         <div className="d-flex align-items-center">

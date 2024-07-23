@@ -6,13 +6,14 @@ import BreadCrumb from '../../Components/Common/BreadCrumb';
 import Flatpickr from 'react-flatpickr';
 import Statistics from './statistics';
 import TabData from './tabdata';
-import Header from './header';
+import Header2 from './header';
 import HeaderTabData from "./header_tab_data";
 import { fetchFinishedProductsData } from "../../slices/thunks";
 import { setDateRange } from "../../slices/finishedProducts/reducer";
 import { format, parse } from 'date-fns';
 import { useCallback } from "react";
 import SearchOption from "../../Components/Common/SearchOption";
+import Header from "../../Layouts/Header";
 
 const PartyFilter = ({
   uniquePartyNames,
@@ -168,7 +169,7 @@ const Filters = () => {
 
   const toggleFilter = () => setFilterOpen(!filterOpen);
 
-  const headerContent = <Header />;
+  const headerContent = <Header2 />;
 
   const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
   const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
@@ -419,6 +420,10 @@ const Filters = () => {
 {/* Include SearchOption but hide it using CSS */}
 <div className="d-none">
       <SearchOption onSearch={handleSearch} />
+   </div>
+   {/* Include SearchOption but hide it using CSS */}
+<div className="d-none">
+      <Header onSearch={handleSearch} />
    </div> 
    
    <Container style={containerStyle}>
