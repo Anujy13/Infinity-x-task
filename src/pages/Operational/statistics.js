@@ -635,13 +635,13 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   </div>
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
-        {voucher.party}
-        {closingCounts[voucher.party] > 0 && (
-          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
-            {closingCounts[voucher.party]} Pending
-          </span>
-        )}
-      </h5>
+                                        {voucher.party}
+                                        {closingCounts[voucher.party] > 0 && (
+                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                            {closingCounts[voucher.party]} Pending
+                                          </span>
+                                        )}
+                                      </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
                                     </p>
@@ -713,7 +713,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
                 <CardBody>
                   <div className="table-responsive table-card">
-                    <table className="table table-nowrap align-middle table-sm mb-0">
+                    <table className="table  table-sm mb-0">
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Item Name</th>
@@ -734,9 +734,14 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                     )}
                                   </div>
                                   <div className="flex-grow-1">
-                                    <h5 style={{ fontSize: getFontSize() }}>
-                                      {item.item}
-                                    </h5>
+                                  <h5 style={{ fontSize: getFontSize() }}>
+                                        {item.item}
+                                        {closingCountsItem[item.item] > 0 && (
+                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                            {closingCountsItem[item.item]} Pending
+                                          </span>
+                                        )}
+                                      </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
                                     </p>
@@ -804,7 +809,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
                 <CardBody>
                   <div className="table-responsive table-card">
-                    <table className="table table-nowrap align-middle table-sm mb-0">
+                    <table className="table table-sm mb-0">
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Broker Name</th>
@@ -825,9 +830,14 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                     )}
                                   </div>
                                   <div className="flex-grow-1">
-                                    <h5 style={{ fontSize: getFontSize() }}>
-                                      {voucher.broker}
-                                    </h5>
+                                  <h5 style={{ fontSize: getFontSize() }}>
+                                        {voucher.broker}
+                                        {closingCountsBroker[voucher.broker] > 0 && (
+                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                            {closingCountsBroker[voucher.broker]} Pending
+                                          </span>
+                                        )}
+                                      </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
                                     </p>
@@ -899,7 +909,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
                 <CardBody>
                   <div className="table-responsive table-card">
-                    <table className="table table-nowrap align-middle table-sm mb-0">
+                    <table className="table table-sm mb-0">
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Group Name</th>
@@ -920,9 +930,14 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                     )}
                                   </div>
                                   <div className="flex-grow-1">
-                                    <h5 style={{ fontSize: getFontSize() }}>
-                                      {item.stockGroup}
-                                    </h5>
+                                  <h5 style={{ fontSize: getFontSize() }}>
+                                        {item.stockGroup}
+                                        {closingCountsGroup[item.stockGroup] > 0 && (
+                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                            {closingCountsGroup[item.stockGroup]} Pending
+                                          </span>
+                                        )}
+                                      </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
                                     </p>
