@@ -413,8 +413,13 @@ const Filters = () => {
                 </div>
             </div>
         </BreadCrumb>
-
- <Container style={containerStyle}>
+        
+{/* Include SearchOption but hide it using CSS */}
+<div className="d-none">
+      <SearchOption onSearch={handleSearch} />
+   </div> 
+   
+   <Container style={containerStyle}>
       {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} tabCounts={tabCounts} />}
       <Col xl={8}>
         {Array.isArray(user) ? (
