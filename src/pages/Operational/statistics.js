@@ -163,214 +163,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
         if (formattedInTime < formattedFromDate) {
           counts.opening[item.item] = (counts.opening[item.item] || 0) + 1;
-          weightSums.opening[item.item] = (weightSums.opening[item.item] || 0) + item.netWeight;
-        }
-  
-        if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
-          counts.inward[item.item] = (counts.inward[item.item] || 0) + 1;
-          weightSums.inward[item.item] = (weightSums.inward[item.item] || 0) + item.netWeight;
-        }
-  
-        if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
-          counts.outward[item.item] = (counts.outward[item.item] || 0) + 1;
-          weightSums.outward[item.item] = (weightSums.outward[item.item] || 0) + item.netWeight;
-        }
-        
-        if (formattedOutTime > formattedToDate) {
-          counts.closing[item.item] = (counts.closing[item.item] || 0) + 1;
-          weightSums.closing[item.item] = (weightSums.closing[item.item] || 0) + item.netWeight;
-        }
-      });
-    });
-
-    setOpeningCountsItem(counts.opening);
-    setInwardCountsItem(counts.inward);
-    setOutwardCountsItem(counts.outward);
-    setClosingCountsItem(counts.closing);
-    setWeightsItem(weightSums);
-  }, [itemFilter, FromDate, ToDate]);
-
-  useEffect(() => {
-    const counts = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    const weightSums = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    brokerFilter.forEach(voucher => {
-      const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
-      const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
-      const formattedFromDate = formatDate(FromDate);
-      const formattedToDate = formatDate(ToDate);
-
-      if (formattedInTime < formattedFromDate) {
-        counts.opening[voucher.broker] = (counts.opening[voucher.broker] || 0) + 1;
-        weightSums.opening[voucher.broker] = (weightSums.opening[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
-        counts.inward[voucher.broker] = (counts.inward[voucher.broker] || 0) + 1;
-        weightSums.inward[voucher.broker] = (weightSums.inward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
-        counts.outward[voucher.broker] = (counts.outward[voucher.broker] || 0) + 1;
-        weightSums.outward[voucher.broker] = (weightSums.outward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedOutTime > formattedToDate) {
-        counts.closing[voucher.broker] = (counts.closing[voucher.broker] || 0) + 1;
-        weightSums.closing[voucher.broker] = (weightSums.closing[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-    });
-
-    setOpeningCountsBroker(counts.opening);
-    setInwardCountsBroker(counts.inward);
-    setOutwardCountsBroker(counts.outward);
-    setClosingCountsBroker(counts.closing);
-    setWeightsBroker(weightSums);
-  }, [brokerFilter, FromDate, ToDate]);
-
-  useEffect(() => {
-    const counts = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    const weightSums = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    groupFilter.forEach(voucher => {
-      voucher.items.forEach(item => {
-        const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
-        const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
-        const formattedFromDate = formatDate(FromDate);
-        const formattedToDate = formatDate(ToDate);
-
-        if (formattedInTime < formattedFromDate) {
-          counts.opening[item.stockGroup] = (counts.opening[item.stockGroup] || 0) + 1;
-          weightSums.opening[item.stockGroup] = (weightSums.opening[item.stockGroup] || 0) + item.netWeight;
-        }
-  
-        if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
-          counts.inward[item.stockGroup] = (counts.inward[item.stockGroup] || 0) + 1;
-          weightSums.inward[item.stockGroup] = (weightSums.inward[item.stockGroup] || 0) + item.netWeight;
-        }
-  
-        if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
-          counts.outward[item.stockGroup] = (counts.outward[item.stockGroup] || 0) + 1;
-          weightSums.outward[item.stockGroup] = (weightSums.outward[item.stockGroup] || 0) + item.netWeight;
-        }
-        
-        if (formattedOutTime > formattedToDate) {
-          counts.closing[item.stockGroup] = (counts.closing[item.stockGroup] || 0) + 1;
-          weightSums.closing[item.stockGroup] = (weightSums.closing[item.stockGroup] || 0) + item.netWeight;
-        }
-      });
-    });
-
-    setOpeningCountsGroup(counts.opening);
-    setInwardCountsGroup(counts.inward);
-    setOutwardCountsGroup(counts.outward);
-    setClosingCountsGroup(counts.closing);
-    setWeightsGroup(weightSums);
-  }, [groupFilter, FromDate, ToDate]);
-
-  const filterDataByQuery = (data, query, fields) => {
-    if (!query) return data;
-    const lowerCaseQuery = query.toLowerCase();
-    return data.filter(item => fields.some(field => item[field]?.toLowerCase().includes(lowerCaseQuery)));
-  };
-
- useEffect(() => {
-    const counts = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    const weightSums = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    partyFilter.forEach(voucher => {
-      const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
-      const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
-      const formattedFromDate = formatDate(FromDate);
-      const formattedToDate = formatDate(ToDate);
-
-      if (formattedInTime < formattedFromDate) {
-        counts.opening[voucher.party] = (counts.opening[voucher.party] || 0) + 1;
-        weightSums.opening[voucher.party] = (weightSums.opening[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
-        counts.inward[voucher.party] = (counts.inward[voucher.party] || 0) + 1;
-        weightSums.inward[voucher.party] = (weightSums.inward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
-        counts.outward[voucher.party] = (counts.outward[voucher.party] || 0) + 1;
-        weightSums.outward[voucher.party] = (weightSums.outward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-
-      if (formattedOutTime > formattedToDate) {
-        counts.closing[voucher.party] = (counts.closing[voucher.party] || 0) + 1;
-        weightSums.closing[voucher.party] = (weightSums.closing[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
-      }
-    });
-
-    setOpeningCounts(counts.opening);
-    setInwardCounts(counts.inward);
-    setOutwardCounts(counts.outward);
-    setClosingCounts(counts.closing);
-    setWeights(weightSums);
-  }, [partyFilter, FromDate, ToDate]);
-
-
-  useEffect(() => {
-    const counts = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    const weightSums = {
-      opening: {},
-      inward: {},
-      outward: {},
-      closing: {},
-    };
-
-    itemFilter.forEach(voucher => {
-      voucher.items.forEach(item => {
-        const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
-        const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
-        const formattedFromDate = formatDate(FromDate);
-        const formattedToDate = formatDate(ToDate);
-
-        if (formattedInTime < formattedFromDate) {
-          counts.opening[item.item] = (counts.opening[item.item] || 0) + 1;
-          weightSums.opening[item.item] = (weightSums.opening[item.item] || 0) + voucher.gateWeightRecord.netWeight;
+          weightSums.opening[item.item] = (weightSums.opening[item.item] || 0) +voucher.gateWeightRecord.netWeight;
         }
   
         if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
@@ -480,7 +273,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
   
         if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
           counts.outward[item.stockGroup] = (counts.outward[item.stockGroup] || 0) + 1;
-          weightSums.outward[item.stockGroup] = (weightSums.outward[item.stockGroup] || 0) + voucher.gateWeightRecord.netWeight;
+          weightSums.outward[item.stockGroup] = (weightSums.outward[item.stockGroup] || 0) +voucher.gateWeightRecord.netWeight;
         }
         
         if (formattedOutTime > formattedToDate) {
@@ -496,6 +289,18 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setClosingCountsGroup(counts.closing);
     setWeightsGroup(weightSums);
   }, [groupFilter, FromDate, ToDate]);
+
+  const filterDataByQuery = (data, query, fields) => {
+    if (!query) return data;
+    const lowerCaseQuery = query.toLowerCase();
+    return data.filter(item => fields.some(field => item[field]?.toLowerCase().includes(lowerCaseQuery)));
+  };
+
+
+
+ 
+
+ 
 
 
 
