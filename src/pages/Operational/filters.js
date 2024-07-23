@@ -351,9 +351,11 @@ const Filters = () => {
     };
   }, []);
 
-  const containerStyle = activeTab === 'statistics' && isMobile ? 
-    { paddingLeft: '0px', paddingRight: '0px', width: '117%', marginLeft: '-2rem' } :
-    {}; // Default empty style if not 'statistics' or not mobile
+  const containerStyle = activeTab === 'statistics' && isMobile
+  ? { paddingLeft: '0px', paddingRight: '0px', width: '117%', marginLeft: '-2rem' }
+  : is4KDesktop
+  ? { marginLeft: '0rem' } // Adjust the margin left for 4K desktop here
+  : {}; // Default empty style if not 'statistics' or not mobile or not 4K
 
   const cardHeaderStyle = {
     marginTop: '1rem',

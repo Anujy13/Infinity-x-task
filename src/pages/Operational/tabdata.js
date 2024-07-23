@@ -115,13 +115,18 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
   };
 
   const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery), selectedTab);
-  
+
   useEffect(() => {
     if (typeof onUpdateCounts === "function") {
       onUpdateCounts(getCounts(vouchers));
     }
-  }, [vouchers, selectedTab, selectedDates]);
+  }, [vouchers, selectedTab, selectedDates, searchQuery, onUpdateCounts]);
 
+  useEffect(() => {
+    if (typeof onUpdateCounts === "function") {
+      onUpdateCounts(getCounts(filteredVouchers));
+    }
+  }, [filteredVouchers, selectedTab, selectedDates, searchQuery, onUpdateCounts]);
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
       <Container fluid style={{ marginTop: '-5.5rem' }}>
