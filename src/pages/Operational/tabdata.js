@@ -114,23 +114,16 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
     });
   };
 
-  const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery));
+  const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery), selectedTab);
 
-  // Effect to handle counting vouchers on initial load and date changes
-  useEffect(() => {
-    if (typeof onUpdateCounts === "function") {
-      const initialCounts = getCounts(vouchers);
-      onUpdateCounts(initialCounts);
-    }
-  }, [vouchers, selectedDates, onUpdateCounts]);
+ // First effect to handle counting vouchers
+ useEffect(() => {
+  if (typeof onUpdateCounts === "function") {
+    onUpdateCounts(getCounts(filterVouchersByQuery(vouchers, searchQuery)));
+  }
+}, [vouchers, selectedDates, onUpdateCounts, selectedTab, searchQuery]);
 
-  // Effect to handle filtering vouchers on search query changes
-  useEffect(() => {
-    if (typeof onUpdateCounts === "function") {
-      const filteredCounts = getCounts(filteredVouchers);
-      onUpdateCounts(filteredCounts);
-    }
-  }, [filteredVouchers, searchQuery]);
+
 
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
