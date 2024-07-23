@@ -7,12 +7,12 @@ import { RiAddLine, RiSubtractLine } from 'react-icons/ri';
 const formatDate = (date) => {
   const d = new Date(date);
   const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Ensure month is always 2 digits
+  const hours = d.getHours();
+  const minutes = d.getMinutes();
+  const seconds = d.getSeconds();
+  return `${year}-${month} ${hours}:${minutes}:${seconds}`;
 };
-
-
 
 const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, selectedDates, user,searchQuery  }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
@@ -38,6 +38,30 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
   const [netWeightsItem, setNetWeightsItem] = useState({});
   const [netWeightsBroker, setNetWeightsBroker] = useState({});
   const [netWeightsGroup, setNetWeightsGroup] = useState({});
+  const [weights, setWeights] = useState({
+    opening: {},
+    inward: {},
+    outward: {},
+    closing: {},
+  });
+  const [weightsItem, setWeightsItem] = useState({
+    opening: {},
+    inward: {},
+    outward: {},
+    closing: {},
+  });
+  const [weightsBroker, setWeightsBroker] = useState({
+    opening: {},
+    inward: {},
+    outward: {},
+    closing: {},
+  });
+  const [weightsGroup, setWeightsGroup] = useState({
+    opening: {},
+    inward: {},
+    outward: {},
+    closing: {},
+  });
 
   const sumNetWeights = (vouchers, type = 'party') => {
     return vouchers.reduce((acc, voucher) => {
@@ -73,6 +97,13 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
       closing: {},
     };
 
+    const weightSums = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
     partyFilter.forEach(voucher => {
       const formattedInTime = formatDate(voucher.gateWeightRecord.inTime);
       const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
@@ -81,27 +112,42 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
       if (formattedInTime < formattedFromDate) {
         counts.opening[voucher.party] = (counts.opening[voucher.party] || 0) + 1;
+        weightSums.opening[voucher.party] = (weightSums.opening[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
         counts.inward[voucher.party] = (counts.inward[voucher.party] || 0) + 1;
+        weightSums.inward[voucher.party] = (weightSums.inward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
         counts.outward[voucher.party] = (counts.outward[voucher.party] || 0) + 1;
+        weightSums.outward[voucher.party] = (weightSums.outward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
+
       if (formattedOutTime > formattedToDate) {
         counts.closing[voucher.party] = (counts.closing[voucher.party] || 0) + 1;
+        weightSums.closing[voucher.party] = (weightSums.closing[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
     });
+
     setOpeningCounts(counts.opening);
     setInwardCounts(counts.inward);
     setOutwardCounts(counts.outward);
     setClosingCounts(counts.closing);
+    setWeights(weightSums);
   }, [partyFilter, FromDate, ToDate]);
+
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -117,17 +163,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
         if (formattedInTime < formattedFromDate) {
           counts.opening[item.item] = (counts.opening[item.item] || 0) + 1;
+          weightSums.opening[item.item] = (weightSums.opening[item.item] || 0) + item.netWeight;
         }
   
         if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
           counts.inward[item.item] = (counts.inward[item.item] || 0) + 1;
+          weightSums.inward[item.item] = (weightSums.inward[item.item] || 0) + item.netWeight;
         }
   
         if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
           counts.outward[item.item] = (counts.outward[item.item] || 0) + 1;
+          weightSums.outward[item.item] = (weightSums.outward[item.item] || 0) + item.netWeight;
         }
+        
         if (formattedOutTime > formattedToDate) {
           counts.closing[item.item] = (counts.closing[item.item] || 0) + 1;
+          weightSums.closing[item.item] = (weightSums.closing[item.item] || 0) + item.netWeight;
         }
       });
     });
@@ -136,10 +187,18 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCountsItem(counts.inward);
     setOutwardCountsItem(counts.outward);
     setClosingCountsItem(counts.closing);
+    setWeightsItem(weightSums);
   }, [itemFilter, FromDate, ToDate]);
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -152,31 +211,43 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
       const formattedFromDate = formatDate(FromDate);
       const formattedToDate = formatDate(ToDate);
 
-       if (formattedInTime < formattedFromDate) {
+      if (formattedInTime < formattedFromDate) {
         counts.opening[voucher.broker] = (counts.opening[voucher.broker] || 0) + 1;
+        weightSums.opening[voucher.broker] = (weightSums.opening[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
         counts.inward[voucher.broker] = (counts.inward[voucher.broker] || 0) + 1;
+        weightSums.inward[voucher.broker] = (weightSums.inward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
         counts.outward[voucher.broker] = (counts.outward[voucher.broker] || 0) + 1;
+        weightSums.outward[voucher.broker] = (weightSums.outward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
+
       if (formattedOutTime > formattedToDate) {
         counts.closing[voucher.broker] = (counts.closing[voucher.broker] || 0) + 1;
+        weightSums.closing[voucher.broker] = (weightSums.closing[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
     });
-
 
     setOpeningCountsBroker(counts.opening);
     setInwardCountsBroker(counts.inward);
     setOutwardCountsBroker(counts.outward);
     setClosingCountsBroker(counts.closing);
+    setWeightsBroker(weightSums);
   }, [brokerFilter, FromDate, ToDate]);
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -192,17 +263,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
         if (formattedInTime < formattedFromDate) {
           counts.opening[item.stockGroup] = (counts.opening[item.stockGroup] || 0) + 1;
+          weightSums.opening[item.stockGroup] = (weightSums.opening[item.stockGroup] || 0) + item.netWeight;
         }
   
         if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
           counts.inward[item.stockGroup] = (counts.inward[item.stockGroup] || 0) + 1;
+          weightSums.inward[item.stockGroup] = (weightSums.inward[item.stockGroup] || 0) + item.netWeight;
         }
   
         if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
           counts.outward[item.stockGroup] = (counts.outward[item.stockGroup] || 0) + 1;
+          weightSums.outward[item.stockGroup] = (weightSums.outward[item.stockGroup] || 0) + item.netWeight;
         }
+        
         if (formattedOutTime > formattedToDate) {
           counts.closing[item.stockGroup] = (counts.closing[item.stockGroup] || 0) + 1;
+          weightSums.closing[item.stockGroup] = (weightSums.closing[item.stockGroup] || 0) + item.netWeight;
         }
       });
     });
@@ -211,15 +287,24 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCountsGroup(counts.inward);
     setOutwardCountsGroup(counts.outward);
     setClosingCountsGroup(counts.closing);
+    setWeightsGroup(weightSums);
   }, [groupFilter, FromDate, ToDate]);
+
   const filterDataByQuery = (data, query, fields) => {
     if (!query) return data;
     const lowerCaseQuery = query.toLowerCase();
     return data.filter(item => fields.some(field => item[field]?.toLowerCase().includes(lowerCaseQuery)));
   };
 
-  useEffect(() => {
+ useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -234,17 +319,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
       if (formattedInTime < formattedFromDate) {
         counts.opening[voucher.party] = (counts.opening[voucher.party] || 0) + 1;
+        weightSums.opening[voucher.party] = (weightSums.opening[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
         counts.inward[voucher.party] = (counts.inward[voucher.party] || 0) + 1;
+        weightSums.inward[voucher.party] = (weightSums.inward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
         counts.outward[voucher.party] = (counts.outward[voucher.party] || 0) + 1;
+        weightSums.outward[voucher.party] = (weightSums.outward[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
+
       if (formattedOutTime > formattedToDate) {
         counts.closing[voucher.party] = (counts.closing[voucher.party] || 0) + 1;
+        weightSums.closing[voucher.party] = (weightSums.closing[voucher.party] || 0) + voucher.gateWeightRecord.netWeight;
       }
     });
 
@@ -252,10 +342,19 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCounts(counts.inward);
     setOutwardCounts(counts.outward);
     setClosingCounts(counts.closing);
+    setWeights(weightSums);
   }, [partyFilter, FromDate, ToDate]);
+
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -269,19 +368,24 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
         const formattedFromDate = formatDate(FromDate);
         const formattedToDate = formatDate(ToDate);
 
-       if (formattedInTime < formattedFromDate) {
+        if (formattedInTime < formattedFromDate) {
           counts.opening[item.item] = (counts.opening[item.item] || 0) + 1;
+          weightSums.opening[item.item] = (weightSums.opening[item.item] || 0) + voucher.gateWeightRecord.netWeight;
         }
   
         if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
           counts.inward[item.item] = (counts.inward[item.item] || 0) + 1;
+          weightSums.inward[item.item] = (weightSums.inward[item.item] || 0) + voucher.gateWeightRecord.netWeight;
         }
   
         if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
           counts.outward[item.item] = (counts.outward[item.item] || 0) + 1;
+          weightSums.outward[item.item] = (weightSums.outward[item.item] || 0) + voucher.gateWeightRecord.netWeight;
         }
+        
         if (formattedOutTime > formattedToDate) {
           counts.closing[item.item] = (counts.closing[item.item] || 0) + 1;
+          weightSums.closing[item.item] = (weightSums.closing[item.item] || 0) + voucher.gateWeightRecord.netWeight;
         }
       });
     });
@@ -290,10 +394,18 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCountsItem(counts.inward);
     setOutwardCountsItem(counts.outward);
     setClosingCountsItem(counts.closing);
+    setWeightsItem(weightSums);
   }, [itemFilter, FromDate, ToDate]);
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -308,17 +420,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
       if (formattedInTime < formattedFromDate) {
         counts.opening[voucher.broker] = (counts.opening[voucher.broker] || 0) + 1;
+        weightSums.opening[voucher.broker] = (weightSums.opening[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
         counts.inward[voucher.broker] = (counts.inward[voucher.broker] || 0) + 1;
+        weightSums.inward[voucher.broker] = (weightSums.inward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
 
       if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
         counts.outward[voucher.broker] = (counts.outward[voucher.broker] || 0) + 1;
+        weightSums.outward[voucher.broker] = (weightSums.outward[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
+
       if (formattedOutTime > formattedToDate) {
         counts.closing[voucher.broker] = (counts.closing[voucher.broker] || 0) + 1;
+        weightSums.closing[voucher.broker] = (weightSums.closing[voucher.broker] || 0) + voucher.gateWeightRecord.netWeight;
       }
     });
 
@@ -326,10 +443,18 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCountsBroker(counts.inward);
     setOutwardCountsBroker(counts.outward);
     setClosingCountsBroker(counts.closing);
+    setWeightsBroker(weightSums);
   }, [brokerFilter, FromDate, ToDate]);
 
   useEffect(() => {
     const counts = {
+      opening: {},
+      inward: {},
+      outward: {},
+      closing: {},
+    };
+
+    const weightSums = {
       opening: {},
       inward: {},
       outward: {},
@@ -342,19 +467,25 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
         const formattedOutTime = formatDate(voucher.gateWeightRecord.outTime);
         const formattedFromDate = formatDate(FromDate);
         const formattedToDate = formatDate(ToDate);
+
         if (formattedInTime < formattedFromDate) {
           counts.opening[item.stockGroup] = (counts.opening[item.stockGroup] || 0) + 1;
+          weightSums.opening[item.stockGroup] = (weightSums.opening[item.stockGroup] || 0) + voucher.gateWeightRecord.netWeight;
         }
   
         if (formattedInTime >= formattedFromDate && formattedInTime <= formattedToDate) {
           counts.inward[item.stockGroup] = (counts.inward[item.stockGroup] || 0) + 1;
+          weightSums.inward[item.stockGroup] = (weightSums.inward[item.stockGroup] || 0) + voucher.gateWeightRecord.netWeight;
         }
   
         if (formattedOutTime >= formattedFromDate && formattedOutTime <= formattedToDate) {
           counts.outward[item.stockGroup] = (counts.outward[item.stockGroup] || 0) + 1;
+          weightSums.outward[item.stockGroup] = (weightSums.outward[item.stockGroup] || 0) + voucher.gateWeightRecord.netWeight;
         }
+        
         if (formattedOutTime > formattedToDate) {
           counts.closing[item.stockGroup] = (counts.closing[item.stockGroup] || 0) + 1;
+          weightSums.closing[item.stockGroup] = (weightSums.closing[item.stockGroup] || 0) + voucher.gateWeightRecord.netWeight;
         }
       });
     });
@@ -363,6 +494,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     setInwardCountsGroup(counts.inward);
     setOutwardCountsGroup(counts.outward);
     setClosingCountsGroup(counts.closing);
+    setWeightsGroup(weightSums);
   }, [groupFilter, FromDate, ToDate]);
 
 
@@ -481,11 +613,11 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
               <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
                 <CardBody style={{ paddingTop: "0px" }}>
                   <div className="table-responsive table-card">
-                    <table className="table table-nowrap align-middle table-sm mb-0">
+                    <table className="table table-sm mb-0">
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Party Name</th>
-                          <th scope="col" style={{ textAlign: 'center' }}>Total</th>
+                          <th scope="col" style={{ textAlign: 'right' }}>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -502,24 +634,27 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                     )}
                                   </div>
                                   <div className="flex-grow-1">
-                                    <h5 style={{ fontSize: getFontSize() }}>
-                                      {voucher.party}
-                                    </h5>
+                                  <h5 style={{ fontSize: getFontSize() }}>
+        {voucher.party}
+        {closingCounts[voucher.party] > 0 && (
+          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+            {closingCounts[voucher.party]} Pending
+          </span>
+        )}
+      </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
                                     </p>
                                   </div>
                                 </div>
                               </td>
-                              <td className="fw-medium" style={{ textAlign: 'center' }}>
-                                  {(
-                                    (openingCounts[voucher.party] || 0) +
-                                    (inwardCounts[voucher.party] || 0) +
-                                    (outwardCounts[voucher.party] || 0) +
-                                    (closingCounts[voucher.party] || 0)
-                                  ).toLocaleString()}
-                                  | {netWeights[voucher.party]?.toFixed(2) || 0}
-                                </td>
+                              <td className="fw-medium" style={{ textAlign: 'right' }}>
+                                {(netWeights[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
+                                {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |
+                                {(
+                                  (closingCounts[voucher.party] || 0)
+                                ).toLocaleString()}
+                              </td>
                             </tr>
                             {expandedRows.includes(voucher.party) && (
                               <>
@@ -527,22 +662,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                 <td>
                                   Opening
                                 </td>
-                                <td  style={{ textAlign: 'center' }}>{openingCounts[voucher.party] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weights.opening[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{openingCounts[voucher.party] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>In</td>
-                                <td  style={{ textAlign: 'center' }}>{inwardCounts[voucher.party] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weights.inward[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{inwardCounts[voucher.party] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Out</td>
-                                <td  style={{ textAlign: 'center' }}>{outwardCounts[voucher.party] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weights.outward[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{outwardCounts[voucher.party] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Closing</td>
-                                <td  style={{ textAlign: 'center' }}>{closingCounts[voucher.party] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weights.closing[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{closingCounts[voucher.party] || 0}
                                 </td>
                               </tr>
                               </>
@@ -552,8 +687,16 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       </tbody>
                       <tfoot>
                         <tr className="border-top border-top-dashed">
-                          <th scope="row">Total Entries:(As per all Parties)</th>
-                          <th style={{ textAlign: 'center' }}>{(partyTotals.opening + partyTotals.inward + partyTotals.outward + partyTotals.closing).toFixed(2)} | {Object.values(netWeights).reduce((acc, weight) => acc + weight, 0).toFixed(2)}</th>
+                          <th scope="row">Total Entries: (As per all Parties)</th>
+                          <th style={{ textAlign: 'right' }}>
+                            {Object.values(netWeights).reduce((acc, weight) => acc + weight, 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            {uniqueParties.length && uniqueParties[0].items.length ? ` ${uniqueParties[0].items[0].unit}` : ''} | 
+                            {Math.round(
+                              partyTotals.opening +
+                              partyTotals.inward +
+                              partyTotals.outward +
+                              partyTotals.closing
+                            ).toLocaleString()}</th>
                         </tr>
                       </tfoot>
                     </table>
@@ -574,7 +717,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Item Name</th>
-                          <th scope="col" style={{ textAlign: 'center' }}>Total</th>
+                          <th scope="col" style={{ textAlign: 'right' }}>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -600,14 +743,12 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   </div>
                                 </div>
                               </td>
-                              <td className="fw-medium" style={{ textAlign: 'center' }}>
+                              <td className="fw-medium" style={{ textAlign: 'right' }}>
+                              {netWeightsItem[item.item]?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
+                              {item.unit && ` ${item.unit}`} | 
                                   {(
-                                    (openingCountsItem[item.item] || 0) +
-                                    (inwardCountsItem[item.item] || 0) +
-                                    (outwardCountsItem[item.item] || 0) +
-                                    (closingCountsItem[item.item] || 0)
+                                   (closingCountsItem[item.item] || 0)
                                   ).toLocaleString()}
-                                  | {netWeightsItem[item.item]?.toFixed(2) || 0}
                                 </td>
                             </tr>
                             {expandedRows.includes(item.item) && (
@@ -616,22 +757,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                 <td>
                                   Opening
                                 </td>
-                                <td  style={{ textAlign: 'center' }}>{openingCountsItem[item.item] || 0}
+                                <td  style={{ textAlign: 'right' }}>  {(weightsItem.opening[item.item] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {openingCountsItem[item.item] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>In</td>
-                                <td  style={{ textAlign: 'center' }}>{inwardCountsItem[item.item] || 0}
+                                <td  style={{ textAlign: 'right' }}>  {(weightsItem.inward[item.item] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {item.unit && ` ${item.unit}`} | {inwardCountsItem[item.item] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Out</td>
-                                <td  style={{ textAlign: 'center' }}>{outwardCountsItem[item.item] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsItem.outward[item.item] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {outwardCountsItem[item.item] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Closing</td>
-                                <td  style={{ textAlign: 'center' }}>{closingCountsItem[item.item] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsItem.closing[item.item] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {closingCountsItem[item.item] || 0}
                                 </td>
                               </tr>
                               </>
@@ -640,9 +781,13 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                         ))}
                       </tbody>
                       <tfoot>
-                                                <tr className="border-top border-top-dashed">
+                      <tr className="border-top border-top-dashed">
                           <th scope="row">Total Entries:(As per all Items)</th>
-                          <th style={{ textAlign: 'center' }}>{(itemTotals.opening + itemTotals.inward + itemTotals.outward + itemTotals.closing).toFixed(2)} | {Object.values(netWeightsItem).reduce((acc, weight) => acc + weight, 0).toFixed(2)}</th>
+                          <th style={{ textAlign: 'right' }}>
+                          {Object.values(netWeightsItem).reduce((acc, weight) => acc + weight, 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          {uniqueItems.length && uniqueItems[0].unit ? ` ${uniqueItems[0].unit}` : ''}
+                            |  {Math.round(itemTotals.opening + itemTotals.inward + itemTotals.outward + itemTotals.closing).toLocaleString()}
+                          </th>
                         </tr>
                       </tfoot>
                     </table>
@@ -663,7 +808,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Broker Name</th>
-                          <th scope="col" style={{ textAlign: 'center' }}>Total</th>
+                          <th scope="col" style={{ textAlign: 'right' }}>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -689,14 +834,12 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   </div>
                                 </div>
                               </td>
-                              <td className="fw-medium" style={{ textAlign: 'center' }}>
+                              <td className="fw-medium" style={{ textAlign: 'right' }}>
+                              {(netWeightsBroker[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
+                                {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |
                                   {(
-                                    (openingCountsBroker[voucher.broker] || 0) +
-                                    (inwardCountsBroker[voucher.broker] || 0) +
-                                    (outwardCountsBroker[voucher.broker] || 0) +
                                     (closingCountsBroker[voucher.broker] || 0)
                                   ).toLocaleString()}
-                                  | {netWeightsBroker[voucher.broker]?.toFixed(2) || 0}
                                 </td>
                             </tr>
                             {expandedRows.includes(voucher.broker) && (
@@ -705,22 +848,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                 <td>
                                   Opening
                                 </td>
-                                <td  style={{ textAlign: 'center' }}>{openingCountsBroker[voucher.broker] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsBroker.opening[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{openingCountsBroker[voucher.broker] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>In</td>
-                                <td  style={{ textAlign: 'center' }}>{inwardCountsBroker[voucher.broker] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsBroker.inward[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{inwardCountsBroker[voucher.broker] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Out</td>
-                                <td  style={{ textAlign: 'center' }}>{outwardCountsBroker[voucher.broker] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsBroker.outward[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{outwardCountsBroker[voucher.broker] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Closing</td>
-                                <td  style={{ textAlign: 'center' }}>{closingCountsBroker[voucher.broker] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsBroker.closing[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |{closingCountsBroker[voucher.broker] || 0}
                                 </td>
                               </tr>
                               </>
@@ -729,9 +872,17 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                         ))}
                       </tbody>
                       <tfoot>
-                        <tr className="border-top border-top-dashed">
-                          <th scope="row">Total Entries:(As per all Brokers)</th>
-                          <th style={{ textAlign: 'center' }}>{(brokerTotals.opening + brokerTotals.inward + brokerTotals.outward + brokerTotals.closing).toFixed(2)} | {Object.values(netWeightsBroker).reduce((acc, weight) => acc + weight, 0).toFixed(2)}</th>
+                      <tr className="border-top border-top-dashed">
+                          <th scope="row">Total Entries: (As per all Brokers)</th>
+                          <th style={{ textAlign: 'right' }}>
+                            {Object.values(netWeightsBroker).reduce((acc, weight) => acc + weight, 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            {uniqueBrokers.length && uniqueBrokers[0].items.length ? ` ${uniqueBrokers[0].items[0].unit}` : ''} | 
+                            {Math.round(
+                                brokerTotals.opening +
+                                brokerTotals.inward +
+                                brokerTotals.outward +
+                                brokerTotals.closing
+                              ).toLocaleString()}                          </th>
                         </tr>
                       </tfoot>
                     </table>
@@ -752,7 +903,7 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <thead className="table-light text-muted">
                         <tr>
                           <th scope="col">Group Name</th>
-                          <th scope="col" style={{ textAlign: 'center' }}>Total</th>
+                          <th scope="col" style={{ textAlign: 'right' }}>Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -778,14 +929,12 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   </div>
                                 </div>
                               </td>
-                              <td className="fw-medium" style={{ textAlign: 'center' }}>
+                              <td className="fw-medium" style={{ textAlign: 'right' }}>
+                              {netWeightsGroup[item.stockGroup]?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
+                              {item.unit && ` ${item.unit}`} | 
                                   {(
-                                    (openingCountsGroup[item.stockGroup] || 0) +
-                                    (inwardCountsGroup[item.stockGroup] || 0) +
-                                    (outwardCountsGroup[item.stockGroup] || 0) +
-                                    (closingCountsGroup[item.stockGroup] || 0)
+                                   (closingCountsGroup[item.stockGroup] || 0)
                                   ).toLocaleString()}
-                                  | {netWeightsGroup[item.stockGroup]?.toFixed(2) || 0}
                                 </td>
 
                             </tr>
@@ -795,22 +944,22 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                 <td>
                                   Opening
                                 </td>
-                                <td  style={{ textAlign: 'center' }}>{openingCountsGroup[item.stockGroup] || 0}
+                                <td  style={{ textAlign: 'right' }}>  {(weightsGroup.opening[item.stockGroup] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {openingCountsGroup[item.stockGroup] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>In</td>
-                                <td  style={{ textAlign: 'center' }}>{inwardCountsGroup[item.stockGroup] || 0}
+                                <td  style={{ textAlign: 'right' }}>  {(weightsGroup.inward[item.stockGroup] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {item.unit && ` ${item.unit}`} | {inwardCountsGroup[item.stockGroup] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Out</td>
-                                <td  style={{ textAlign: 'center' }}>{outwardCountsGroup[item.stockGroup] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsGroup.outward[item.stockGroup] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {outwardCountsGroup[item.stockGroup] || 0}
                                 </td>
                               </tr>
                               <tr>
                                 <td>Closing</td>
-                                <td  style={{ textAlign: 'center' }}>{closingCountsGroup[item.stockGroup] || 0}
+                                <td  style={{ textAlign: 'right' }}>{(weightsGroup.closing[item.stockGroup] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}  {item.unit && ` ${item.unit}`} | {closingCountsGroup[item.stockGroup] || 0}
                                 </td>
                               </tr>
                               </>
@@ -819,9 +968,13 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                         ))}
                       </tbody>
                       <tfoot>
-                                                <tr className="border-top border-top-dashed">
+                      <tr className="border-top border-top-dashed">
                           <th scope="row">Total Entries:(As per all Groups)</th>
-                          <th style={{ textAlign: 'center' }}>{(groupsTotals.opening + groupsTotals.inward + groupsTotals.outward + groupsTotals.closing).toFixed(2)} | {Object.values(netWeightsGroup).reduce((acc, weight) => acc + weight, 0).toFixed(2)}</th>
+                          <th style={{ textAlign: 'right' }}>
+                          {Object.values(netWeightsGroup).reduce((acc, weight) => acc + weight, 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          {uniqueGroups.length && uniqueGroups[0].unit ? ` ${uniqueGroups[0].unit}` : ''}
+                            |  {Math.round(groupsTotals.opening + groupsTotals.inward + groupsTotals.outward + groupsTotals.closing).toLocaleString()}
+                          </th>
                         </tr>
                       </tfoot>
                     </table>

@@ -83,7 +83,7 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
       } else if (selectedTab === "In") {
         return gateInTime >= fromDate && gateInTime <= toDate;
       } else if (selectedTab === "Out") {
-        return gateOutTime >= fromDate && gateOutTime <= toDate
+        return gateOutTime >= fromDate && gateOutTime <= toDate;
       } else if (selectedTab === "Closing") {
         return gateOutTime > toDate;
       } else {
@@ -306,10 +306,10 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
                                         <td colSpan="2" className="accordion-body ms-2 ps-5 pt-0">
                                           <div>
                                             <h6 className="mb-2">
-                                              Gross Weight: {voucher.gateWeightRecord.grossWeight} {voucher.items[0].unit}
+                                              Gross Weight: {voucher.gateWeightRecord.grossWeight} {voucher.items.unit}
                                             </h6>
                                             <h6 className="mb-1">
-                                              Tare Weight: {voucher.gateWeightRecord.tareWeight} {voucher.items[0].unit}
+                                              Tare Weight: {voucher.gateWeightRecord.tareWeight} {voucher.items.unit}
                                             </h6>
                                           </div>
                                         </td>
