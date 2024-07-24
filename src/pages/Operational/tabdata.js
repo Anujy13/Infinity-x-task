@@ -41,6 +41,17 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
     return moment(dateTime).format("ddd, DD MMM YYYY - hh:mmA");
   };
 
+  const formatDate2 = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Ensure month is always 2 digits
+    const day = d.getDate().toString().padStart(2, '0'); // Ensure day is always 2 digits
+    const hours = d.getHours().toString().padStart(2, '0'); // Ensure hours is always 2 digits
+    const minutes = d.getMinutes().toString().padStart(2, '0'); // Ensure minutes is always 2 digits
+    const seconds = d.getSeconds().toString().padStart(2, '0'); // Ensure seconds is always 2 digits
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   const formatDate = dateString => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" });
@@ -73,10 +84,10 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
       return vouchers; // Return all vouchers for the 'All' tab
     }
     return vouchers.filter(voucher => {
-      const gateInTime = new Date(voucher.gateWeightRecord.inTime);
-      const gateOutTime = new Date(voucher.gateWeightRecord.outTime);
-      const fromDate = new Date(FromDate);
-      const toDate = new Date(ToDate);
+      const gateInTime = formatDate2(voucher.gateWeightRecord.inTime);
+      const gateOutTime = formatDate2(voucher.gateWeightRecord.outTime);
+      const fromDate = formatDate2(FromDate);
+      const toDate = formatDate2(ToDate);
 
       if (selectedTab === "Opening") {
         return gateInTime < fromDate;
