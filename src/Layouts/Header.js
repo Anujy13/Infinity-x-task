@@ -20,7 +20,6 @@ import LightDark from '../Components/Common/LightDark';
 import { changeSidebarVisibility } from '../slices/thunks';
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from 'reselect';
-import {Input} from 'reactstrap';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) => {
     const dispatch = useDispatch();
@@ -69,8 +68,19 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) =>
             document.body.classList.contains('twocolumn-panel') ? document.body.classList.remove('twocolumn-panel') : document.body.classList.add('twocolumn-panel');
         }
     };
-    const [value, setValue] = useState('');
-    const onChangeData = (value) => {
+
+    
+      useEffect(() => {
+        const searchInput = document.getElementById('search-options');
+        searchInput.addEventListener('input', (e) => onChangeData(e.target.value));
+    
+        return () => {
+          searchInput.removeEventListener('input', (e) => onChangeData(e.target.value));
+        };
+      }, []);
+      const [value, setValue] = useState('');
+
+      const onChangeData = (value) => {
         setValue(value);
         if (onSearch) onSearch(value); // pass the value to the parent
       };
@@ -83,7 +93,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) =>
           searchInput.removeEventListener('input', (e) => onChangeData(e.target.value));
         };
       }, []);
-
+    
       
     return (
         <React.Fragment>
@@ -138,20 +148,27 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) =>
                                     <Form className="p-3">
                                         <div className="form-group m-0">
                                             <div className="input-group">
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Search..."
-                                                id="search-options"
-                                                value={value}
-                                                onChange={e => onChangeData(e.target.value)}
-                                                />
+                                                <input type="text" className="form-control" placeholder="Search ..."
+                                                    aria-label="Recipient's username" 
+                                                    id="search-options"
+                                                    value={value}
+                                                    onChange={e => onChangeData(e.target.value)}/>
+                                                {/* <button className="btn btn-primary"><i
+                                                    className="mdi mdi-magnify"></i></button> */}
                                             </div>
                                         </div>
                                     </Form>
                                 </DropdownMenu>
                             </Dropdown>
 
+                            {/* LanguageDropdown */}
+                            {/* <LanguageDropdown /> */}
+
+                            {/* WebAppsDropdown */}
+                            {/* <WebAppsDropdown /> */}
+
+                            {/* MyCartDropdwon */}
+                            {/* <MyCartDropdown /> */}
 
                             {/* FullScreenDropdown */}
                             <FullScreenDropdown />

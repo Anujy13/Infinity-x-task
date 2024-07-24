@@ -422,7 +422,7 @@ const Filters = () => {
       <SearchOption onSearch={handleSearch} />
    </div>
    {/* Include SearchOption but hide it using CSS */}
-<div className="d-none">
+<div >
       <Header onSearch={handleSearch} />
    </div> 
    
