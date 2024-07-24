@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown, DropdownMenu, DropdownToggle, Form } from 'reactstrap';
 
@@ -20,8 +20,9 @@ import LightDark from '../Components/Common/LightDark';
 import { changeSidebarVisibility } from '../slices/thunks';
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from 'reselect';
+import {Input} from 'reactstrap';
 
-const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
+const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) => {
     const dispatch = useDispatch();
 
     const selectDashboardData = createSelector(
@@ -68,7 +69,22 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
             document.body.classList.contains('twocolumn-panel') ? document.body.classList.remove('twocolumn-panel') : document.body.classList.add('twocolumn-panel');
         }
     };
+    const [value, setValue] = useState('');
+    const onChangeData = (value) => {
+        setValue(value);
+        if (onSearch) onSearch(value); // pass the value to the parent
+      };
+    
+      useEffect(() => {
+        const searchInput = document.getElementById('search-options');
+        searchInput.addEventListener('input', (e) => onChangeData(e.target.value));
+    
+        return () => {
+          searchInput.removeEventListener('input', (e) => onChangeData(e.target.value));
+        };
+      }, []);
 
+      
     return (
         <React.Fragment>
             <header id="page-topbar" className={headerClass}>
@@ -109,7 +125,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                             </button>
 
 
-                            <SearchOption />
+                            <SearchOption onSearch={onSearch}/>
                         </div>
 
                         <div className="d-flex align-items-center">
@@ -122,24 +138,20 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                     <Form className="p-3">
                                         <div className="form-group m-0">
                                             <div className="input-group">
-                                                <input type="text" className="form-control" placeholder="Search ..."
-                                                    aria-label="Recipient's username" />
-                                                <button className="btn btn-primary" type="submit"><i
-                                                    className="mdi mdi-magnify"></i></button>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Search..."
+                                                id="search-options"
+                                                value={value}
+                                                onChange={e => onChangeData(e.target.value)}
+                                                />
                                             </div>
                                         </div>
                                     </Form>
                                 </DropdownMenu>
                             </Dropdown>
 
-                            {/* LanguageDropdown */}
-                            <LanguageDropdown />
-
-                            {/* WebAppsDropdown */}
-                            <WebAppsDropdown />
-
-                            {/* MyCartDropdwon */}
-                            <MyCartDropdown />
 
                             {/* FullScreenDropdown */}
                             <FullScreenDropdown />

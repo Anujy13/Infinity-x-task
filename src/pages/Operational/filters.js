@@ -6,11 +6,14 @@ import BreadCrumb from '../../Components/Common/BreadCrumb';
 import Flatpickr from 'react-flatpickr';
 import Statistics from './statistics';
 import TabData from './tabdata';
-import Header from './header';
+import Header2 from './header';
 import HeaderTabData from "./header_tab_data";
 import { fetchFinishedProductsData } from "../../slices/thunks";
 import { setDateRange } from "../../slices/finishedProducts/reducer";
 import { format, parse } from 'date-fns';
+import { useCallback } from "react";
+import SearchOption from "../../Components/Common/SearchOption";
+import Header from "../../Layouts/Header";
 
 const PartyFilter = ({
   uniquePartyNames,
@@ -103,6 +106,7 @@ const Filters = () => {
   const [isOpen4, setIsOpen4] = useState(false);
   const [isAnyAccordionOpen, setIsAnyAccordionOpen] = useState(false);
   const [selectedDates, setSelectedDates] = useState([null, null]);
+  
 
   const [partyFilter, setPartyFilter] = useState([]);
   const [itemFilter, setItemFilter] = useState([]);
@@ -111,6 +115,13 @@ const Filters = () => {
   const [combinedFilter, setCombinedFilter] = useState([]);
   const [isLargeOrMedium, setIsLargeOrMedium] = useState(window.innerWidth > 767);
   const [isSmallDevice, setIsSmallDevice] = useState(window.innerWidth <= 560);
+  const [tabCounts, setTabCounts] = useState({
+    All: 0,
+    Opening: 0,
+    In: 0,
+    Out: 0,
+    Closing: 0,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -158,7 +169,7 @@ const Filters = () => {
 
   const toggleFilter = () => setFilterOpen(!filterOpen);
 
-  const headerContent = <Header />;
+  const headerContent = <Header2 />;
 
   const uniquePartyNames = Array.isArray(user) ? Array.from(new Set(user.map(voucher => voucher.party))) : [];
   const allItems = Array.isArray(user) ? user.flatMap(voucher => voucher.items) : [];
@@ -238,7 +249,7 @@ const Filters = () => {
     setBrokerFilter(filteredVouchers);
     setGroupFilter(filteredVouchers);
   };
-  
+
   const clearAll = () => {
     setCheckedState1(Array(uniquePartyNames.length).fill(false));
     setCheckedState2(Array(uniqueItems.length).fill(false));
@@ -295,104 +306,148 @@ const Filters = () => {
     item?.stockGroup.toLowerCase().includes(searchQuery4.toLowerCase())
   );
 
-  const handleSelectTab = (tab) => {
-    setActiveTab(tab);
+  
+  const handleUpdateCounts = (counts) => {
+    setTabCounts(counts);
   };
+
 
   const handleTabSelection = (tab) => {
     setSelectedTab(tab);
   };
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const updateIsMobile = useCallback(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
+  useEffect(() => {
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, [updateIsMobile]);
+
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+  const [isLaptop1024, setIsLaptop1024] = useState(window.innerWidth >= 1024 && window.innerWidth < 1280);
+  const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
+  const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
+  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+      setIsLaptop1024(window.innerWidth >= 1024 && window.innerWidth < 1280);
+      setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
+      setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
+      setIs4KDesktop(window.innerWidth >= 1600);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const containerStyle = activeTab === 'statistics' && isMobile
+  ? { paddingLeft: '0px', paddingRight: '0px', width: '110%' ,marginLeft:'-1rem'}
+  : is4KDesktop
+  ? { marginLeft: '0rem' } // Adjust the margin left for 4K desktop here
+  : {}; // Default empty style if not 'statistics' or not mobile or not 4K
+
+  const cardHeaderStyle = {
+    marginTop: '1rem',
+    width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
+    marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
+  };
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (query) => {
+    setSearchQuery(query); // update search query
+  };
+
   return (
     <div>
-      <BreadCrumb leftContent={headerContent}>
-        {location.pathname !== '/operational' && headerContent}
-        <div className="mt-3 mt-lg-0 d-flex justify-content-end">
-          <i
-            className="ri-filter-3-line"
-            style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
-            onClick={toggleFilter}
-          ></i>
-          <form action="#">
-            <Row className="g-3 mb-0 align-items-center">
-              <div className="col-sm-auto">
-                <div className="input-group" style={{ flexWrap: "nowrap" }}>
-                  <Flatpickr
-                    className="form-control border-0 dash-filter-picker shadow"
-                    options={{ mode: "range", dateFormat: "d M, Y", defaultDate: ["01 Apr 2024", "01 Apr 2025"] }}
-                    onChange={(dates) => handleDateChange(dates)}
-                  />
-                  <div className="input-group-text bg-primary border-primary text-white">
-                    <i className="ri-calendar-2-line"></i>
-                  </div>
+           <BreadCrumb leftContent={headerContent}>
+            {location.pathname !== '/operational' && headerContent}
+            <div className="mt-3 mt-lg-0 d-flex justify-content-end">
+                <i
+                    className="ri-filter-3-line"
+                    style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
+                    onClick={toggleFilter}
+                ></i>
+                <form action="#">
+                    <Row className="g-3 mb-0 align-items-center">
+                        <div className="col-sm-auto">
+                            <div className="input-group" style={{ flexWrap: "nowrap" }}>
+                                <Flatpickr
+                                    className="form-control border-0 dash-filter-picker shadow"
+                                    options={{ mode: "range", dateFormat: "d M, Y", defaultDate: ["01 Apr 2024", "01 Apr 2025"] }}
+                                    onChange={(dates) => handleDateChange(dates)}
+                                />
+                                <div className="input-group-text bg-primary border-primary text-white">
+                                    <i className="ri-calendar-2-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </Row>
+                </form>
+            </div>
+            <div className="card-header border-0" style={cardHeaderStyle}>
+                <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
+                    <div className="col">
+                        <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav flex-fill" style={{ width: '100%' }}>
+                            <li className="nav-item" style={{ flex: 1 }}>
+                                <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '100%', textAlign: 'center' }}>
+                                    Statistics
+                                </a>
+                            </li>
+                            <li className="nav-item" style={{ flex: 1 }}>
+                                <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '100%', textAlign: 'center' }}>
+                                    Vouchers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-              </div>
-            </Row>
-          </form>
-        </div>
-        {!isLargeOrMedium && (
-          <div className="card-header border-0" style={{ marginTop: '1rem' }}>
-            <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
-              <div className="col">
-                <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
-                  <li className="nav-item flex-grow-1">
-                    <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '100%', textAlign: 'center' }}>
-                      Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
-                    </a>
-                  </li>
-                  <li className="nav-item flex-grow-1">
-                    <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '100%', textAlign: 'center' }}>
-                      Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </div>
-          </div>
-        )}
-      </BreadCrumb>
-      {!isSmallDevice && (
-        <div className="card-header border-0">
-          <div className="row align-items-center" style={{ justifyContent: 'space-between' }}>
-            <div className="col">
-              <ul role="tablist" className="nav-tabs-custom card-header-tabs border-bottom-0 nav" style={{ width: '100%' }}>
-                <li className="nav-item flex-grow-1">
-                  <a href="#" className={`fw-semibold nav-link ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')} style={{ width: '107%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Statistics <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">12</span>
-                  </a>
-                </li>
-                <li className="nav-item flex-grow-1">
-                  <a href="#" className={`fw-semibold nav-link ${activeTab === 'vouchers' ? 'active' : ''}`} onClick={() => setActiveTab('vouchers')} style={{ width: '115%', textAlign: 'center', backgroundColor: '#fff', marginLeft: '-2rem', marginTop: '-1rem' }}>
-                    Vouchers <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">5</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <Container>
-        {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} />}
-        <Col xl={8}>
-          {Array.isArray(user) ? (
-            activeTab === 'statistics' ? (
-              <Statistics
-                partyFilter={partyFilter}
-                itemFilter={itemFilter}
-                brokerFilter={brokerFilter}
-                groupFilter={groupFilter}
-                selectedDates={selectedDates}
-                user={user}
-              />
-            ) : (
-              <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates} />
-            )
+        </BreadCrumb>
+        
+{/* Include SearchOption but hide it using CSS */}
+<div className="d-none">
+      <SearchOption onSearch={handleSearch} />
+   </div>
+   {/* Include SearchOption but hide it using CSS */}
+<div className="d-none">
+      <Header onSearch={handleSearch} />
+   </div> 
+   
+   <Container style={containerStyle}>
+      {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} tabCounts={tabCounts} />}
+      <Col xl={8}>
+        {Array.isArray(user) ? (
+          activeTab === 'statistics' ? (
+            <Statistics
+              partyFilter={partyFilter}
+              itemFilter={itemFilter}
+              brokerFilter={brokerFilter}
+              groupFilter={groupFilter}
+              selectedDates={selectedDates}
+              user={user}
+              searchQuery={searchQuery} // pass the search query to Statistics
+            />
           ) : (
-            <p>No finished products data available.</p>
-          )}
-        </Col>
-      </Container>
+            <TabData vouchers={combinedFilter} selectedTab={selectedTab} selectedDates={selectedDates}   onUpdateCounts={handleUpdateCounts}  searchQuery={searchQuery}/>
+          )
+        ) : (
+          <p>No finished products data available.</p>
+        )}
+      </Col>
+    </Container>
             {filterOpen && (
                 <div className={`sidebar-filter ${isAnyAccordionOpen ? 'open-height' : 'closed-height'}`}>
                     <div className="card">
