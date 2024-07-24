@@ -8,10 +8,11 @@ const formatDate = (date) => {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Ensure month is always 2 digits
-  const hours = d.getHours();
-  const minutes = d.getMinutes();
-  const seconds = d.getSeconds();
-  return `${year}-${month} ${hours}:${minutes}:${seconds}`;
+  const day = d.getDate().toString().padStart(2, '0'); // Ensure day is always 2 digits
+  const hours = d.getHours().toString().padStart(2, '0'); // Ensure hours is always 2 digits
+  const minutes = d.getMinutes().toString().padStart(2, '0'); // Ensure minutes is always 2 digits
+  const seconds = d.getSeconds().toString().padStart(2, '0'); // Ensure seconds is always 2 digits
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
 const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, selectedDates, user,searchQuery  }) => {
