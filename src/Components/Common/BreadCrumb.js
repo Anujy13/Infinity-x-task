@@ -1,15 +1,30 @@
 import React from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Col, Row } from 'reactstrap';
+import { useCallback } from 'react';
+import { useEffect } from 'react';
 
 const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
     const location = useLocation();
-
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+    const updateIsMobile = useCallback(() => {
+        setIsMobile(window.innerWidth <= 500);
+      }, []);
+    
+      useEffect(() => {
+        updateIsMobile();
+        window.addEventListener('resize', updateIsMobile);
+    
+        return () => {
+          window.removeEventListener('resize', updateIsMobile);
+        };
+      }, [updateIsMobile]);
     return (
         <React.Fragment>
             <Row>
                 <Col xs={12}>
-                    <div className="page-title-box d-sm-flex align-items-center justify-content-between" style={{paddingLeft:'4px',paddingRight:'4px'}}>
+                    <div className="page-title-box d-sm-flex align-items-center justify-content-between" style={{paddingLeft:'4px',paddingRight:'4px',width:isMobile?'115%':''}}>
                         {leftContent && location.pathname === '/operational' && (
                             <div className="mr-3">{leftContent}</div>
                         )}

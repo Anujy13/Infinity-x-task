@@ -316,10 +316,12 @@ const Filters = () => {
     setSelectedTab(tab);
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const [is320, setIs320] = useState(window.innerWidth >= 320 && window.innerWidth <= 360);
 
   const updateIsMobile = useCallback(() => {
     setIsMobile(window.innerWidth <= 768);
+    setIs320(window.innerWidth >= 320 && window.innerWidth <= 360);
   }, []);
 
   useEffect(() => {
@@ -377,10 +379,10 @@ const Filters = () => {
             <div className="mt-3 mt-lg-0 d-flex justify-content-end">
                 <i
                     className="ri-filter-3-line"
-                    style={{ marginTop: '0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
+                    style={{ marginTop: isMobile?'-3.5rem':'0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
                     onClick={toggleFilter}
                 ></i>
-                <form action="#">
+                <form action="#" style={{marginTop:isMobile?'-3.8rem':''}}>
                     <Row className="g-3 mb-0 align-items-center">
                         <div className="col-sm-auto">
                             <div className="input-group" style={{ flexWrap: "nowrap" }}>
