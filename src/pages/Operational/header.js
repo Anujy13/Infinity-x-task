@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ButtonGroup,
     UncontrolledDropdown,
@@ -29,12 +29,23 @@ const Header2 = () => {
         setSelectedOptions({ ...selectedOptions, [id]: checked });
     };
 
-    const renderContent = () => {
+    const renderSelectedOptions = () => {
         const selectedKeys = Object.keys(selectedOptions).filter(key => selectedOptions[key]);
+
         if (selectedKeys.length === 6) {
-            return "All";
+            return <span style={searchChoiceStyle}>All <a style={closeButtonStyle} onClick={() => handleCloseAll()}>×</a></span>;
         }
-        return selectedKeys.map(key => key.charAt(0).toUpperCase() + key.slice(1)).join(", ");
+
+        return (
+            <ul style={selectedOptionsContainerStyle}>
+                {selectedKeys.map((key, index) => (
+                    <li key={index} style={searchChoiceStyle}>
+                        <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                        <a style={closeButtonStyle} onClick={() => handleCloseOption(key)}>×</a>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     useEffect(() => {
@@ -48,17 +59,87 @@ const Header2 = () => {
         };
     }, []);
 
+    const handleCloseOption = (option) => {
+        setSelectedOptions(prevState => ({
+            ...prevState,
+            [option]: false
+        }));
+    };
+
+    const handleCloseAll = () => {
+        setSelectedOptions({
+            inward: false,
+            outward: false,
+            rawMaterials: false,
+            finishedProducts: false,
+            stores: false,
+            others: false
+        });
+    };
+
+    const chosenChoicesStyle = {
+        padding: '11px',
+        background: '#fff',
+        border: '1px solid #DDD',
+        fontSize: '14px',
+        height: 'auto',
+        lineHeight: '1.14285714',
+        borderRadius: '3px',
+        position: 'relative',
+        overflow: 'hidden',
+        margin: '0',
+        width: '100%',
+        backgroundColor: '#fff',
+        backgroundImage: 'linear-gradient(#eee 1%, #fff 15%)',
+        cursor: 'text'
+    };
+
+    const searchChoiceStyle = {
+        position: 'relative',
+        maxWidth: '100%',
+        backgroundColor: '#008BDC',
+        color: '#fff',
+        fontSize: '10px',
+        lineHeight: '1.1428571',
+        border: 'none',
+        borderRadius: '24px',
+        padding: '8px 24px 8px 12px',
+        margin: '0 8px 8px 0',
+        display: 'inline-flex',
+        alignItems: 'center',
+    };
+
+    const closeButtonStyle = {
+        position: 'absolute',
+        top: '50%',
+        right: '8px',
+        transform: 'translateY(-50%)',
+        fontSize: '12px',
+        color: '#fff',
+        cursor: 'pointer'
+    };
+
+    const selectedOptionsContainerStyle = {
+        padding: 0,
+        margin: 0,
+        listStyleType: 'none',
+        display: 'flex',
+        flexWrap: 'wrap',
+    };
+
     return (
-   <div className="d-flex align-items-center" style={isLargeScreen ? { marginTop: '-2.5rem' } : {}}>            <ButtonGroup className="me-3">
+        <div className="d-flex align-items-center" style={isLargeScreen ? { marginTop: '-2.5rem' } : {}}>
+            <ButtonGroup className="me-3">
                 <UncontrolledDropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                     <DropdownToggle tag="button" className="btn btn-primary">
-                        {renderContent()} <i className="mdi mdi-chevron-down"></i>
+                       <i className="mdi mdi-chevron-down"></i>
                     </DropdownToggle>
                     <DropdownMenu>
                         <div className="d-flex justify-content-end p-2">
                             <i className="ri-close-line" style={{ cursor: 'pointer' }} onClick={toggleDropdown}></i>
                         </div>
                         <DropdownItem>
+                            {renderSelectedOptions()}
                             <Col>
                                 <div>
                                     <div className="form-check mb-2">
@@ -70,7 +151,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="inward">
+                                        <Label className="form-check-label" htmlFor="inward">
                                             Inward
                                         </Label>
                                     </div>
@@ -83,7 +164,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="outward">
+                                        <Label className="form-check-label" htmlFor="outward">
                                             Outward
                                         </Label>
                                     </div>
@@ -97,7 +178,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="rawMaterials">
+                                        <Label className="form-check-label" htmlFor="rawMaterials">
                                             Raw Materials
                                         </Label>
                                     </div>
@@ -110,7 +191,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="finishedProducts">
+                                        <Label className="form-check-label" htmlFor="finishedProducts">
                                             Finished Products
                                         </Label>
                                     </div>
@@ -123,7 +204,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="stores">
+                                        <Label className="form-check-label" htmlFor="stores">
                                             Stores
                                         </Label>
                                     </div>
@@ -136,7 +217,7 @@ const Header2 = () => {
                                             onChange={handleCheckboxChange}
                                             onClick={(e) => e.stopPropagation()}
                                         />
-                                        <Label className="form-check-label" for="others">
+                                        <Label className="form-check-label" htmlFor="others">
                                             Others
                                         </Label>
                                     </div>
