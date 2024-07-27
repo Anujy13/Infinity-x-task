@@ -15,6 +15,8 @@ const formatDate = (date) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+const isMobile = window.innerWidth <= 767.98;
+
 const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, selectedDates, user,searchQuery  }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [openingCounts, setOpeningCounts] = useState({});
@@ -407,8 +409,8 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
     outward: outwardCountsGroup[item.stockGroup],
     closing: closingCountsGroup[item.stockGroup],
   })));
-  
-  
+  // Utility function to truncate text to a specific number of words
+
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0' }}>
       <Container fluid style={{ marginTop: '-4rem', paddingLeft: '0px', paddingRight: '0px' }}>
@@ -440,9 +442,20 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   </div>
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
-                                        {voucher.party}
-                                        {closingCounts[voucher.party] > 0 && (
-                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                  {isMobile && voucher.party.length > 10 ? `${voucher.party.slice(0, 10)}...` : voucher.party}                                        {closingCounts[voucher.party] > 0 && (
+                                          <span style={{
+                                            padding: '3px 8px',
+                                            paddingLeft:'2px',
+                                            marginLeft:'1rem',
+                                            gap: '4px',
+                                            borderRadius: '28px',
+                                            background: '#fff',
+                                            border: '1px solid #76abee',
+                                            fontSize: '10px',
+                                            fontWeight: '500',
+                                            lineHeight: '13px',
+                                            color: '#4383d6'
+                                          }}>
                                             {closingCounts[voucher.party]} Pending
                                           </span>
                                         )}
@@ -542,8 +555,20 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {item.item}
                                         {closingCountsItem[item.item] > 0 && (
-                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
-                                            {closingCountsItem[item.item]} Pending
+                                                    <span style={{
+                                                      padding: '3px 8px',
+                                                      paddingLeft:'2px',
+                                                      marginLeft:'1rem',
+                                                      gap: '4px',
+                                                      borderRadius: '28px',
+                                                      background: '#fff',
+                                                      border: '1px solid #76abee',
+                                                      fontSize: '10px',
+                                                      fontWeight: '500',
+                                                      lineHeight: '13px',
+                                                      color: '#4383d6'
+                                                    }}>                                            
+                                                    {closingCountsItem[item.item]} Pending
                                           </span>
                                         )}
                                       </h5>
@@ -638,7 +663,19 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {voucher.broker}
                                         {closingCountsBroker[voucher.broker] > 0 && (
-                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
+                                            <span style={{
+                                              padding: '3px 8px',
+                                              paddingLeft:'2px',
+                                              marginLeft:'1rem',
+                                              gap: '4px',
+                                              borderRadius: '28px',
+                                              background: '#fff',
+                                              border: '1px solid #76abee',
+                                              fontSize: '10px',
+                                              fontWeight: '500',
+                                              lineHeight: '13px',
+                                              color: '#4383d6'
+                                            }}>                                            
                                             {closingCountsBroker[voucher.broker]} Pending
                                           </span>
                                         )}
@@ -738,8 +775,20 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {item.stockGroup}
                                         {closingCountsGroup[item.stockGroup] > 0 && (
-                                          <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
-                                            {closingCountsGroup[item.stockGroup]} Pending
+                                              <span style={{
+                                                padding: '3px 8px',
+                                                paddingLeft:'2px',
+                                                marginLeft:'1rem',
+                                                gap: '4px',
+                                                borderRadius: '28px',
+                                                background: '#fff',
+                                                border: '1px solid #76abee',
+                                                fontSize: '10px',
+                                                fontWeight: '500',
+                                                lineHeight: '13px',
+                                                color: '#4383d6'
+                                              }}>                                            
+                                              {closingCountsGroup[item.stockGroup]} Pending
                                           </span>
                                         )}
                                       </h5>
