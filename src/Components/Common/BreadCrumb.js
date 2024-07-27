@@ -9,7 +9,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
         <React.Fragment>
             <Row>
                 <Col xs={12}>
-                    <div className="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <div className="page-title-box d-sm-flex align-items-center justify-content-between" style={{paddingLeft:'4px',paddingRight:'4px'}}>
                         {leftContent && location.pathname === '/operational' && (
                             <div className="mr-3">{leftContent}</div>
                         )}

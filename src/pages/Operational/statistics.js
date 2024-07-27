@@ -409,7 +409,6 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
   })));
   
   
-  
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0' }}>
       <Container fluid style={{ marginTop: '-4rem', paddingLeft: '0px', paddingRight: '0px' }}>

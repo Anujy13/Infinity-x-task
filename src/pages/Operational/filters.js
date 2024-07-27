@@ -422,9 +422,10 @@ const Filters = () => {
       <SearchOption onSearch={handleSearch} />
    </div>
    {/* Include SearchOption but hide it using CSS */}
-<div >
-      <Header onSearch={handleSearch} />
-   </div> 
+   <div className="d-block d-md-none">
+  <Header onSearch={handleSearch} />
+</div>
+
    
    <Container style={containerStyle}>
       {activeTab === 'vouchers' && <HeaderTabData onSelectTab={handleTabSelection} tabCounts={tabCounts} />}

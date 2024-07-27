@@ -23,6 +23,7 @@ import { createSelector } from 'reselect';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) => {
     const dispatch = useDispatch();
+    const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
 
     const selectDashboardData = createSelector(
         (state) => state.Layout,
@@ -137,7 +138,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass,onSearch }) =>
 
                             <SearchOption onSearch={onSearch}/>
                         </div>
-
+                        <h5 className="mb-0">{companyName}</h5>
                         <div className="d-flex align-items-center">
 
                             <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">

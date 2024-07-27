@@ -13,7 +13,6 @@ import {
 const Header2 = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-    const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 700);
 
     const [selectedOptions, setSelectedOptions] = useState({
@@ -147,7 +146,6 @@ const Header2 = () => {
                     </DropdownMenu>
                 </UncontrolledDropdown>
             </ButtonGroup>
-            <h5 className="mb-0">{companyName}</h5>
         </div>
     );
 };
