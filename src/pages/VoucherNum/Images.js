@@ -44,7 +44,7 @@ const VoucherImages = () => {
 
   // Rendering Swiper component if user2 exists and has elements
   return (
-    !errorimages ? (
+    !errorimages && user2 && user2.length > 0 ? (
       <Card>
         <CardHeader>
           <h5 className="card-title mb-0">
@@ -53,27 +53,23 @@ const VoucherImages = () => {
           </h5>
         </CardHeader>
         <CardBody>
-          {user2 && user2.length > 0 ? (
-            <Swiper
-              navigation
-              pagination={{ clickable: true }}
-              loop
-              autoplay={{ delay: 2500, disableOnInteraction: false }}
-              className="mySwiper swiper navigation-swiper rounded"
-            >
-              {user2.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={`data:image/png;base64,${image.imageBase64}`}
-                    alt={image.imageName}
-                    className="img-fluid"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          ) : (
-            <p>No captures in Camera</p>
-          )}
+          <Swiper
+            navigation
+            pagination={{ clickable: true }}
+            loop
+            autoplay={{ delay: 2500, disableOnInteraction: false }}
+            className="mySwiper swiper navigation-swiper rounded"
+          >
+            {user2.map((image, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={`data:image/png;base64,${image.imageBase64}`}
+                  alt={image.imageName}
+                  className="img-fluid"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </CardBody>
       </Card>
     ) : null

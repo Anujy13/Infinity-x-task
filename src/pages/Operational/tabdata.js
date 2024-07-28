@@ -66,6 +66,7 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
   const setVoucherDetailsToLocalStorage = voucher => {
     localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
     localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
+    localStorage.setItem("voucherNumID", JSON.stringify(voucher.voucherNumID));
     localStorage.setItem("FirstTime", JSON.stringify(voucher.gateWeightRecord.inTime));
     localStorage.setItem("FinalTime", JSON.stringify(voucher.gateWeightRecord.outTime));
     localStorage.setItem("FirstWeight", JSON.stringify(voucher.gateWeightRecord.grossWeight));
@@ -134,18 +135,21 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
   }
 }, [vouchers, selectedDates, onUpdateCounts, selectedTab, searchQuery]);
 
-
+const indianNumberFormatter = new Intl.NumberFormat('en-IN', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
 
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
-      <Container fluid style={{ marginTop: '-5.5rem' }}>
+      <Container fluid style={{ marginTop: '-5.5rem' ,paddingLeft: '0px', paddingRight: '0px'}}>
         <Row className="mb-3">
           {filteredVouchers.length > 0 ? (
             filteredVouchers.map((voucher, voucherIndex) => (
               <div className="card-header p-0" key={voucherIndex} onClick={e => handleCardClick(e, voucher)}>
                 <Col xl={12} lg={12}>
                   <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
-                    <CardBody style={{ paddingTop: "0px" }}>
+                    <CardBody style={{ paddingTop: "0px"}}>
                       <div className="ribbon-two ribbon-two-info">
                         <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "7px" : "13px" }}>
                           {voucher.status}
@@ -198,13 +202,13 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
                                     </h5>
                                     <p className="text-muted mb-0">
                                       {voucher.items[0].quantity} {voucher.items[0].unit} |
-                                      {voucher.items[0].exclusiveRate.toLocaleString()}  {/* Comma separator */}
+                                      {indianNumberFormatter.format(voucher.items[0].exclusiveRate)} {/* Comma separator */}
                                     </p>
                                   </div>
                                 </div>
                               </td>
                               <td className="fw-medium text-end">
-                                {voucher.items[0].amount.toLocaleString()}  {/* Comma separator */}
+                              {indianNumberFormatter.format(voucher.items[0].amount)}  {/* Comma separator */}
                               </td>
                             </tr>
                             {!expandedItems.includes(voucherIndex) && voucher.items.length > 1 ? (
@@ -228,13 +232,13 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
                                             </h5>
                                             <p className="text-muted mb-0">
                                               {item.quantity} {item.unit} |
-                                              {item.exclusiveRate.toLocaleString()}  {/* Comma separator */}
+                                              {indianNumberFormatter.format(item.exclusiveRate)}  {/* Comma separator */}
                                             </p>
                                           </div>
                                         </div>
                                       </td>
                                       <td className="fw-medium text-end">
-                                        {item.amount.toLocaleString()}  {/* Comma separator */}
+                                        {indianNumberFormatter.format(item.amount)}  {/* Comma separator */}
                                       </td>
                                     </tr>
                                   ))}
@@ -260,16 +264,16 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
                                             style={{ width: "0.5rem", marginTop: "9px" }}
                                             onClick={e => toggleGateDetails(e, voucherIndex)}
                                           >
-                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
+                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "17px", height: "17px" }}>
                                               {expandedGateMap[voucherIndex] ? (
                                                 <FaMinus />
                                               ) : (
-                                                <i className="ri-add-line"></i>
+                                                <i className="ri-add-line" style={{ fontSize: "12px" }}></i>
                                               )}
                                             </div>
                                           </div>
-                                          <div className="flex-grow-1 ms-3">
-                                            <h6 className="fs-15 mb-0 fw-semibold">Gate</h6>
+                                          <div className="flex-grow-1 ms-3" style={{ marginTop: "-px" }}>
+                                            <h6 className="fs-15 mb-0">Gate</h6>
                                           </div>
                                         </div>
                                       </td>
@@ -292,23 +296,23 @@ const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQu
                                         <div className="d-flex align-items-center">
                                           <div
                                             className="flex-shrink-0 avatar-xs"
-                                            style={{ width: "0.5rem", marginTop: "9px" }}
+                                            style={{ width: "0.5rem", marginTop: "0px" }}
                                             onClick={e => toggleWeighBridgeDetails(e, voucherIndex)}
                                           >
-                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
+                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "17px", height: "17px" }}>
                                               {expandedWeighBridgeMap[voucherIndex] ? (
                                                 <FaMinus />
                                               ) : (
-                                                <i className="ri-add-line"></i>
+                                                <i className="ri-add-line" style={{ fontSize: "12px" }}></i>
                                               )}
                                             </div>
                                           </div>
-                                          <div className="flex-grow-1 ms-3">
-                                            <h6 className="fs-15 mb-0 fw-semibold">WeighBridge</h6>
+                                          <div className="flex-grow-1 ms-3" style={{ marginTop: "-15px" }}>
+                                            <h6 className="fs-15 mb-0">WeighBridge</h6>
                                           </div>
                                         </div>
                                       </td>
-                                      <td className="text-end" style={{ paddingTop: "10px" }}>
+                                      <td className="text-end" style={{marginTop:'-15px'}}>
                                         {voucher.gateWeightRecord.weightDisplay}
                                       </td>
                                     </tr>

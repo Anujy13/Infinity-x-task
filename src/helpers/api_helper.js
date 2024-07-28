@@ -1,6 +1,6 @@
 import axios from "axios";
 import { api } from "../config";
-
+const getVoucherNumID = () => JSON.parse(localStorage.getItem("voucherNumID"));
 // default
 axios.defaults.baseURL = api.API_URL;
 // content type
@@ -48,12 +48,17 @@ class APIClient {
   get = async (url, params) => {
     const token = JSON.parse(localStorage.getItem("authUser2"))?.token;
     if (token) setAuthorization(token);
-
+  
     const queryString = params
-      ? Object.keys(params).map(key => key + '=' + params[key]).join('&')
+      ? Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&')
       : "";
-      
-    const response = await axios.get(`${url}${queryString}`);
+  
+    const voucherNumID = getVoucherNumID();
+    if (voucherNumID && (url.includes("VoucherNumCameraCaptures") || url.includes("VoucherNumData"))) {
+      url += `?VoucherNumID=${voucherNumID}`;
+    }
+  
+    const response = await axios.get(queryString ? `${url}&${queryString}` : url);
     return response;
   };
 

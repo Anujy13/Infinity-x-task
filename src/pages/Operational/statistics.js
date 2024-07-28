@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
 import { Row, Col, Card, CardBody } from 'reactstrap';
 import { RiAddLine, RiSubtractLine } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 
 // Utility function to format date as YYYY-MM-DD
 const formatDate = (date) => {
@@ -364,7 +365,8 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
 
   const getFontSize = () => (window.innerWidth <= 767 ? '11px' : '13px');
 
-  const toggleRow = (id) => {
+  const toggleRow = (id, event) => {
+    event.stopPropagation(); // Stop event propagation
     setExpandedRows(prevState => 
       prevState.includes(id) 
         ? prevState.filter(row => row !== id) 
@@ -411,6 +413,15 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
   })));
   // Utility function to truncate text to a specific number of words
 
+  const navigate = useNavigate();
+
+const handleNavigation = (filterType, filterValue, event) => {
+  event.stopPropagation(); // Stop event propagation
+  localStorage.setItem("selectedFilter", filterType);
+  localStorage.setItem("selectedValue", filterValue);
+  navigate("/finished-products");
+};
+
   return (
     <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0' }}>
       <Container fluid style={{ marginTop: '-4rem', paddingLeft: '0px', paddingRight: '0px' }}>
@@ -430,10 +441,10 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <tbody>
                         {uniqueParties.map((voucher, voucherIndex) => (
                           <React.Fragment key={voucherIndex}>
-                            <tr>
+                            <tr onClick={(e) => handleNavigation("party", voucher.party, e)}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <div className="me-2 mb-2" onClick={() => toggleRow(voucher.party)} style={{ cursor: 'pointer' }}>
+                                  <div className="me-2 mb-2" onClick={(e) => toggleRow(voucher.party, e)} style={{ cursor: 'pointer' }}>
                                     {expandedRows.includes(voucher.party) ? (
                                       <RiSubtractLine size={16} />
                                     ) : (
@@ -541,10 +552,10 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <tbody>
                         {uniqueItems.map((item, itemIndex) => (
                           <React.Fragment key={itemIndex}>
-                            <tr>
+                              <tr onClick={(e) => handleNavigation("item", item.item, e)}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <div className="me-2 mb-2" onClick={() => toggleRow(item.item)} style={{ cursor: 'pointer' }}>
+                                  <div className="me-2 mb-2" onClick={(e) => toggleRow(item.item,e)} style={{ cursor: 'pointer' }}>
                                     {expandedRows.includes(item.item) ? (
                                       <RiSubtractLine size={16} />
                                     ) : (
@@ -649,10 +660,10 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <tbody>
                         {uniqueBrokers.map((voucher, voucherIndex) => (
                           <React.Fragment key={voucherIndex}>
-                            <tr>
+                            <tr onClick={(e) => handleNavigation("broker", voucher.broker, e)}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <div className="me-2 mb-2" onClick={() => toggleRow(voucher.broker)} style={{ cursor: 'pointer' }}>
+                                  <div className="me-2 mb-2" onClick={(e) => toggleRow(voucher.broker,e)} style={{ cursor: 'pointer' }}>
                                     {expandedRows.includes(voucher.broker) ? (
                                       <RiSubtractLine size={16} />
                                     ) : (
@@ -761,10 +772,10 @@ const Statistics = ({ partyFilter, itemFilter, brokerFilter, groupFilter, select
                       <tbody>
                         {uniqueGroups.map((item, itemIndex) => (
                           <React.Fragment key={itemIndex}>
-                            <tr>
+                             <tr onClick={(e) => handleNavigation("group", item.stockGroup, e)}>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  <div className="me-2 mb-2" onClick={() => toggleRow(item.stockGroup)} style={{ cursor: 'pointer' }}>
+                                  <div className="me-2 mb-2" onClick={(e) => toggleRow(item.stockGroup,e)} style={{ cursor: 'pointer' }}>
                                     {expandedRows.includes(item.stockGroup) ? (
                                       <RiSubtractLine size={16} />
                                     ) : (

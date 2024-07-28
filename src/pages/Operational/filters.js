@@ -123,6 +123,9 @@ const Filters = () => {
     Closing: 0,
   });
 
+  const today = new Date();
+  const formattedToday = `${today.getDate()} ${today.toLocaleString('default', { month: 'short' })}, ${today.getFullYear()}`;
+
   useEffect(() => {
     const handleResize = () => {
       setIsLargeOrMedium(window.innerWidth > 767);
@@ -290,11 +293,15 @@ const Filters = () => {
   }, [isOpen1, isOpen2, isOpen3, isOpen4]);
 
   useEffect(() => {
-    const defaultDates = ["04 Apr 2024", "04 Apr 2025"];
+    const today2 = new Date();
+    const formattedToday2 = format(today2, 'dd MMM yyyy');
+    const defaultDates = [formattedToday2]; // Pass today's date
+
     const convertedDates = defaultDates.map(date => {
       const parsedDate = parse(date, 'dd MMM yyyy', new Date());
       return format(parsedDate, 'yyyy-MM-dd');
     });
+
     setSelectedDates(convertedDates);
   }, []);
 
@@ -361,7 +368,7 @@ const Filters = () => {
   : {}; // Default empty style if not 'statistics' or not mobile or not 4K
 
   const cardHeaderStyle = {
-    marginTop: '1rem',
+    marginTop:isMobile ? '':'1rem',
     width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
     marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
   };
@@ -371,6 +378,14 @@ const Filters = () => {
   const handleSearch = (query) => {
     setSearchQuery(query); // update search query
   };
+  
+// Inside your Filters component
+
+useEffect(() => {
+  if (selectedDates) {
+    localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
+  }
+}, [selectedDates]);
 
   return (
     <div>
@@ -388,7 +403,7 @@ const Filters = () => {
                             <div className="input-group" style={{ flexWrap: "nowrap" }}>
                                 <Flatpickr
                                     className="form-control border-0 dash-filter-picker shadow"
-                                    options={{ mode: "range", dateFormat: "d M, Y", defaultDate: ["01 Apr 2024", "01 Apr 2025"] }}
+                                    options={{ mode: "range", dateFormat: "d M, Y",   defaultDate: [formattedToday] }}
                                     onChange={(dates) => handleDateChange(dates)}
                                 />
                                 <div className="input-group-text bg-primary border-primary text-white">
