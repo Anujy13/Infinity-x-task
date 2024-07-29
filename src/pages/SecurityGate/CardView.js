@@ -29,7 +29,7 @@ const CardView = () => {
                     const totalValue = item.argumentValue.reduce((acc, curr) => acc + parseFloat(curr.value), 0);
                     return (
                         <Col lg={3} key={index}>
-                            <Link to="/finished-products"> {/* Wrap Card with Link */}
+                            <Link to="/gate-products"> {/* Wrap Card with Link */}
                                 <Card>
                                     <CardBody>
                                         <h5 className="fs-15 fw-semibold">{item.voucherType}</h5>

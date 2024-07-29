@@ -323,7 +323,7 @@ const Filters = () => {
     setSelectedTab(tab);
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const [isMobile, setIsMobile] = useState(window.innerWidth >= 361 && window.innerWidth <= 500);
   const [is320, setIs320] = useState(window.innerWidth >= 320 && window.innerWidth <= 360);
 
   const updateIsMobile = useCallback(() => {
@@ -368,7 +368,7 @@ const Filters = () => {
   : {}; // Default empty style if not 'statistics' or not mobile or not 4K
 
   const cardHeaderStyle = {
-    marginTop:isMobile ? '':'1rem',
+    marginTop:isMobile ? '1rem':'1rem',
     width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
     marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
   };
@@ -389,15 +389,15 @@ useEffect(() => {
 
   return (
     <div>
-           <BreadCrumb leftContent={headerContent}>
+           <BreadCrumb title="Inward Order/Finished Products" leftContent={headerContent} >
             {location.pathname !== '/operational' && headerContent}
             <div className="mt-3 mt-lg-0 d-flex justify-content-end">
                 <i
                     className="ri-filter-3-line"
-                    style={{ marginTop: isMobile?'-3.5rem':'0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
+                    style={{ marginTop: isMobile?'-0.5rem':'0.3rem', marginRight: '1rem', fontSize: '1.5rem', cursor: 'pointer' }}
                     onClick={toggleFilter}
                 ></i>
-                <form action="#" style={{marginTop:isMobile?'-3.8rem':''}}>
+                <form action="#" style={{marginTop:isMobile?'-0.5rem':'',marginRight:is320?'':isMobile?'2rem':''}}>
                     <Row className="g-3 mb-0 align-items-center">
                         <div className="col-sm-auto">
                             <div className="input-group" style={{ flexWrap: "nowrap" }}>

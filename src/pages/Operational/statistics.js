@@ -453,23 +453,7 @@ const handleNavigation = (filterType, filterValue, event) => {
                                   </div>
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
-                                  {isMobile && voucher.party.length > 10 ? `${voucher.party.slice(0, 10)}...` : voucher.party}                                        {closingCounts[voucher.party] > 0 && (
-                                          <span style={{
-                                            padding: '3px 8px',
-                                            paddingLeft:'2px',
-                                            marginLeft:'1rem',
-                                            gap: '4px',
-                                            borderRadius: '28px',
-                                            background: '#fff',
-                                            border: '1px solid #76abee',
-                                            fontSize: '10px',
-                                            fontWeight: '500',
-                                            lineHeight: '13px',
-                                            color: '#4383d6'
-                                          }}>
-                                            {closingCounts[voucher.party]} Pending
-                                          </span>
-                                        )}
+                                  {voucher.party}                                       
                                       </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
@@ -481,7 +465,7 @@ const handleNavigation = (filterType, filterValue, event) => {
                                 {(netWeights[voucher.party] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
                                 {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |
                                 {(
-                                  (closingCounts[voucher.party] || 0)
+                                  (outwardCounts[voucher.party] || 0)
                                 ).toLocaleString()}
                               </td>
                             </tr>
@@ -565,23 +549,6 @@ const handleNavigation = (filterType, filterValue, event) => {
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {item.item}
-                                        {closingCountsItem[item.item] > 0 && (
-                                                    <span style={{
-                                                      padding: '3px 8px',
-                                                      paddingLeft:'2px',
-                                                      marginLeft:'1rem',
-                                                      gap: '4px',
-                                                      borderRadius: '28px',
-                                                      background: '#fff',
-                                                      border: '1px solid #76abee',
-                                                      fontSize: '10px',
-                                                      fontWeight: '500',
-                                                      lineHeight: '13px',
-                                                      color: '#4383d6'
-                                                    }}>                                            
-                                                    {closingCountsItem[item.item]} Pending
-                                          </span>
-                                        )}
                                       </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
@@ -593,7 +560,7 @@ const handleNavigation = (filterType, filterValue, event) => {
                               {netWeightsItem[item.item]?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
                               {item.unit && ` ${item.unit}`} | 
                                   {(
-                                   (closingCountsItem[item.item] || 0)
+                                   (outwardCountsItem[item.item] || 0)
                                   ).toLocaleString()}
                                 </td>
                             </tr>
@@ -673,23 +640,6 @@ const handleNavigation = (filterType, filterValue, event) => {
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {voucher.broker}
-                                        {closingCountsBroker[voucher.broker] > 0 && (
-                                            <span style={{
-                                              padding: '3px 8px',
-                                              paddingLeft:'2px',
-                                              marginLeft:'1rem',
-                                              gap: '4px',
-                                              borderRadius: '28px',
-                                              background: '#fff',
-                                              border: '1px solid #76abee',
-                                              fontSize: '10px',
-                                              fontWeight: '500',
-                                              lineHeight: '13px',
-                                              color: '#4383d6'
-                                            }}>                                            
-                                            {closingCountsBroker[voucher.broker]} Pending
-                                          </span>
-                                        )}
                                       </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
@@ -701,7 +651,7 @@ const handleNavigation = (filterType, filterValue, event) => {
                               {(netWeightsBroker[voucher.broker] || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
                                 {voucher.items.length ? ` ${voucher.items[0].unit}` : ''} |
                                   {(
-                                    (closingCountsBroker[voucher.broker] || 0)
+                                    (outwardCountsBroker[voucher.broker] || 0)
                                   ).toLocaleString()}
                                 </td>
                             </tr>
@@ -785,23 +735,6 @@ const handleNavigation = (filterType, filterValue, event) => {
                                   <div className="flex-grow-1">
                                   <h5 style={{ fontSize: getFontSize() }}>
                                         {item.stockGroup}
-                                        {closingCountsGroup[item.stockGroup] > 0 && (
-                                              <span style={{
-                                                padding: '3px 8px',
-                                                paddingLeft:'2px',
-                                                marginLeft:'1rem',
-                                                gap: '4px',
-                                                borderRadius: '28px',
-                                                background: '#fff',
-                                                border: '1px solid #76abee',
-                                                fontSize: '10px',
-                                                fontWeight: '500',
-                                                lineHeight: '13px',
-                                                color: '#4383d6'
-                                              }}>                                            
-                                              {closingCountsGroup[item.stockGroup]} Pending
-                                          </span>
-                                        )}
                                       </h5>
                                     <p className="text-muted mb-0">
                                       {/* Quantity and unit if needed */}
@@ -813,7 +746,7 @@ const handleNavigation = (filterType, filterValue, event) => {
                               {netWeightsGroup[item.stockGroup]?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 
                               {item.unit && ` ${item.unit}`} | 
                                   {(
-                                   (closingCountsGroup[item.stockGroup] || 0)
+                                   (outwardCountsGroup[item.stockGroup] || 0)
                                   ).toLocaleString()}
                                 </td>
 
