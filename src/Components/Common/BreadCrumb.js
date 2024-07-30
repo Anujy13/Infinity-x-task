@@ -6,6 +6,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
     const location = useLocation();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
     const [is320, setIs320] = useState(window.innerWidth >= 320 && window.innerWidth <= 360);
+    const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
     const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
   const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
   const [IsBetween1600And1800, setIsBetween1600And1800] = useState(window.innerWidth >= 1600 && window.innerWidth < 1800);
@@ -17,6 +18,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
     const updateIsMobile = useCallback(() => {
         setIsMobile(window.innerWidth <= 500);
         setIs320(window.innerWidth >= 320 && window.innerWidth <= 360);
+        setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
         setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
         setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
         setIsBetween1600And1800(window.innerWidth >= 1600 && window.innerWidth < 1800);
@@ -35,7 +37,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
         };
     }, [updateIsMobile]);
 
-    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: is4KDesktop?'100rem':IsBetween1600And1800?'50rem':IsBetween1800And2000?'60rem':IsBetween2000And2200?'70rem':IsBetween2200And2400?'80rem':isLaptopLarge?'40rem': isBetween1200And1300?'35rem':isMobile ? '':'15rem' ,marginLeft: isMobile ? '5rem':''} : {};
+    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: is4KDesktop?'100rem':isTablet?'0rem':IsBetween1600And1800?'50rem':IsBetween1800And2000?'60rem':IsBetween2000And2200?'70rem':IsBetween2200And2400?'80rem':isLaptopLarge?'40rem': isBetween1200And1300?'35rem':isMobile ? '':'15rem' ,marginLeft: isMobile ? '5rem':''} : {};
 
     return (
         <React.Fragment>

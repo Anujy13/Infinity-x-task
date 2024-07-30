@@ -377,8 +377,8 @@ const Filters = () => {
 
   const cardHeaderStyle = {
     marginTop:isMobile ? '1rem':'1rem',
-    width: is4KDesktop ? '500%' :IsBetween1600And1800?'350%':IsBetween1800And2000?'350%':IsBetween2000And2200?'350%':IsBetween2200And2400?'450%': isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
-    marginLeft: is4KDesktop ? '-100rem'  :IsBetween1600And1800?'-55rem':IsBetween1800And2000?'-60rem':IsBetween2000And2200?'-65rem':IsBetween2200And2400?'-86rem': isLaptopLarge ? '-52rem' : isBetween1200And1300 ? '-47rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
+    width: is4KDesktop ? '500%' :IsBetween1600And1800?'350%':IsBetween1800And2000?'350%':IsBetween2000And2200?'350%':IsBetween2200And2400?'450%': isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '160%' : '100%',
+    marginLeft: is4KDesktop ? '-100rem'  :IsBetween1600And1800?'-55rem':IsBetween1800And2000?'-60rem':IsBetween2000And2200?'-65rem':IsBetween2200And2400?'-86rem': isLaptopLarge ? '-52rem' : isBetween1200And1300 ? '-47rem' : isLaptop1024 ? '-37rem' : isTablet ? '-13rem' : '0'
   };
 
   const [searchQuery, setSearchQuery] = useState('');
