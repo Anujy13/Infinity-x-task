@@ -6,10 +6,16 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
     const location = useLocation();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
     const [is320, setIs320] = useState(window.innerWidth >= 320 && window.innerWidth <= 360);
+    const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
+  const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
+  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
 
     const updateIsMobile = useCallback(() => {
         setIsMobile(window.innerWidth <= 500);
         setIs320(window.innerWidth >= 320 && window.innerWidth <= 360);
+        setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
+        setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
+        setIs4KDesktop(window.innerWidth >= 1600);
     }, []);
 
     useEffect(() => {
@@ -21,7 +27,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
         };
     }, [updateIsMobile]);
 
-    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: isMobile ? '':'35rem' ,marginLeft: isMobile ? '5rem':''} : {};
+    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: is4KDesktop?'110rem':isLaptopLarge?'40rem': isBetween1200And1300?'35rem':isMobile ? '':'15rem' ,marginLeft: isMobile ? '5rem':''} : {};
 
     return (
         <React.Fragment>
