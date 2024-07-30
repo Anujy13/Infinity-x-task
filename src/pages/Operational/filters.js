@@ -389,7 +389,7 @@ useEffect(() => {
 
   return (
     <div>
-           <BreadCrumb title="Inward Order/Finished Products" leftContent={headerContent} >
+           <BreadCrumb title="Inward Order" leftContent={headerContent} >
             {location.pathname !== '/operational' && headerContent}
             <div className="mt-3 mt-lg-0 d-flex justify-content-end">
                 <i

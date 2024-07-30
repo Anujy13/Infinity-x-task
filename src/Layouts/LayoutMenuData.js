@@ -187,7 +187,7 @@ const Navdata = () => {
       id: "inward_order",
       label: "Inward Order",
       icon: "mdi mdi-file-import",
-      link: "/voucher-num",
+      link: "/operational",
       stateVariables: isDashboard,
       click: function (e) {
         e.preventDefault();

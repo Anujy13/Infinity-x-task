@@ -21,7 +21,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
         };
     }, [updateIsMobile]);
 
-    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: isMobile ? '':'25rem' ,marginLeft: isMobile ? '5rem':''} : {};
+    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: isMobile ? '':'35rem' ,marginLeft: isMobile ? '5rem':''} : {};
 
     return (
         <React.Fragment>
