@@ -8,14 +8,22 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
     const [is320, setIs320] = useState(window.innerWidth >= 320 && window.innerWidth <= 360);
     const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
   const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
-  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
+  const [IsBetween1600And1800, setIsBetween1600And1800] = useState(window.innerWidth >= 1600 && window.innerWidth < 1800);
+  const [IsBetween1800And2000, setIsBetween1800And2000] = useState(window.innerWidth >= 1800 && window.innerWidth < 2000);
+  const [IsBetween2000And2200, setIsBetween2000And2200] = useState(window.innerWidth >= 2000 && window.innerWidth < 2200);
+  const [IsBetween2200And2400, setIsBetween2200And2400] = useState(window.innerWidth >= 2200 && window.innerWidth < 2400);
+  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 2400);
 
     const updateIsMobile = useCallback(() => {
         setIsMobile(window.innerWidth <= 500);
         setIs320(window.innerWidth >= 320 && window.innerWidth <= 360);
         setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
         setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
-        setIs4KDesktop(window.innerWidth >= 1600);
+        setIsBetween1600And1800(window.innerWidth >= 1600 && window.innerWidth < 1800);
+        setIsBetween1800And2000(window.innerWidth >= 1800 && window.innerWidth < 2000);
+        setIsBetween2000And2200(window.innerWidth >= 2000 && window.innerWidth < 2200);
+        setIsBetween2200And2400(window.innerWidth >= 2200 && window.innerWidth < 2400);
+        setIs4KDesktop(window.innerWidth >= 2400);
     }, []);
 
     useEffect(() => {
@@ -27,7 +35,7 @@ const BreadCrumb = ({ title, pageTitle, children, leftContent }) => {
         };
     }, [updateIsMobile]);
 
-    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: is4KDesktop?'110rem':isLaptopLarge?'40rem': isBetween1200And1300?'35rem':isMobile ? '':'15rem' ,marginLeft: isMobile ? '5rem':''} : {};
+    const breadcrumbTitleStyle = location.pathname === '/operational' ? { marginTop: isMobile?'-1.7rem':'-2.5rem', marginRight: is4KDesktop?'100rem':IsBetween1600And1800?'50rem':IsBetween1800And2000?'60rem':IsBetween2000And2200?'70rem':IsBetween2200And2400?'80rem':isLaptopLarge?'40rem': isBetween1200And1300?'35rem':isMobile ? '':'15rem' ,marginLeft: isMobile ? '5rem':''} : {};
 
     return (
         <React.Fragment>

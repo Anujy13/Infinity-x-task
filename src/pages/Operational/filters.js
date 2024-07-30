@@ -344,7 +344,11 @@ const Filters = () => {
   const [isLaptop1024, setIsLaptop1024] = useState(window.innerWidth >= 1024 && window.innerWidth < 1280);
   const [isBetween1200And1300, setIsBetween1200And1300] = useState(window.innerWidth >= 1281 && window.innerWidth < 1399);
   const [isLaptopLarge, setIsLaptopLarge] = useState(window.innerWidth >= 1400 && window.innerWidth < 1600);
-  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 1600);
+  const [IsBetween1600And1800, setIsBetween1600And1800] = useState(window.innerWidth >= 1600 && window.innerWidth < 1800);
+  const [IsBetween1800And2000, setIsBetween1800And2000] = useState(window.innerWidth >= 1800 && window.innerWidth < 2000);
+  const [IsBetween2000And2200, setIsBetween2000And2200] = useState(window.innerWidth >= 2000 && window.innerWidth < 2200);
+  const [IsBetween2200And2400, setIsBetween2200And2400] = useState(window.innerWidth >= 2200 && window.innerWidth < 2400);
+  const [is4KDesktop, setIs4KDesktop] = useState(window.innerWidth >= 2400);
 
   useEffect(() => {
     const handleResize = () => {
@@ -352,7 +356,11 @@ const Filters = () => {
       setIsLaptop1024(window.innerWidth >= 1024 && window.innerWidth < 1280);
       setIsBetween1200And1300(window.innerWidth >= 1281 && window.innerWidth < 1399);
       setIsLaptopLarge(window.innerWidth >= 1400 && window.innerWidth < 1600);
-      setIs4KDesktop(window.innerWidth >= 1600);
+      setIsBetween1600And1800(window.innerWidth >= 1600 && window.innerWidth < 1800);
+      setIsBetween1800And2000(window.innerWidth >= 1800 && window.innerWidth < 2000);
+      setIsBetween2000And2200(window.innerWidth >= 2000 && window.innerWidth < 2200);
+      setIsBetween2200And2400(window.innerWidth >= 2200 && window.innerWidth < 2400);
+      setIs4KDesktop(window.innerWidth >= 2400);
     };
 
     window.addEventListener('resize', handleResize);
@@ -369,8 +377,8 @@ const Filters = () => {
 
   const cardHeaderStyle = {
     marginTop:isMobile ? '1rem':'1rem',
-    width: is4KDesktop ? '500%' : isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
-    marginLeft: is4KDesktop ? '-100rem' : isLaptopLarge ? '-50rem' : isBetween1200And1300 ? '-45rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
+    width: is4KDesktop ? '500%' :IsBetween1600And1800?'350%':IsBetween1800And2000?'350%':IsBetween2000And2200?'350%':IsBetween2200And2400?'450%': isLaptopLarge ? '350%' : isBetween1200And1300 ? '350%' : isLaptop1024 ? '290%' : isTablet ? '200%' : '100%',
+    marginLeft: is4KDesktop ? '-100rem'  :IsBetween1600And1800?'-55rem':IsBetween1800And2000?'-60rem':IsBetween2000And2200?'-65rem':IsBetween2200And2400?'-86rem': isLaptopLarge ? '-52rem' : isBetween1200And1300 ? '-47rem' : isLaptop1024 ? '-37rem' : isTablet ? '-20rem' : '0'
   };
 
   const [searchQuery, setSearchQuery] = useState('');
