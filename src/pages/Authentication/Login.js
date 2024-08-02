@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 // actions
 import { loginUser, socialLogin, resetLoginFlag } from "../../slices/thunks"; // Used for API Logics
 
-import infinity2 from "../../assets/infinity2.png";
+import infinity3 from "../../assets/INFINITY.png";
 import clientLogo from "../../assets/client.png";
 import { createSelector } from "reselect";
 import { infinity } from "ldrs";
@@ -43,7 +43,7 @@ const Login = (props) => {
   const loginpageData = createSelector(selectLayoutState, (state) => ({
     user: state.Account.user,
     error: state.Login.error,
-    loading: state.Login.loading,
+    loading2: state.Login.loading2,
     errorMsg: state.Login.errorMsg,
   }));
   // Inside your component
@@ -54,6 +54,8 @@ const Login = (props) => {
   const [localLoading, setLocalLoading] = useState(false); // Local loading state
   const [initialLoading, setInitialLoading] = useState(true); // Initial loading state
   const [autoSubmitted, setAutoSubmitted] = useState(false); // Track auto submission
+  const [error2,seterror2]= useState();
+
   const navigate = useNavigate();
 
   const companyCode = JSON.parse(localStorage.getItem("selectedCompany"))?.companyCode;
@@ -121,6 +123,14 @@ const Login = (props) => {
     dispatch(socialLogin(type, props.router.navigate));
   };
 
+  useEffect(() => {
+    if (error === 'Request failed with status code 401') {
+      const errorMessage = 'Unauthorized';
+      seterror2(errorMessage);
+    }
+  }, [error]);
+
+
   // useEffect(() => {
   //   if (
   //     validation.initialValues.email &&
@@ -135,13 +145,13 @@ const Login = (props) => {
   //   }
   // }, [validation.initialValues, autoSubmitted, validation]);
 
-  useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        dispatch(resetLoginFlag());
-      }, 3000);
-    }
-  }, [dispatch, errorMsg]);
+  // useEffect(() => {
+  //   if (errorMsg) {
+  //     setTimeout(() => {
+  //       dispatch(resetLoginFlag());
+  //     }, 3000);
+  //   }
+  // }, [dispatch, errorMsg]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -191,9 +201,9 @@ const Login = (props) => {
   <p className="text-muted">Company Code: {companyCode}</p>
 </div>
 
-                    {error && error ? (
-                      <Alert color="danger"> {error} </Alert>
-                    ) : null}
+{error2 && (
+                      <Alert color="danger"> {error2} </Alert>
+                    )}
                     <div className="p-2 mt-4">
                       <Form
                         onSubmit={(e) => {
@@ -309,7 +319,7 @@ const Login = (props) => {
                           <div className="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                               <img
-                                src={infinity2}
+                                src={infinity3}
                                 alt="infinityLogo"
                                 height="60"
                                 width="212"

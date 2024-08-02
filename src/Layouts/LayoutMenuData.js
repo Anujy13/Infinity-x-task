@@ -162,20 +162,95 @@ const Navdata = () => {
       label: "Security Gate",
       icon: "mdi mdi-gate",
       link: "/securitygate-ERP",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
     {
       id: "weighbridge",
       label: "WeighBridge",
       icon: "mdi mdi-scale",
       link: "/weighbridge",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
     {
       id: "inward_order",
       label: "Inward Order",
       icon: "mdi mdi-file-import",
-      link: "/voucher-num",
+      link: "/operational",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
     },
-    
+
+    {
+      id: "master",
+      label: "Master",
+      icon: "bx bx-podcast",
+      link: "/#",
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
+      stateVariables: isDashboard,
+      subItems: [
+       
+        {
+          id: "accounting",
+          label: "Accounting",
+          link: "/#",
+          isChildItem: true,
+          click: function (e) {
+            e.preventDefault();
+            setIsProfile(!isProfile);
+          },
+          parentId: "master",
+          stateVariables: isProfile,
+          childItems: [
+            {
+              id: 1,
+              label: "Account Group",
+              link: "/pages-profile",
+              parentId: "master",
+            },
+            {
+              id: 2,
+              label: "Area",
+              link: "/pages-profile-settings",
+              parentId: "master",
+            },
+            {
+              id: 3,
+              label: "Account Ledger",
+              link: "/pages-profile-settings",
+              parentId: "master",
+            },
+          ],
+        },
+       
+      ],
+    },
+
+  ];
+  return <React.Fragment>{menuItems}</React.Fragment>;
+};
+export default Navdata;
       // subItems: [
       //   {
       //     id: "analytics",
@@ -1490,8 +1565,3 @@ const Navdata = () => {
     //     },
     //   ],
     // },
-  ];
-  return <React.Fragment>{menuItems}</React.Fragment>;
-};
-export default Navdata;
-

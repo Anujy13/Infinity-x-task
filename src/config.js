@@ -1,3 +1,7 @@
+// Retrieve and parse the dataExchangeURL from localStorage
+const dataExchangeURL = JSON.parse(localStorage.getItem("selectedCompany"))?.dataExchangeURL;
+
+// Export configuration
 module.exports = {
   google: {
     API_KEY: "",

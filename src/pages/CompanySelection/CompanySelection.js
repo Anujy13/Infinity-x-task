@@ -19,7 +19,7 @@ const CompanySelection = () => {
     const [localLoading, setLocalLoading] = useState(false); // Local loading state
     const navigate = useNavigate();  // Access the history object for navigation
     const [backButtonClickCount, setBackButtonClickCount] = useState(0);
-    const [selectedCompany, setSelectedCompany] = useState({ companyName: '', companyCode: '' });
+    const [selectedCompany, setSelectedCompany] = useState({ companyName: '', companyCode: '',dataExchangeURL:'' });
 
     const userprofileData = createSelector(
         selectLayoutState,
@@ -101,7 +101,8 @@ const CompanySelection = () => {
             const timer = setTimeout(() => {
                 localStorage.setItem('selectedCompany', JSON.stringify({
                     companyName: userList[0].companyName,
-                    companyCode: userList[0].companyCode
+                    companyCode: userList[0].companyCode,
+                    dataExchangeURL: userList[0].dataExchangeURL 
                 }));
                 navigate("/ERPLogin"); // Navigate to login page after storing details and a brief delay
                 setLocalLoading(false); // Stop local loading indicator after navigation
@@ -112,7 +113,6 @@ const CompanySelection = () => {
     }, [userList, navigate]);
     
 
-    
     useEffect(() => {
         const handleBackButtonClick = (event) => {
             setBackButtonClickCount(prevCount => prevCount + 1); // Increment the click count
@@ -146,18 +146,17 @@ const CompanySelection = () => {
         }
     }, [success, user]);
 
-    const handleLoginClick = (companyName, companyCode) => {
-        // Store selected company details in local storage
+    const handleLoginClick = (companyName, companyCode, dataExchangeURL) => {
+        // Store selected company details in local storage, including dataExchangeURL
         localStorage.setItem('selectedCompany', JSON.stringify({
             companyName,
-            companyCode
+            companyCode,
+            dataExchangeURL
         }));
 
         // Navigate to login page after storing details
         navigate("/ERPLogin");
     };
-
-    // Rest of your component code...
 
 
     return (
@@ -314,7 +313,7 @@ const CompanySelection = () => {
                                                             <div className="text-end">
                                 {item.connectionStatus === 'Online' ? (
                                     <Button
-                                        onClick={() => handleLoginClick(item.companyName, item.companyCode)}
+                                        onClick={() => handleLoginClick(item.companyName, item.companyCode,item.dataExchangeURL)}
                                         className="btn btn-light view-btn"
                                     >
                                         Login

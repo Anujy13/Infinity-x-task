@@ -15,6 +15,7 @@ import UiAlerts from "../pages/BaseUi/UiAlerts/UiAlerts";
 import UiBadges from "../pages/BaseUi/UiBadges/UiBadges";
 import UiButtons from "../pages/BaseUi/UiButtons/UiButtons";
 import UiColors from "../pages/BaseUi/UiColors/UiColors";
+import GateProducts from "../pages/GateProducts";
 import UiCards from "../pages/BaseUi/UiCards/UiCards";
 import UiCarousel from "../pages/BaseUi/UiCarousel/UiCarousel";
 import UiDropdowns from "../pages/BaseUi/UiDropdowns/UiDropdowns";
@@ -35,6 +36,9 @@ import UiLink from "../pages/BaseUi/UiLinks/UiLinks";
 import UiGeneral from "../pages/BaseUi/UiGeneral/UiGeneral";
 import UiRibbons from "../pages/BaseUi/UiRibbons/UiRibbons";
 import UiUtilities from "../pages/BaseUi/UiUtilities/UiUtilities";
+
+///operational template
+import Operational from  "../pages/Operational";
 
 // Advance Ui
 import UiNestableList from "../pages/AdvanceUi/UiNestableList/UiNestableList";
@@ -120,8 +124,11 @@ import VoucherNum from "../pages/VoucherNum";
 const authProtectedRoutes = [
   { path: "/finished-products", component: <FinishedProducts /> },
   { path: "/voucher-num", component: <VoucherNum /> },
+  { path: "/gate-products", component: <GateProducts /> },
   { path: "/dashboard-ERP", component: <ERPDashboard /> },
   { path: "/securitygate-ERP", component: <SecurityGate /> },
+  //operational template
+  { path: "/operational", component: <Operational /> },
 
 
   // Base Ui
@@ -176,6 +183,7 @@ const authProtectedRoutes = [
   { path: "/forms-wizard", component: <FormWizard /> },
   { path: "/forms-advanced", component: <FormAdvanced /> },
   { path: "/forms-select2", component: <Select2 /> },
+
 
   //Icons
   { path: "/icons-remix", component: <RemixIcons /> },

@@ -4,7 +4,7 @@ import { Card, CardHeader, Col, Row } from 'reactstrap';
 import CountUp from "react-countup";
 import { fetchDashboardData } from '../../slices/thunks';
 import { createSelector } from "reselect";
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 
 const DataOverview = () => {
     const dispatch = useDispatch();
@@ -22,12 +22,23 @@ const DataOverview = () => {
         dispatch(fetchDashboardData());
     }, [dispatch]);
 
+    const getLinkPath = (voucherType) => {
+        switch (voucherType) {
+            case 'Security Gate':
+                return '/securitygate-ERP';
+            case 'Inward Order':
+                return '/operational';
+            default:
+                return '/';
+        }
+    };
+
     return (
         <React.Fragment>
             {user?.map((item, index) => (
                 <Row key={index}>
                     <Col xl={12}>
-                        <Link to="/securitygate-ERP"> {/* Wrap Card with Link */}
+                        <Link to={getLinkPath(item.voucherType)}> {/* Conditional path */}
                             <Card>
                                 <CardHeader className="border-0 align-items-center d-flex">
                                     <h4 className="card-title mb-0 flex-grow-1">{item.voucherType}</h4>
@@ -64,4 +75,3 @@ const DataOverview = () => {
 };
 
 export default DataOverview;
-
