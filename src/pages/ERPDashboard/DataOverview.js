@@ -41,7 +41,6 @@ const DataOverview = () => {
                         <Link to={getLinkPath(item.voucherType)}> {/* Conditional path */}
                             <Card>
                                 <CardHeader className="border-0 align-items-center d-flex">
-                                <FeatherIcon icon="shopping-cart" /> &nbsp;&nbsp;
                                     <h4 className="card-title mb-0 flex-grow-1">{item.voucherType}</h4>
                                     <div class="flex-shrink-0"><a class="badge bg-primary-subtle text-primary fs-11" >Under Process</a></div>
                                 </CardHeader>
