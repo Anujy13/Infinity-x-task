@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 // actions
 import { loginUser, socialLogin, resetLoginFlag } from "../../slices/thunks"; // Used for API Logics
 
-import infinity2 from "../../assets/infinity2.png";
+import infinity3 from "../../assets/INFINITY.png";
 import clientLogo from "../../assets/client.png";
 import { createSelector } from "reselect";
 import { infinity } from "ldrs";
@@ -319,7 +319,7 @@ const Login = (props) => {
                           <div className="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                               <img
-                                src={infinity2}
+                                src={infinity3}
                                 alt="infinityLogo"
                                 height="60"
                                 width="212"

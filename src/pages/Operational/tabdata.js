@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Collapse, Col, Container, Row, Card, CardBody } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { FaMinus } from "react-icons/fa6";
 import moment from "moment";
 
-const TabData = ({ vouchers, selectedTab, selectedDates }) => {
+const TabData = ({ vouchers, selectedTab, selectedDates, onUpdateCounts,searchQuery  }) => {
   const [FromDate, ToDate] = Array.isArray(selectedDates) ? selectedDates : [null, null];
   const [expandedItems, setExpandedItems] = useState([]);
   const [expandedGateMap, setExpandedGateMap] = useState({});
@@ -41,6 +41,17 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
     return moment(dateTime).format("ddd, DD MMM YYYY - hh:mmA");
   };
 
+  const formatDate2 = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Ensure month is always 2 digits
+    const day = d.getDate().toString().padStart(2, '0'); // Ensure day is always 2 digits
+    const hours = d.getHours().toString().padStart(2, '0'); // Ensure hours is always 2 digits
+    const minutes = d.getMinutes().toString().padStart(2, '0'); // Ensure minutes is always 2 digits
+    const seconds = d.getSeconds().toString().padStart(2, '0'); // Ensure seconds is always 2 digits
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   const formatDate = dateString => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" });
@@ -49,12 +60,13 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
   const handleCardClick = (e, voucher) => {
     e.stopPropagation();
     setVoucherDetailsToLocalStorage(voucher);
-    navigate(`/voucher-num`);
+    navigate("/voucher-num");
   };
 
   const setVoucherDetailsToLocalStorage = voucher => {
     localStorage.setItem("NetWeight", JSON.stringify(voucher.gateWeightRecord.netWeight));
     localStorage.setItem("NetGateTime", JSON.stringify(voucher.gateWeightRecord.netGateTime));
+    localStorage.setItem("voucherNumID", JSON.stringify(voucher.voucherNumID));
     localStorage.setItem("FirstTime", JSON.stringify(voucher.gateWeightRecord.inTime));
     localStorage.setItem("FinalTime", JSON.stringify(voucher.gateWeightRecord.outTime));
     localStorage.setItem("FirstWeight", JSON.stringify(voucher.gateWeightRecord.grossWeight));
@@ -73,37 +85,71 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
       return vouchers; // Return all vouchers for the 'All' tab
     }
     return vouchers.filter(voucher => {
-      const gateInTime = new Date(voucher.gateWeightRecord.inTime);
-      const gateOutTime = new Date(voucher.gateWeightRecord.outTime);
-      const fromDate = new Date(FromDate);
-      const toDate = new Date(ToDate);
+      const gateInTime = formatDate2(voucher.gateWeightRecord.inTime);
+      const gateOutTime = formatDate2(voucher.gateWeightRecord.outTime);
+      const fromDate = formatDate2(FromDate);
+      const toDate = formatDate2(ToDate);
 
       if (selectedTab === "Opening") {
         return gateInTime < fromDate;
-      } else if (selectedTab === "Inward") {
-        return gateInTime > fromDate;
-      } else if (selectedTab === "Outward") {
-        return gateOutTime < toDate;
+      } else if (selectedTab === "In") {
+        return gateInTime >= fromDate && gateInTime <= toDate;
+      } else if (selectedTab === "Out") {
+        return gateOutTime >= fromDate && gateOutTime <= toDate;
       } else if (selectedTab === "Closing") {
-        return gateInTime >= fromDate || gateOutTime > toDate;
+        return gateOutTime > toDate;
       } else {
         return true;
       }
     });
   };
 
-  const filteredVouchers = filterVouchersByTab(vouchers, selectedTab);
+  const getCounts = (vouchers) => {
+    return {
+      All: vouchers.length,
+      Opening: filterVouchersByTab(vouchers, "Opening").length,
+      In: filterVouchersByTab(vouchers, "In").length,
+      Out: filterVouchersByTab(vouchers, "Out").length,
+      Closing: filterVouchersByTab(vouchers, "Closing").length
+    };
+  }
+
+  const filterVouchersByQuery = (vouchers, query) => {
+    if (!query) return vouchers;
+    return vouchers.filter(voucher => {
+      const lowerCaseQuery = query.toLowerCase();
+      return voucher.party.toLowerCase().includes(lowerCaseQuery)
+        || voucher.items.some(item => item.item.toLowerCase().includes(lowerCaseQuery))
+        || voucher.voucherNumber.toLowerCase().includes(lowerCaseQuery)
+        || voucher.vehicleNumber.toLowerCase().includes(lowerCaseQuery)
+        || formatDate(voucher.voucherDate).toLowerCase().includes(lowerCaseQuery);
+    });
+  };
+
+  const filteredVouchers = filterVouchersByTab(filterVouchersByQuery(vouchers, searchQuery), selectedTab);
+
+ // First effect to handle counting vouchers
+ useEffect(() => {
+  if (typeof onUpdateCounts === "function") {
+    onUpdateCounts(getCounts(filterVouchersByQuery(vouchers, searchQuery)));
+  }
+}, [vouchers, selectedDates, onUpdateCounts, selectedTab, searchQuery]);
+
+const indianNumberFormatter = new Intl.NumberFormat('en-IN', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
 
   return (
-    <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '-1.5rem' }}>
-      <Container fluid style={{ marginTop: '-5rem' }}>
+    <div className="page-content" style={{ paddingBottom: '0px', paddingLeft: '0px', paddingRight: '0px', marginBottom: '0rem' }}>
+      <Container fluid style={{ marginTop: '-5.5rem' ,paddingLeft: '0px', paddingRight: '0px'}}>
         <Row className="mb-3">
           {filteredVouchers.length > 0 ? (
             filteredVouchers.map((voucher, voucherIndex) => (
               <div className="card-header p-0" key={voucherIndex} onClick={e => handleCardClick(e, voucher)}>
                 <Col xl={12} lg={12}>
-                  <Card className="product cursor-pointer ribbon-box border shadow-none mb-lg-0 right mt-2" xl={12} lg={12} md={12}>
-                    <CardBody style={{ paddingTop: "0px" }}>
+                  <Card className="product cursor-pointer ribbon-box border shadow-none mb-1 right" xl={12} lg={12} md={12} style={{ marginTop: '0rem', marginLeft: '0rem' }}>
+                    <CardBody style={{ paddingTop: "0px"}}>
                       <div className="ribbon-two ribbon-two-info">
                         <span style={{ fontSize: voucher.status && voucher.status.length > 7 ? "7px" : "13px" }}>
                           {voucher.status}
@@ -155,14 +201,17 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                                       {voucher.items[0].sequence}. {voucher.items[0].item}
                                     </h5>
                                     <p className="text-muted mb-0">
-                                      {voucher.items[0].quantity} {voucher.items[0].unit} | {voucher.items[0].exclusiveRate}
+                                      {voucher.items[0].quantity} {voucher.items[0].unit} |
+                                      {indianNumberFormatter.format(voucher.items[0].exclusiveRate)} {/* Comma separator */}
                                     </p>
                                   </div>
                                 </div>
                               </td>
-                              <td className="fw-medium text-end">{voucher.items[0].amount}</td>
+                              <td className="fw-medium text-end">
+                              {indianNumberFormatter.format(voucher.items[0].amount)}  {/* Comma separator */}
+                              </td>
                             </tr>
-                            {!expandedItems.includes(voucherIndex) ? (
+                            {!expandedItems.includes(voucherIndex) && voucher.items.length > 1 ? (
                               <tr
                                 key="expand-btn"
                                 style={{ cursor: "pointer", color: "red" }}
@@ -171,32 +220,37 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                                 <td colSpan="2">+{voucher.items.length - 1} more items</td>
                               </tr>
                             ) : (
-                              <>
-                                {voucher.items.slice(1).map((item, itemIndex) => (
-                                  <tr key={itemIndex}>
-                                    <td>
-                                      <div className="d-flex">
-                                        <div className="flex-grow-1 ms-0">
-                                          <h5 className="fs-15">
-                                            {item.sequence}. {item.item}
-                                          </h5>
-                                          <p className="text-muted mb-0">
-                                            {item.quantity} {item.unit} | {item.exclusiveRate}
-                                          </p>
+                              expandedItems.includes(voucherIndex) && voucher.items.length > 1 && (
+                                <>
+                                  {voucher.items.slice(1).map((item, itemIndex) => (
+                                    <tr key={itemIndex}>
+                                      <td>
+                                        <div className="d-flex">
+                                          <div className="flex-grow-1 ms-0">
+                                            <h5 className="fs-15">
+                                              {item.sequence}. {item.item}
+                                            </h5>
+                                            <p className="text-muted mb-0">
+                                              {item.quantity} {item.unit} |
+                                              {indianNumberFormatter.format(item.exclusiveRate)}  {/* Comma separator */}
+                                            </p>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </td>
-                                    <td className="fw-medium text-end">{item.amount}</td>
+                                      </td>
+                                      <td className="fw-medium text-end">
+                                        {indianNumberFormatter.format(item.amount)}  {/* Comma separator */}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                  <tr
+                                    key="collapse-btn"
+                                    style={{ cursor: "pointer", color: "red" }}
+                                    onClick={e => handleExpandItem(e, voucherIndex)}
+                                  >
+                                    <td colSpan="2">Less items</td>
                                   </tr>
-                                ))}
-                                <tr
-                                  key="collapse-btn"
-                                  style={{ cursor: "pointer", color: "red" }}
-                                  onClick={e => handleExpandItem(e, voucherIndex)}
-                                >
-                                  <td colSpan="2">Less items</td>
-                                </tr>
-                              </>
+                                </>
+                              )
                             )}
                             <tr className="border-top border-top-dashed">
                               <td colSpan="2" className="fw-medium p-0">
@@ -210,16 +264,16 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                                             style={{ width: "0.5rem", marginTop: "9px" }}
                                             onClick={e => toggleGateDetails(e, voucherIndex)}
                                           >
-                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
+                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "17px", height: "17px" }}>
                                               {expandedGateMap[voucherIndex] ? (
                                                 <FaMinus />
                                               ) : (
-                                                <i className="ri-add-line"></i>
+                                                <i className="ri-add-line" style={{ fontSize: "12px" }}></i>
                                               )}
                                             </div>
                                           </div>
-                                          <div className="flex-grow-1 ms-3">
-                                            <h6 className="fs-15 mb-0 fw-semibold">Gate</h6>
+                                          <div className="flex-grow-1 ms-3" style={{ marginTop: "-px" }}>
+                                            <h6 className="fs-15 mb-0">Gate</h6>
                                           </div>
                                         </div>
                                       </td>
@@ -242,23 +296,23 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                                         <div className="d-flex align-items-center">
                                           <div
                                             className="flex-shrink-0 avatar-xs"
-                                            style={{ width: "0.5rem", marginTop: "9px" }}
+                                            style={{ width: "0.5rem", marginTop: "0px" }}
                                             onClick={e => toggleWeighBridgeDetails(e, voucherIndex)}
                                           >
-                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "20px", height: "20px" }}>
+                                            <div className="avatar-title bg-success rounded-circle" style={{ width: "17px", height: "17px" }}>
                                               {expandedWeighBridgeMap[voucherIndex] ? (
                                                 <FaMinus />
                                               ) : (
-                                                <i className="ri-add-line"></i>
+                                                <i className="ri-add-line" style={{ fontSize: "12px" }}></i>
                                               )}
                                             </div>
                                           </div>
-                                          <div className="flex-grow-1 ms-3">
-                                            <h6 className="fs-15 mb-0 fw-semibold">WeighBridge</h6>
+                                          <div className="flex-grow-1 ms-3" style={{ marginTop: "-15px" }}>
+                                            <h6 className="fs-15 mb-0">WeighBridge</h6>
                                           </div>
                                         </div>
                                       </td>
-                                      <td className="text-end" style={{ paddingTop: "10px" }}>
+                                      <td className="text-end" style={{marginTop:'-15px'}}>
                                         {voucher.gateWeightRecord.weightDisplay}
                                       </td>
                                     </tr>
@@ -267,10 +321,10 @@ const TabData = ({ vouchers, selectedTab, selectedDates }) => {
                                         <td colSpan="2" className="accordion-body ms-2 ps-5 pt-0">
                                           <div>
                                             <h6 className="mb-2">
-                                              Gross Weight: {voucher.gateWeightRecord.grossWeight} {voucher.items[0].unit}
+                                              Gross Weight: {voucher.gateWeightRecord.grossWeight} {voucher.items.unit}
                                             </h6>
                                             <h6 className="mb-1">
-                                              Tare Weight: {voucher.gateWeightRecord.tareWeight} {voucher.items[0].unit}
+                                              Tare Weight: {voucher.gateWeightRecord.tareWeight} {voucher.items.unit}
                                             </h6>
                                           </div>
                                         </td>

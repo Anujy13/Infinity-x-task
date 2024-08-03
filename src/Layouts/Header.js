@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Dropdown, DropdownMenu, DropdownToggle, Form } from 'reactstrap';
 
-//import images
+// Import images
 import logoSm from "../assets/images/logo-sm.png";
 import logoDark from "../assets/images/logo-dark.png";
 import logoLight from "../assets/images/logo-light.png";
 
-//import Components
+// Import Components
 import SearchOption from '../Components/Common/SearchOption';
 import LanguageDropdown from '../Components/Common/LanguageDropdown';
 import WebAppsDropdown from '../Components/Common/WebAppsDropdown';
@@ -21,34 +21,36 @@ import { changeSidebarVisibility } from '../slices/thunks';
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from 'reselect';
 
-const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
+const Header = ({ onChangeLayoutMode, layoutModeType, headerClass, onSearch }) => {
     const dispatch = useDispatch();
+    const companyName = JSON.parse(localStorage.getItem("selectedCompany"))?.companyName;
+    const location = useLocation();
+    const path = location.pathname;
 
     const selectDashboardData = createSelector(
         (state) => state.Layout,
         (sidebarVisibilitytype) => sidebarVisibilitytype.sidebarVisibilitytype
-      );
-    // Inside your component
+    );
+
     const sidebarVisibilitytype = useSelector(selectDashboardData);
 
     const [search, setSearch] = useState(false);
-    const toogleSearch = () => {
+
+    const toggleSearch = () => {
         setSearch(!search);
     };
 
-    const toogleMenuBtn = () => {
+    const toggleMenuBtn = () => {
         var windowSize = document.documentElement.clientWidth;
         dispatch(changeSidebarVisibility("show"));
 
         if (windowSize > 767)
             document.querySelector(".hamburger-icon").classList.toggle('open');
 
-        //For collapse horizontal menu
         if (document.documentElement.getAttribute('data-layout') === "horizontal") {
-            document.body.classList.contains("menu") ? document.body.classList.remove("menu") : document.body.classList.add("menu");
+            document.body.classList.toggle("menu");
         }
 
-        //For collapse vertical and semibox menu
         if (sidebarVisibilitytype === "show" && (document.documentElement.getAttribute('data-layout') === "vertical" || document.documentElement.getAttribute('data-layout') === "semibox")) {
             if (windowSize < 1025 && windowSize > 767) {
                 document.body.classList.remove('vertical-sidebar-enable');
@@ -62,12 +64,30 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
             }
         }
 
-
-        //Two column menu
         if (document.documentElement.getAttribute('data-layout') === "twocolumn") {
-            document.body.classList.contains('twocolumn-panel') ? document.body.classList.remove('twocolumn-panel') : document.body.classList.add('twocolumn-panel');
+            document.body.classList.toggle('twocolumn-panel');
         }
     };
+
+    const [value, setValue] = useState('');
+
+    const onChangeData = (value) => {
+        setValue(value);
+        if (onSearch) onSearch(value); // pass the value to the parent
+    };
+
+    useEffect(() => {
+        const searchInput = document.getElementById('search-options');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => onChangeData(e.target.value));
+        }
+
+        return () => {
+            if (searchInput) {
+                searchInput.removeEventListener('input', (e) => onChangeData(e.target.value));
+            }
+        };
+    }, []);
 
     return (
         <React.Fragment>
@@ -75,7 +95,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <div className="layout-width">
                     <div className="navbar-header">
                         <div className="d-flex">
-
                             <div className="navbar-brand-box horizontal-logo">
                                 <Link to="/" className="logo logo-dark">
                                     <span className="logo-sm">
@@ -85,7 +104,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                         <img src={logoDark} alt="" height="17" />
                                     </span>
                                 </Link>
-
                                 <Link to="/" className="logo logo-light">
                                     <span className="logo-sm">
                                         <img src={logoSm} alt="" height="22" />
@@ -95,9 +113,8 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                     </span>
                                 </Link>
                             </div>
-
                             <button
-                                onClick={toogleMenuBtn}
+                                onClick={toggleMenuBtn}
                                 type="button"
                                 className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger shadow-none"
                                 id="topnav-hamburger-icon">
@@ -107,11 +124,15 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                     <span></span>
                                 </span>
                             </button>
-
-
-                            <SearchOption />
+                            <SearchOption onSearch={onSearch} />
+                            {path !== '/operational' && path !== '/finished-products' && (
+                                <h5 className="mb-0 mt-4">{companyName}</h5>
+                            )}
                         </div>
 
+                        {path === '/operational' || path === '/finished-products' ? (
+                            <h5 className="mb-0">{companyName}</h5>
+                        ) : null}
                         <div className="d-flex align-items-center">
 
                             <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
@@ -142,18 +163,32 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                             {/* <MyCartDropdown /> */}
 
                             {/* FullScreenDropdown */}
+                            {(path === '/operational' || path === '/finished-products') && (
+                                <Dropdown isOpen={search} toggle={toggleSearch} className="d-md-none topbar-head-dropdown header-item">
+                                    <DropdownToggle type="button" tag="button" className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
+                                        <i className="bx bx-search fs-22"></i>
+                                    </DropdownToggle>
+                                    <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
+                                        <Form className="p-3">
+                                            <div className="form-group m-0">
+                                                <div className="input-group">
+                                                    <input type="text" className="form-control" placeholder="Search ..."
+                                                        aria-label="Recipient's username" 
+                                                        id="search-options"
+                                                        value={value}
+                                                        onChange={e => onChangeData(e.target.value)} />
+                                                </div>
+                                            </div>
+                                        </Form>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            )}
                             <FullScreenDropdown />
-
-                            {/* Dark/Light Mode set */}
                             <LightDark
                                 layoutMode={layoutModeType}
                                 onChangeLayoutMode={onChangeLayoutMode}
                             />
-
-                            {/* NotificationDropdown */}
                             <NotificationDropdown />
-
-                            {/* ProfileDropdown */}
                             <ProfileDropdown />
                         </div>
                     </div>

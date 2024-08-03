@@ -36,7 +36,7 @@ import {
 // type it
 import TypeIt from "typeit";
 
-import infinity2 from "../../assets/infinity2.png";
+import infinity3 from "../../assets/INFINITY.png";
 import { createSelector } from "reselect";
 import { infinity } from 'ldrs';
 
@@ -207,7 +207,7 @@ const LicenseValidation = (props) => {
               <Col lg={12}>
                 <div className="text-center mt-sm-5 mb-4 text-white-50">
                   <div>
-                    <img src={infinity2} alt="infinityLogo" height="60" width="212" />
+                    <img src={infinity3} alt="infinityLogo" height="60" width="212" />
                   </div>
                   <p className="text-description mt-3 fs-15 fw-medium"></p>
                 </div>

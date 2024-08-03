@@ -63,7 +63,22 @@ const EcommerceOrderDetail = (props) => {
     dispatch(fetchVoucherNumData());
   }, [dispatch]);
 
+  // Prevent back navigation
+  useEffect(() => {
+    const handleBackNavigation = (event) => {
+      event.preventDefault();
+      window.history.pushState(null, null, window.location.href);
+    };
 
+    window.history.pushState(null, null, window.location.href); // Set initial state
+    window.addEventListener('popstate', handleBackNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackNavigation); // Clean up event listener
+    };
+  }, []);
+
+  
   if (loading) {
     return <div>Loading...</div>;
   }
