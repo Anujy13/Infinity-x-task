@@ -121,6 +121,11 @@ import LicenseValidation from "../pages/LicenseValidation/LicenseValidation";
 //Voucher Num
 import VoucherNum from "../pages/VoucherNum";
 
+
+//new 
+import StockCategory from "../pages/StockCategory";
+import { components } from "react-select";
+
 const authProtectedRoutes = [
   { path: "/finished-products", component: <FinishedProducts /> },
   { path: "/voucher-num", component: <VoucherNum /> },
@@ -129,6 +134,9 @@ const authProtectedRoutes = [
   { path: "/securitygate-ERP", component: <SecurityGate /> },
   //operational template
   { path: "/operational", component: <Operational /> },
+
+  //new 
+  {path: "/stock-category", component: <StockCategory />},
 
 
   // Base Ui

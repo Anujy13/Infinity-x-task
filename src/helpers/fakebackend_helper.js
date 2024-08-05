@@ -37,6 +37,7 @@ export const getVendorDashboardData = data => api.get(url.GET_VENDOR_DASHBOARD_D
 // Login Method
 export const getSecurityGateData = data => api.get(url.GET_ERP_SECURITYGATE_DATA, data);
 
+
 export const getCompanySelectionData = data => api.getdata(url.GET_COMPANYSELECTIONDATA,data);
 
 //Voucher Num

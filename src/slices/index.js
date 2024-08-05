@@ -22,6 +22,8 @@ import FinishedProductsReducer from "./finishedProducts/reducer";
 import ERPDashboardReducer from "./erpDashboard/reducer";
 //security dashboard
 import SecurityGateReducer from "./securityGate/reducer";
+
+
 // API Key
 import APIKeyReducer from "./apiKey/reducer";
 //voucher num
@@ -36,6 +38,7 @@ const rootReducer = combineReducers({
     APIKey: APIKeyReducer,
     ERPDashboard: ERPDashboardReducer,
     SecurityGate: SecurityGateReducer,
+    StockCategory: SecurityGateReducer,
     CompanySelection: CompanySelectionReducer,
     LicenseValidation : licenseReducer,
     FinishedProducts : FinishedProductsReducer,

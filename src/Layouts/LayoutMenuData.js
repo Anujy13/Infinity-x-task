@@ -197,6 +197,21 @@ const Navdata = () => {
       },
     },
 
+    //new
+    {
+      id: "stock_category",
+      label: "Stock Category",
+      icon: "mdi mdi-file-import",
+      link: "/stock-category",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
+    },
+
     {
       id: "master",
       label: "Master",
